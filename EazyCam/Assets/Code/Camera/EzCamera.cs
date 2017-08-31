@@ -18,7 +18,8 @@ public class EzCamera : MonoBehaviour
 
     private Quaternion m_destRot = Quaternion.identity;
 
-    public bool IsInOrbit { get; set; }
+    public bool IsInOrbit { get { return m_stateMachine.CurrentState == m_orbitState; } }
+    public bool IsLockedOn { get { return m_stateMachine.CurrentState == m_lockOnState; } }
 
     private Vector3 m_relativePosition = Vector3.zero;
 
@@ -36,15 +37,12 @@ public class EzCamera : MonoBehaviour
     private bool m_isOccluded = false;
     //private float hitDistance = 0f;
 
-    private bool m_isLockedOn = false;
-    private GameObject m_lockonObject = null;
-    private Vector3 m_lockonMidpoint = Vector3.zero;
-
 
     private EzStateMachine m_stateMachine = null;
     private EzStationaryState m_stationaryState = null;
     private EzOrbitState m_orbitState = null;
     private EzFollowState m_followState = null;
+    private EzLockOnState m_lockOnState = null;
 
     // intialize necessarry fields
     private void Awake()
@@ -52,6 +50,7 @@ public class EzCamera : MonoBehaviour
         m_stationaryState = new EzStationaryState(this, m_settings);
         m_orbitState = new EzOrbitState(this, m_settings);
         m_followState = new EzFollowState(this, m_settings);
+        m_lockOnState = new EzLockOnState(this, m_settings);
     }
 
     private void Start()
@@ -320,6 +319,9 @@ public class EzCamera : MonoBehaviour
                 break;
             case EzCameraState.State.ORBIT:
                 m_stateMachine.SetCurrentState(m_orbitState);
+                break;
+            case EzCameraState.State.LOCKON:
+                m_stateMachine.SetCurrentState(m_lockOnState);
                 break;
             case EzCameraState.State.STATIONARY:
             default:

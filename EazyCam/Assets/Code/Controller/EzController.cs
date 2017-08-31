@@ -74,9 +74,17 @@ public class EzController : MonoBehaviour
         {
             m_camera.SetState(EzCameraState.State.FOLLOW);
         }
-        else if (Input.GetMouseButtonDown(0))
+        else if (Input.GetMouseButtonDown(0) && !m_camera.IsLockedOn)
         {
             m_camera.SetState(EzCameraState.State.ORBIT);
+        }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            m_camera.SetState(EzCameraState.State.LOCKON);
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            m_camera.SetState(EzCameraState.State.FOLLOW);
         }
 
 

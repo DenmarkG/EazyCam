@@ -10,7 +10,7 @@ public abstract class EzCameraState
         FOLLOW = 0
         , ORBIT
         , STATIONARY
-        , TARGETTING
+        , LOCKON
     }
 
     public State StateName { get; protected set; }
