@@ -21,6 +21,7 @@ public class EzLockOnState : EzCameraState
 
     public int LayerMask { get { return m_layermask; } }
     private int m_layermask = 0;
+    public int LockOnTargetLayer { get { return m_targetObjectLayer; } }
     [SerializeField] private int m_targetObjectLayer = 9;
 
     public EzLockOnState(EzCamera camera, EzCameraSettings stateCameraSettings = null) 
@@ -41,11 +42,15 @@ public class EzLockOnState : EzCameraState
         for (int i = 0; i < nearbyObjects.Length; ++i)
         {
             targetToAdd = nearbyObjects[i].gameObject.GetComponent<EzLockOnTarget>();
-            if (targetToAdd != null)
+            if (targetToAdd != null && !m_nearbyTargets.Contains(targetToAdd))
             {
-                targetToAdd.TargetIcon.SetActive(true);
                 m_nearbyTargets.Add(targetToAdd);
             }
+        }
+
+        if (m_nearbyTargets.Count > 0)
+        {
+            SetInitialTarget();
         }
 
         Debug.Log("Added " + m_nearbyTargets.Count + " targets");
@@ -53,7 +58,13 @@ public class EzLockOnState : EzCameraState
 
     public override void ExitState()
     {
-        Debug.Log("entered lock on mode");
+        if (m_currentTarget != null)
+        {
+            m_currentTarget.SetIconActive(false);
+            m_currentTarget = null;
+        }
+
+        m_nearbyTargets.Clear();
     }
 
     public override void HandleInput()
@@ -63,7 +74,7 @@ public class EzLockOnState : EzCameraState
 
     public override void LateUpdateState()
     {
-
+        LockOnTarget();
         m_controlledCamera.UpdatePosition();
     }
 
@@ -74,6 +85,37 @@ public class EzLockOnState : EzCameraState
 
     public override void UpdateStateFixed()
     {
-        //
+        // Update the possible targets here
+    }
+
+    private void LockOnTarget()
+    {
+        if (m_currentTarget != null)
+        {
+            float step = Time.deltaTime * m_stateSettings.RotateSpeed;
+
+            Vector3 relativePos = m_currentTarget.transform.position - m_cameraTransform.position;
+            m_cameraTransform.rotation = Quaternion.LookRotation(relativePos);
+        }
+    }
+
+    private void SetInitialTarget()
+    {
+        // Find the closest Target
+
+        // for now set to the initial one in the list
+        m_currentTarget = m_nearbyTargets[0];
+        m_currentTarget.SetIconActive();
+    }
+
+    public void MoveToNextTarget(Vector3 Direction)
+    {
+        // if one target early out
+
+        // if two targets, toggle between them
+
+        // if more than two targets:
+        // Find the target nearest to the direction we want to move 
+        // priority goes to closest targets first
     }
 }

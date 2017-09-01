@@ -43,7 +43,7 @@ public class EzOrbitState : EzCameraState
         //
     }
 
-    public void OrbitCamera(float horz, float vert)
+    private void OrbitCamera(float horz, float vert)
     {
         // cache the step and update the roation from input
         float step = Time.deltaTime * m_stateSettings.RotateSpeed;
