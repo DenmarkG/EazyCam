@@ -56,6 +56,11 @@ public class EzLockOnState : EzCameraState
         Debug.Log("Added " + m_nearbyTargets.Count + " targets");
     }
 
+    public override void UpdateState()
+    {
+        HandleInput();
+    }
+
     public override void ExitState()
     {
         if (m_currentTarget != null)
@@ -67,25 +72,27 @@ public class EzLockOnState : EzCameraState
         m_nearbyTargets.Clear();
     }
 
-    public override void HandleInput()
-    {
-        //
-    }
-
     public override void LateUpdateState()
     {
         LockOnTarget();
         m_controlledCamera.UpdatePosition();
     }
 
-    public override void UpdateState()
-    {
-        //
-    }
-
     public override void UpdateStateFixed()
     {
         // Update the possible targets here
+    }
+
+    public override void HandleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            MoveToNextTarget(m_cameraTransform.right);
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            MoveToNextTarget(-m_cameraTransform.right);
+        }
     }
 
     private void LockOnTarget()
@@ -108,14 +115,52 @@ public class EzLockOnState : EzCameraState
         m_currentTarget.SetIconActive();
     }
 
-    public void MoveToNextTarget(Vector3 Direction)
+    public void MoveToNextTarget(Vector3 direction)
     {
         // if one target early out
+        if (m_nearbyTargets.Count <= 1)
+        {
+            return;
+        }
 
         // if two targets, toggle between them
+        if (m_nearbyTargets.Count == 2)
+        {
+            m_currentTarget = m_currentTarget == m_nearbyTargets[0] ? m_nearbyTargets[1] : m_nearbyTargets[0];
+        }
 
         // if more than two targets:
         // Find the target nearest to the direction we want to move 
+        EzLockOnTarget nearestTarget = m_currentTarget;
+        EzLockOnTarget nextTarget = null;
+        Vector3 relativeDirection = direction;
+        float currentNearestDistance = float.MaxValue;
+        float sqDstance = float.MaxValue;
+
+        for (int i = 0; i < m_nearbyTargets.Count; ++i)
+        {
+            nextTarget = m_nearbyTargets[i];
+            if (nextTarget == m_currentTarget)
+            {
+                continue;
+            }
+
+            relativeDirection = nextTarget.transform.position - m_cameraTransform.position;
+            if (Vector3.Dot(relativeDirection, direction) > 0)
+            {
+                sqDstance = relativeDirection.sqrMagnitude;
+                if (sqDstance < currentNearestDistance)
+                {
+                    nearestTarget = nextTarget;
+                    currentNearestDistance = sqDstance;
+                }
+            }
+        }
+
+        m_currentTarget.SetIconActive(false);
+        m_currentTarget = nearestTarget;
+        m_currentTarget.SetIconActive(true);
+
         // priority goes to closest targets first
     }
 }
