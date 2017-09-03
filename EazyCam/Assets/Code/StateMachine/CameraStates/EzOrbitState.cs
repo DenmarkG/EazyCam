@@ -12,15 +12,21 @@ public class EzOrbitState : EzCameraState
 
     Quaternion m_destRot = Quaternion.identity;
 
-    public EzOrbitState(EzCamera camera, EzCameraSettings stateCameraSettings = null) 
-        : base(camera, stateCameraSettings)
+    protected override void AddStateToCamera()
     {
-        //
+        EzCamera ezCam = this.GetComponent<EzCamera>();
+        if (ezCam != null)
+        {
+            ezCam.OrbitState = this;
+            Init(ezCam, ezCam.Settings);
+        }
     }
 
     public override void EnterState()
     {
-        //
+        m_rotX = m_cameraTransform.rotation.eulerAngles.x;
+        m_rotX = Mathf.Clamp(m_rotX, m_stateSettings.MinRotX, m_stateSettings.MaxRotX);
+        m_rotY = m_cameraTransform.rotation.eulerAngles.y;
     }
 
     public override void ExitState()
@@ -67,6 +73,12 @@ public class EzOrbitState : EzCameraState
 
     public override void HandleInput()
     {
+        if (Input.GetMouseButtonUp(0))
+        {
+            m_controlledCamera.SetState(EzCameraState.State.FOLLOW);
+            return;
+        }
+
         // cache the inputs
         float horz = Input.GetAxis(MOUSEX);
         float vert = Input.GetAxis(MOUSEY);

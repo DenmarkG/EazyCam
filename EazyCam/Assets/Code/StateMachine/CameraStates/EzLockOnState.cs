@@ -2,63 +2,88 @@
 using System.Collections;
 using System.Collections.Generic;
 
-/**
- * Add a sphere trigger collider to this, 
- * as objects enter and leave, update the list of nearby targettable objects
- * 
- */
-
-
 public class EzLockOnState : EzCameraState
 {
-    [SerializeField] private float m_maxTargetDistance = 8f;
+    public enum LockOnStyle
+    {
+        TOGGLE, // Press button to turn targeting on/off
+        HOLD // Targeting active while button held down
+    }
 
-    private bool m_isLockedOn = false;
+    public enum TargetSwitchStyle
+    {
+        CYCLE, 
+        NEAREST
+    }
+
     private EzLockOnTarget m_currentTarget = null;
-    private Vector3 m_lockonMidpoint = Vector3.zero;
 
     private List<EzLockOnTarget> m_nearbyTargets = null;
 
-    public int LayerMask { get { return m_layermask; } }
-    private int m_layermask = 0;
-    public int LockOnTargetLayer { get { return m_targetObjectLayer; } }
-    [SerializeField] private int m_targetObjectLayer = 9;
+    [SerializeField] private LockOnStyle m_lockOnStyle = LockOnStyle.HOLD;
+    [SerializeField] private TargetSwitchStyle m_switchStyle = TargetSwitchStyle.NEAREST;
 
-    public EzLockOnState(EzCamera camera, EzCameraSettings stateCameraSettings = null) 
-        : base(camera, stateCameraSettings)
+    private bool m_isActive = false;
+
+    /// <summary>
+    /// Camera will snap to target when the angle between the forward vector and the relative position is less than this value
+    /// </summary>
+    [SerializeField] private float m_snapAngle = 2.5f;
+
+    protected override void AddStateToCamera()
     {
+        EzCamera ezCam = this.GetComponent<EzCamera>();
+        if (ezCam != null)
+        {
+            ezCam.LockOnState = this;
+            Init(ezCam, ezCam.Settings);
+        }
+    }
+
+    public override void Init(EzCamera camera, EzCameraSettings stateCameraSettings = null)
+    {
+        base.Init(camera, stateCameraSettings);
         m_nearbyTargets = new List<EzLockOnTarget>();
     }
 
     public override void EnterState()
     {
-        Debug.Log("entered lock on mode");
-        m_layermask = 1 << m_targetObjectLayer;
-        //m_layermask = ~m_layermask;
+        //Debug.Log("entered lock on mode");
+        //m_layermask = 1 << m_targetObjectLayer;
+        ////m_layermask = ~m_layermask;
 
-        // Do a sphere check to get the nearby targettables 
-        Collider[] nearbyObjects = Physics.OverlapSphere(m_controlledCamera.transform.position, m_maxTargetDistance/*, m_layermask*/);
-        EzLockOnTarget targetToAdd = null;
-        for (int i = 0; i < nearbyObjects.Length; ++i)
-        {
-            targetToAdd = nearbyObjects[i].gameObject.GetComponent<EzLockOnTarget>();
-            if (targetToAdd != null && !m_nearbyTargets.Contains(targetToAdd))
-            {
-                m_nearbyTargets.Add(targetToAdd);
-            }
-        }
+        //// Do a sphere check to get the nearby targettables 
+        //Collider[] nearbyObjects = Physics.OverlapSphere(m_controlledCamera.Target.transform.position, m_maxTargetDistance/*, m_layermask*/);
+        //EzLockOnTarget targetToAdd = null;
+        //for (int i = 0; i < nearbyObjects.Length; ++i)
+        //{
+        //    targetToAdd = nearbyObjects[i].gameObject.GetComponent<EzLockOnTarget>();
+        //    if (targetToAdd != null && !m_nearbyTargets.Contains(targetToAdd))
+        //    {
+        //        m_nearbyTargets.Add(targetToAdd);
+        //    }
+        //}
 
-        if (m_nearbyTargets.Count > 0)
-        {
-            SetInitialTarget();
-        }
+        //if (m_nearbyTargets.Count > 0)
+        //{
+        //    SetInitialTarget();
+        //}
 
-        Debug.Log("Added " + m_nearbyTargets.Count + " targets");
+        //Debug.Log("Added " + m_nearbyTargets.Count + " targets");
     }
+
+    private void Update()
+    {
+        if (m_controlledCamera.AllowTargeting)
+        {
+            HandleInput();
+        }
+    }
+
 
     public override void UpdateState()
     {
-        HandleInput();
+        //
     }
 
     public override void ExitState()
@@ -68,8 +93,6 @@ public class EzLockOnState : EzCameraState
             m_currentTarget.SetIconActive(false);
             m_currentTarget = null;
         }
-
-        m_nearbyTargets.Clear();
     }
 
     public override void LateUpdateState()
@@ -80,18 +103,67 @@ public class EzLockOnState : EzCameraState
 
     public override void UpdateStateFixed()
     {
-        // Update the possible targets here
+        //
     }
 
     public override void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (m_nearbyTargets.Count == 0)
         {
-            MoveToNextTarget(m_cameraTransform.right);
+            return;
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+
+        if (m_isActive)
         {
-            MoveToNextTarget(-m_cameraTransform.right);
+            if (m_switchStyle == TargetSwitchStyle.NEAREST)
+            {
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    MoveToNextTarget(m_cameraTransform.right);
+                }
+                else if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    MoveToNextTarget(-m_cameraTransform.right);
+                }
+            }
+            else if (m_switchStyle == TargetSwitchStyle.CYCLE)
+            {
+                if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Q))
+                {
+                    CycleTargets();
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (!m_controlledCamera.IsLockedOn)
+            {
+                m_controlledCamera.SetState(State.LOCKON);
+            }
+
+            if (m_lockOnStyle == LockOnStyle.TOGGLE)
+            {
+                m_isActive = !m_isActive;
+            }
+            else
+            {
+                m_isActive = true;
+            }
+
+            if (m_isActive)
+            {
+                SetInitialTarget();
+            }
+            else
+            {
+                m_controlledCamera.SetState(m_controlledCamera.DefaultState);
+            }
+        }
+        else if (Input.GetKeyUp(KeyCode.Space) && m_lockOnStyle == LockOnStyle.HOLD)
+        {
+            m_isActive = false;
+            m_controlledCamera.SetState(m_controlledCamera.DefaultState);
         }
     }
 
@@ -102,7 +174,16 @@ public class EzLockOnState : EzCameraState
             float step = Time.deltaTime * m_stateSettings.RotateSpeed;
 
             Vector3 relativePos = m_currentTarget.transform.position - m_cameraTransform.position;
-            m_cameraTransform.rotation = Quaternion.LookRotation(relativePos);
+
+            if (Vector3.Angle(m_cameraTransform.forward, relativePos) > m_snapAngle)
+            {
+                Quaternion nextRot = Quaternion.Lerp(m_cameraTransform.rotation, Quaternion.LookRotation(relativePos), step);
+                m_cameraTransform.rotation = nextRot;
+            }
+            else
+            {
+                m_cameraTransform.rotation = Quaternion.LookRotation(relativePos);
+            }
         }
     }
 
@@ -126,7 +207,10 @@ public class EzLockOnState : EzCameraState
         // if two targets, toggle between them
         if (m_nearbyTargets.Count == 2)
         {
+            m_currentTarget.SetIconActive(false);
             m_currentTarget = m_currentTarget == m_nearbyTargets[0] ? m_nearbyTargets[1] : m_nearbyTargets[0];
+            m_currentTarget.SetIconActive(true);
+            return;
         }
 
         // if more than two targets:
@@ -148,7 +232,8 @@ public class EzLockOnState : EzCameraState
             relativeDirection = nextTarget.transform.position - m_cameraTransform.position;
             if (Vector3.Dot(relativeDirection, direction) > 0)
             {
-                sqDstance = relativeDirection.sqrMagnitude;
+                //sqDstance = relativeDirection.sqrMagnitude;
+                sqDstance = (m_currentTarget.transform.position - nextTarget.transform.position).sqrMagnitude;
                 if (sqDstance < currentNearestDistance)
                 {
                     nearestTarget = nextTarget;
@@ -160,7 +245,62 @@ public class EzLockOnState : EzCameraState
         m_currentTarget.SetIconActive(false);
         m_currentTarget = nearestTarget;
         m_currentTarget.SetIconActive(true);
+    }
 
-        // priority goes to closest targets first
+    private void CycleTargets()
+    {
+        // if one target early out
+        if (m_nearbyTargets.Count <= 1)
+        {
+            return;
+        }
+
+        // if two targets, toggle between them
+        if (m_nearbyTargets.Count == 2)
+        {
+            m_currentTarget = m_currentTarget == m_nearbyTargets[0] ? m_nearbyTargets[1] : m_nearbyTargets[0];
+            return;
+        }
+        
+        m_currentTarget.SetIconActive(false);
+        m_currentTarget = m_nearbyTargets[CycleIndex(m_nearbyTargets.IndexOf(m_currentTarget), m_nearbyTargets.Count)];
+        m_currentTarget.SetIconActive(true);
+    }
+
+    private int CycleIndex(int startIndex, int numElements)
+    {
+        return (numElements + (startIndex + 1)) % numElements;
+    }
+
+    public void AddTarget(EzLockOnTarget newTarget)
+    {
+        if (!m_nearbyTargets.Contains(newTarget))
+        {
+            m_nearbyTargets.Add(newTarget);
+        }
+    }
+
+    public void RemoveTarget(EzLockOnTarget targetToRemove)
+    {
+        if (m_nearbyTargets.Contains(targetToRemove))
+        {
+            m_nearbyTargets.Remove(targetToRemove);
+
+            if (m_currentTarget == targetToRemove)
+            {
+                m_currentTarget.SetIconActive(false);
+                m_currentTarget = null;
+                if (m_nearbyTargets.Count > 0)
+                {
+                    m_currentTarget = m_nearbyTargets[0];
+                    m_currentTarget.SetIconActive(true);
+                }
+                else
+                {
+                    m_isActive = false;
+                    m_controlledCamera.SetState(m_controlledCamera.DefaultState);
+                }
+            }
+        }
     }
 }

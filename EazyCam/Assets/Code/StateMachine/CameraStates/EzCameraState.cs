@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EzCameraState
+public abstract class EzCameraState : MonoBehaviour
 {
     public enum State : int
     {
@@ -15,20 +15,27 @@ public abstract class EzCameraState
 
     public State StateName { get; protected set; }
 
-    protected EzCamera m_controlledCamera = null;
+    [SerializeField] protected EzCamera m_controlledCamera = null;
     protected EzCameraSettings m_stateSettings = null;
     protected Transform m_cameraTransform = null;
     protected Transform m_cameraTarget = null;
 
-    public EzCameraState(EzCamera camera, EzCameraSettings stateCameraSettings = null) 
+    public virtual void Init(EzCamera camera, EzCameraSettings stateCameraSettings = null)
     {
         m_controlledCamera = camera;
         m_cameraTransform = m_controlledCamera.transform;
         m_cameraTarget = m_controlledCamera.Target;
-        m_stateSettings = stateCameraSettings ?? m_controlledCamera.Settings;
+        m_stateSettings = (stateCameraSettings) == null ? new EzCameraSettings() : m_controlledCamera.Settings.Clone();
     }
 
-	public abstract void EnterState();
+    protected void Start()
+    {
+        AddStateToCamera();
+    }
+
+    protected abstract void AddStateToCamera();
+
+    public abstract void EnterState();
 	public abstract void UpdateState();
 	public abstract void UpdateStateFixed();
 	public abstract void LateUpdateState();

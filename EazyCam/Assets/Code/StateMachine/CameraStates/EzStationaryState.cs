@@ -4,8 +4,15 @@ using System;
 
 public class EzStationaryState : EzCameraState
 {
-    public EzStationaryState(EzCamera camera, EzCameraSettings stateSettings)
-        : base(camera, stateSettings) { }
+    protected override void AddStateToCamera()
+    {
+        EzCamera ezCam = this.GetComponent<EzCamera>();
+        if (ezCam != null)
+        {
+            ezCam.StationaryState = this;
+            Init(ezCam, ezCam.Settings);
+        }
+    }
 
     public override void EnterState()
     {
@@ -21,7 +28,10 @@ public class EzStationaryState : EzCameraState
 
     public override void LateUpdateState()
     {
-        //
+        m_controlledCamera.SmoothLookAt();
+
+        //m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
+        //m_cameraTransform.rotation = Quaternion.LookRotation(m_cameraTarget.transform.position - m_cameraTransform.position);
     }
 
     public override void UpdateState()
@@ -34,7 +44,7 @@ public class EzStationaryState : EzCameraState
         //
     }
 
-        public override void HandleInput()
+    public override void HandleInput()
     {
         //
     }

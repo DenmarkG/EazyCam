@@ -9,12 +9,6 @@ public class EzController : MonoBehaviour
 	[SerializeField] private EzCamera m_camera = null;
     [SerializeField] private EzMotor m_controlledPlayer = null;
 
-    protected const string HORIZONTAL = "Horizontal";
-    protected const string VERITCAL = "Vertical";
-    protected const string MOUSEX = "Mouse X";
-    protected const string MOUSEY = "Mouse Y";
-    protected const string MOUSE_WHEEL = "Mouse ScrollWheel";
-
     private void Start()
     {
         // if either the player or camera are null, attempt to find them
@@ -58,8 +52,8 @@ public class EzController : MonoBehaviour
     {
         // Update player movement first
         // cache the inputs
-        float horz = Input.GetAxis(HORIZONTAL);
-        float vert = Input.GetAxis(VERITCAL);
+        float horz = Input.GetAxis(ExtensionMethods.HORIZONTAL);
+        float vert = Input.GetAxis(ExtensionMethods.VERITCAL);
         
         // Convert movement to camera space
         Transform camTransform = m_camera.transform;
@@ -68,30 +62,5 @@ public class EzController : MonoBehaviour
 
         // Move the Player
         m_controlledPlayer.MovePlayer(moveX, moveZ, Input.GetKey(KeyCode.LeftShift));
-
-        // Update camera rotation if necessary
-        if (Input.GetMouseButtonUp(0))
-        {
-            m_camera.SetState(EzCameraState.State.FOLLOW);
-        }
-        else if (Input.GetMouseButtonDown(0) && !m_camera.IsLockedOn)
-        {
-            m_camera.SetState(EzCameraState.State.ORBIT);
-        }
-        else if (Input.GetKeyDown(KeyCode.Space))
-        {
-            m_camera.SetState(EzCameraState.State.LOCKON);
-        }
-        else if (Input.GetKeyUp(KeyCode.Space))
-        {
-            m_camera.SetState(EzCameraState.State.FOLLOW);
-        }
-
-
-        if (Input.GetMouseButton(2))
-        {
-            vert = Input.GetAxis(MOUSEY);
-            m_camera.ZoomCamera(vert);
-        }
     }
 }

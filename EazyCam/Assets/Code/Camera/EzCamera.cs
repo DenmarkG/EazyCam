@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 #if UNITY_EDITOR
+using System.Collections.Generic;
+
 [ExecuteInEditMode]
 #endif
 public class EzCamera : MonoBehaviour 
@@ -18,9 +21,6 @@ public class EzCamera : MonoBehaviour
 
     private Quaternion m_destRot = Quaternion.identity;
 
-    public bool IsInOrbit { get { return m_stateMachine.CurrentState == m_orbitState; } }
-    public bool IsLockedOn { get { return m_stateMachine.CurrentState == m_lockOnState; } }
-
     private Vector3 m_relativePosition = Vector3.zero;
 
     // Camera Occlusion Variables
@@ -35,22 +35,63 @@ public class EzCamera : MonoBehaviour
     private float m_aspectHalfWidth = 0f;
 
     private bool m_isOccluded = false;
-    //private float hitDistance = 0f;
 
-
+    // State Machine and default state
     private EzStateMachine m_stateMachine = null;
-    private EzStationaryState m_stationaryState = null;
-    private EzOrbitState m_orbitState = null;
-    private EzFollowState m_followState = null;
-    private EzLockOnState m_lockOnState = null;
+    [SerializeField] private EzCameraState.State m_defaultState = EzCameraState.State.FOLLOW;
+    public EzLockOnState.State DefaultState { get { return m_defaultState; } }
 
-    // intialize necessarry fields
-    private void Awake()
+    // State for a stationary camera that rotates to look at a target but does not follow it
+    private EzStationaryState m_stationaryState = null;
+    public EzStationaryState StationaryState
     {
-        m_stationaryState = new EzStationaryState(this, m_settings);
-        m_orbitState = new EzOrbitState(this, m_settings);
-        m_followState = new EzFollowState(this, m_settings);
-        m_lockOnState = new EzLockOnState(this, m_settings);
+        get { return m_stationaryState; }
+        set { m_stationaryState = value; }
+    }
+
+    // State for orbiting around a target
+    private EzOrbitState m_orbitState = null;
+    public EzOrbitState OrbitState
+    {
+        get { return m_orbitState; }
+        set { m_orbitState = value; }
+    }
+
+    // State for tracking a target object's position around the environment
+    private EzFollowState m_followState = null;
+    public EzFollowState FollowState
+    {
+        get { return m_followState; }
+        set { m_followState = value; }
+    }
+
+    /// <summary>
+    /// Set the value to true if you want the camera to be able to track an object while still following the player
+    /// </summary>
+    private EzLockOnState m_lockOnState = null;
+    public EzLockOnState LockOnState
+    {
+        get { return m_lockOnState; }
+        set { m_lockOnState = value; }
+    }
+        
+    [SerializeField] private bool m_allowLockOn = true;
+    public bool AllowTargeting { get { return m_allowLockOn; } }
+    public void SetAllowTargeting(bool allowTargeting)
+    {
+        m_allowLockOn = allowTargeting;
+        if (m_allowLockOn)
+        {
+            if (m_lockOnState == null)
+            {
+                m_lockOnState = this.GetOrAddComponent<EzLockOnState>();
+                m_lockOnState.Init(this, m_settings);
+
+#if UNITY_EDITOR
+                m_runtimeStatesAdded.Add(m_lockOnState);
+#endif
+            }
+        }
     }
 
     private void Start()
@@ -72,20 +113,39 @@ public class EzCamera : MonoBehaviour
         m_layermask = 1 << m_playerLayer;
         m_layermask = ~m_layermask;
 
-        // Init the state machine
-        m_stationaryState = new EzStationaryState(this, m_settings);
-        m_orbitState = new EzOrbitState(this, m_settings);
-        m_followState = new EzFollowState(this, m_settings);
+        if (m_allowLockOn)
+        {
+            m_lockOnState = this.GetOrAddComponent<EzLockOnState>();
+            m_lockOnState.Init(this, m_settings);
+        }
+
         m_stateMachine = new EzStateMachine();
-        SetState(EzCameraState.State.FOLLOW);
+#if UNITY_EDITOR
+        if (Application.isPlaying)
+        {
+            if (m_stateMachine.CurrentState != null)
+            {
+                m_stateMachine.CurrentState.Init(this, m_settings);
+            }
+        }
+#endif
+        SetState(m_defaultState);
     }
 
     private void Update()
     {
-        if (m_stateMachine != null)
+#if UNITY_EDITOR
+        if (Application.isPlaying)
         {
-            m_stateMachine.UpdateState();
+#endif
+            if (m_stateMachine != null)
+            {
+                HandleInput();
+                m_stateMachine.UpdateState();
+            }
+#if UNITY_EDITOR
         }
+#endif
     }
 
     private void LateUpdate()
@@ -111,14 +171,42 @@ public class EzCamera : MonoBehaviour
             }
 
             CheckCameraPlanePoints();
-
-            UpdatePosition();
         }
     }
 
     private void OnApplicationQuit()
     {
         m_settings.ResetCameraSettings();
+
+#if UNITY_EDITOR
+        if (m_runtimeStatesAdded.Count > 0)
+        {
+            RemoveRuntimeStates();
+        }
+#endif
+
+    }
+
+    private void HandleInput()
+    {
+        //if (m_orbitState != null && Input.GetMouseButtonDown(0) && !IsLockedOn)
+        //{
+        //    SetState(EzCameraState.State.ORBIT);
+        //}
+        //else if (m_allowLockOn && Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    SetState(EzCameraState.State.LOCKON);
+        //}
+        //else if (Input.GetKeyUp(KeyCode.Space))
+        //{
+        //    SetState(EzCameraState.State.FOLLOW);
+        //}
+
+        // Zoom the camera using the middle mouse button + drag
+        if (Input.GetMouseButton(2))
+        {
+            ZoomCamera(Input.GetAxis(ExtensionMethods.MOUSEY));
+        }
     }
 
     public void UpdatePosition()
@@ -230,7 +318,8 @@ public class EzCamera : MonoBehaviour
 
                         if (!m_isOccluded) // Only store the original position on the original hit
                         {
-                            m_settings.ResetPositionDistance = m_settings.OffsetDistance;
+                            //m_settings.ResetPositionDistance = m_settings.OffsetDistance;
+                            m_settings.ResetPositionDistance = m_settings.DesiredDistance;
                         }
 
                         m_isOccluded = true;
@@ -315,18 +404,98 @@ public class EzCamera : MonoBehaviour
         switch (nextState)
         {
             case EzCameraState.State.FOLLOW:
+                if (m_followState == null)
+                {
+                    m_followState = this.GetOrAddComponent<EzFollowState>();
+                    m_followState.Init(this, m_settings);
+
+#if UNITY_EDITOR
+                    m_runtimeStatesAdded.Add(m_followState);
+#endif
+                }
+
                 m_stateMachine.SetCurrentState(m_followState);
                 break;
             case EzCameraState.State.ORBIT:
+                if (m_orbitState == null)
+                {
+                    m_orbitState = this.GetOrAddComponent<EzOrbitState>();
+                    m_orbitState.Init(this, m_settings);
+
+#if UNITY_EDITOR
+                    m_runtimeStatesAdded.Add(m_orbitState);
+#endif
+                }
+
                 m_stateMachine.SetCurrentState(m_orbitState);
                 break;
             case EzCameraState.State.LOCKON:
+                if (m_lockOnState == null)
+                {
+                    m_lockOnState = this.GetOrAddComponent<EzLockOnState>();
+                    m_lockOnState.Init(this, m_settings);
+
+#if UNITY_EDITOR
+                    m_runtimeStatesAdded.Add(m_lockOnState);
+#endif
+                }
+
                 m_stateMachine.SetCurrentState(m_lockOnState);
                 break;
             case EzCameraState.State.STATIONARY:
             default:
+                if (m_stationaryState == null)
+                {
+                    m_stationaryState = this.GetOrAddComponent<EzStationaryState>();
+                    m_stationaryState.Init(this, m_settings);
+
+#if UNITY_EDITOR
+                    m_runtimeStatesAdded.Add(m_stationaryState);
+#endif
+                }
+
                 m_stateMachine.SetCurrentState(m_stationaryState);
                 break;
         }
     }
+
+    
+    public bool IsInOrbit 
+    { 
+        get 
+        {
+            if (m_orbitState != null)
+            {
+                return m_stateMachine.CurrentState == m_orbitState;
+            }
+
+            return false;
+        } 
+    }
+
+    public bool IsLockedOn 
+    { 
+        get 
+        {
+            if (m_lockOnState != null)
+            {
+                return m_stateMachine.CurrentState == m_lockOnState;
+            }
+
+            return false;
+        } 
+    }
+
+#if UNITY_EDITOR
+    private List<EzCameraState> m_runtimeStatesAdded = new List<EzCameraState>();
+
+    private void RemoveRuntimeStates()
+    {
+        for (int i = 0; i < m_runtimeStatesAdded.Count; ++i)
+        {
+            DestroyImmediate(m_runtimeStatesAdded[i]);
+        }
+    }
+
+#endif
 }
