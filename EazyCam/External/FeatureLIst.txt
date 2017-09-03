@@ -1,0 +1,22 @@
+Eazy Cam
+- 3rd person orbit with customizable controls (EzOrbitCam)
+	- ability to update in edit mode, and save runtime changes
+	- targetting
+	- zooming
+
+- 3rd Person static angle cam (EzSimpleCam)
+	- follows player from specific angle (MOBA style)
+	- same customizations
+
+- 3rd person static (EzStaticCam)
+	- security cam style
+	
+- Triggerable forced angle with all cameras, for more cinematic views
+	- should allow for no code needed by the end user
+- custom inspector for cameras
+- demo scenes for exhibition/testing each camera
+- platform independent
+
+
+Current bugs:
+- Camera snaps to default position after entering orbit, if targetting was entered previously
