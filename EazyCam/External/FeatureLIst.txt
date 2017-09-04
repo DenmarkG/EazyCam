@@ -19,9 +19,8 @@ Eazy Cam
 
 
 Current bugs:
-- Camera snaps to default position after entering orbit, if targetting was entered previously [fixed]
 - Camera jitters and does not return to proper distance when occluded by round objects or when moving while occluded (as in when moving on a floor)
+- separate desired, hit, and zoom distance
 
 TODO:
-- update input per component
-- move collision code to it's own component
+- Create demo scene

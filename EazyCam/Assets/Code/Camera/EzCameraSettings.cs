@@ -20,6 +20,7 @@ public class EzCameraSettings : ScriptableObject
 
     public float DesiredDistance { get; set; }
     public float ResetPositionDistance { get; set; }
+    public float HitDistance { get; set; }
 
     private float m_defaultHeight = 0f;
     private float m_defaultLateralOffset = 0f;

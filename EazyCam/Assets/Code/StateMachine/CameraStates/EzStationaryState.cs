@@ -29,9 +29,6 @@ public class EzStationaryState : EzCameraState
     public override void LateUpdateState()
     {
         m_controlledCamera.SmoothLookAt();
-
-        //m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
-        //m_cameraTransform.rotation = Quaternion.LookRotation(m_cameraTarget.transform.position - m_cameraTransform.position);
     }
 
     public override void UpdateState()

@@ -48,31 +48,10 @@ public class EzLockOnState : EzCameraState
 
     public override void EnterState()
     {
-        //Debug.Log("entered lock on mode");
-        //m_layermask = 1 << m_targetObjectLayer;
-        ////m_layermask = ~m_layermask;
-
-        //// Do a sphere check to get the nearby targettables 
-        //Collider[] nearbyObjects = Physics.OverlapSphere(m_controlledCamera.Target.transform.position, m_maxTargetDistance/*, m_layermask*/);
-        //EzLockOnTarget targetToAdd = null;
-        //for (int i = 0; i < nearbyObjects.Length; ++i)
-        //{
-        //    targetToAdd = nearbyObjects[i].gameObject.GetComponent<EzLockOnTarget>();
-        //    if (targetToAdd != null && !m_nearbyTargets.Contains(targetToAdd))
-        //    {
-        //        m_nearbyTargets.Add(targetToAdd);
-        //    }
-        //}
-
-        //if (m_nearbyTargets.Count > 0)
-        //{
-        //    SetInitialTarget();
-        //}
-
-        //Debug.Log("Added " + m_nearbyTargets.Count + " targets");
+        //
     }
 
-    private void Update()
+    protected override void Update()
     {
         if (m_controlledCamera.AllowTargeting)
         {

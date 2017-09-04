@@ -20,18 +20,26 @@ public abstract class EzCameraState : MonoBehaviour
     protected Transform m_cameraTransform = null;
     protected Transform m_cameraTarget = null;
 
+    protected bool m_initialized = false;
+
     public virtual void Init(EzCamera camera, EzCameraSettings stateCameraSettings = null)
     {
-        m_controlledCamera = camera;
-        m_cameraTransform = m_controlledCamera.transform;
-        m_cameraTarget = m_controlledCamera.Target;
-        m_stateSettings = (stateCameraSettings) == null ? new EzCameraSettings() : m_controlledCamera.Settings.Clone();
+        if (!m_initialized)
+        {
+            m_controlledCamera = camera;
+            m_cameraTransform = m_controlledCamera.transform;
+            m_cameraTarget = m_controlledCamera.Target;
+            m_stateSettings = (stateCameraSettings) == null ? new EzCameraSettings() : m_controlledCamera.Settings.Clone();
+            m_initialized = true;
+        }
     }
 
     protected void Start()
     {
         AddStateToCamera();
     }
+
+    protected virtual void Update() { }
 
     protected abstract void AddStateToCamera();
 

@@ -5,6 +5,7 @@ using System;
 public class EzFollowState : EzCameraState
 {
     [SerializeField] private float m_snapAngle = 2.5f;
+    [SerializeField] private bool m_snapBehindPlayer = true;
     private Quaternion m_defaultRotation = Quaternion.identity;
 
     protected override void AddStateToCamera()
@@ -36,17 +37,23 @@ public class EzFollowState : EzCameraState
 
     public override void LateUpdateState()
     {
-        if (Quaternion.Angle(m_cameraTransform.rotation, m_defaultRotation) > m_snapAngle)
+        if (m_controlledCamera.AllowFollow)
         {
-            float step = m_stateSettings.RotateSpeed * Time.deltaTime;
-            m_cameraTransform.rotation = Quaternion.Lerp(m_cameraTransform.rotation, m_defaultRotation, step);
-        }
-        else
-        {
-            m_cameraTransform.rotation = m_defaultRotation;
-        }
+            if (m_snapBehindPlayer)
+            {
+                if (Quaternion.Angle(m_cameraTransform.rotation, m_defaultRotation) > m_snapAngle)
+                {
+                    float step = m_stateSettings.RotateSpeed * Time.deltaTime;
+                    m_cameraTransform.rotation = Quaternion.Lerp(m_cameraTransform.rotation, m_defaultRotation, step);
+                }
+                else
+                {
+                    m_cameraTransform.rotation = m_defaultRotation;
+                }
 
-        m_controlledCamera.UpdatePosition();
+            }
+            m_controlledCamera.UpdatePosition();
+        }
     }
 
     public override void UpdateState()

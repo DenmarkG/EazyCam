@@ -33,6 +33,9 @@ public class EzLockOnTarget : MonoBehaviour
         m_iconRenderer.enabled = false;
 
         SetIconActive(false);
+
+        // Set the physics layer as not to interfere with Camera Occlusion
+        this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
     }
 
     private void OnTriggerEnter(Collider other)
