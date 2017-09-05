@@ -106,6 +106,23 @@ public class EzCamera : MonoBehaviour
 
 
     [SerializeField] private bool m_checkForCollisions = true;
+    public bool CheckForCollisions { get { return m_checkForCollisions; } }
+    public void EnableCollisionCheck(bool checkForCollisions)
+    {
+        m_checkForCollisions = checkForCollisions;
+        if (m_cameraCollilder != null)
+        {
+            m_cameraCollilder.enabled = m_checkForCollisions;
+        }
+        else
+        {
+            if (m_checkForCollisions)
+            {
+                m_cameraCollilder = this.GetOrAddComponent<EzCameraCollider>();
+            }
+        }
+    }
+
     private EzCameraCollider m_cameraCollilder = null;
 
     private void Start()
@@ -217,16 +234,7 @@ public class EzCamera : MonoBehaviour
     public void UpdatePosition()
     {
         // Update the position of the camera to reflect any rotation changes
-        float moveSpeed = 0f;
-        if (m_checkForCollisions)
-        {
-            moveSpeed = (m_cameraCollilder.IsOccluded ? m_settings.ZoomSpeed : m_settings.ResetSpeed);
-        }
-        else
-        {
-            moveSpeed = m_settings.ZoomSpeed;
-        }
-        m_settings.OffsetDistance = Mathf.MoveTowards(m_settings.OffsetDistance, m_settings.DesiredDistance, Time.deltaTime * moveSpeed);
+        m_settings.OffsetDistance = Mathf.MoveTowards(m_settings.OffsetDistance, m_settings.DesiredDistance, Time.deltaTime * m_settings.ZoomSpeed);
         m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
         this.transform.position = m_relativePosition;
     }
@@ -243,7 +251,7 @@ public class EzCamera : MonoBehaviour
     public void ZoomCamera(float zDelta)
     {
         // clamp the value to the min/max ranges
-        if (!m_checkForCollisions || (m_checkForCollisions && !m_cameraCollilder.IsOccluded))
+        if (!IsOccluded)
         {
             float step = Time.deltaTime * m_settings.ZoomSpeed * zDelta;
             m_settings.DesiredDistance = Mathf.Clamp(m_settings.OffsetDistance + step, m_settings.MinDistance, m_settings.MaxDistance);
@@ -309,7 +317,7 @@ public class EzCamera : MonoBehaviour
         {
             if (!m_checkForCollisions)
             {
-                return true;
+                return false;
             }
 
             return m_cameraCollilder.IsOccluded;

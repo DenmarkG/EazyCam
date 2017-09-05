@@ -618,8 +618,6 @@ GameObject:
   - component: {fileID: 411333327}
   - component: {fileID: 411333332}
   - component: {fileID: 411333333}
-  - component: {fileID: 411333334}
-  - component: {fileID: 411333335}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -711,11 +709,11 @@ MonoBehaviour:
   m_settings: {fileID: 11400000, guid: abdc4bfd564a0c749b1106e6e5544372, type: 2}
   m_target: {fileID: 547705010}
   m_defaultState: 0
-  m_allowOrbit: 1
+  m_allowOrbit: 0
   m_allowFollow: 1
   m_allowLockOn: 0
   m_allowZoom: 1
-  m_checkForCollisions: 1
+  m_checkForCollisions: 0
 --- !u!114 &411333333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,31 +727,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_controlledCamera: {fileID: 411333332}
   m_snapAngle: 2.5
-  m_snapBehindPlayer: 0
---- !u!114 &411333334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 411333326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8199c6245174f44685230efcb387614, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_playerLayer: 
---- !u!114 &411333335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 411333326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f846843feefa8a54eb5fb56a5fe03600, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_controlledCamera: {fileID: 411333332}
+  m_snapBehindPlayer: 1
 --- !u!4 &547705010 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4000013540020446, guid: f81e35786288c274795cfd1ff5a2ad50,
