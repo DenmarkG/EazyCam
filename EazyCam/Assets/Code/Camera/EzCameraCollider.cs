@@ -36,7 +36,7 @@ public class EzCameraCollider : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (m_controlledCamera.CheckForCollisions)
+        if (m_controlledCamera.CollisionsEnabled)
         {
             HandleCollisions();
         }

@@ -21,6 +21,13 @@ public class EzCamera : MonoBehaviour
     private EzStateMachine m_stateMachine = null;
     [SerializeField] private EzCameraState.State m_defaultState = EzCameraState.State.FOLLOW;
     public EzLockOnState.State DefaultState { get { return m_defaultState; } }
+    public void SetDefaultState(EzCameraState.State newDefaultState)
+    {
+        if (newDefaultState != EzCameraState.State.LOCKON)
+        {
+            m_defaultState = newDefaultState;
+        }
+    }
 
     // State for a stationary camera that rotates to look at a target but does not follow it
     private EzStationaryState m_stationaryState = null;
@@ -86,7 +93,7 @@ public class EzCamera : MonoBehaviour
     }
         
     [SerializeField] private bool m_allowLockOn = true;
-    public bool AllowTargeting { get { return m_allowLockOn; } }
+    public bool AllowLockOn { get { return m_allowLockOn; } }
     public void SetAllowTargeting(bool allowTargeting)
     {
         m_allowLockOn = allowTargeting;
@@ -100,19 +107,26 @@ public class EzCamera : MonoBehaviour
         }
     }
 
-    [SerializeField] private bool m_allowZoom = true;
+    public bool ZoomEnabled { get { return m_zoomEnabled; } }
+    [SerializeField] private bool m_zoomEnabled = true;
     private float m_zoomDelta = 0f;
     private const float ZOOM_DEAD_ZONE = .01f;
+    public void SetZoomEnabled(bool isEnabled) { m_zoomEnabled = isEnabled; }
 
 
     [SerializeField] private bool m_checkForCollisions = true;
-    public bool CheckForCollisions { get { return m_checkForCollisions; } }
-    public void EnableCollisionCheck(bool checkForCollisions)
+    public bool CollisionsEnabled { get { return m_checkForCollisions; } }
+    public void EnableCollisionCheck(bool checkForCollisions, bool removeComponent = false)
     {
         m_checkForCollisions = checkForCollisions;
         if (m_cameraCollilder != null)
         {
             m_cameraCollilder.enabled = m_checkForCollisions;
+            if (!checkForCollisions && removeComponent)
+            {
+                DestroyImmediate(m_cameraCollilder);
+                m_cameraCollilder = null;
+            }
         }
         else
         {
@@ -204,7 +218,7 @@ public class EzCamera : MonoBehaviour
         {
             if (m_stateMachine != null)
             {
-                if (m_allowZoom && Mathf.Abs(m_zoomDelta) > ZOOM_DEAD_ZONE)
+                if (m_zoomEnabled && Mathf.Abs(m_zoomDelta) > ZOOM_DEAD_ZONE)
                 {
                     ZoomCamera(m_zoomDelta);
                 }
@@ -221,7 +235,7 @@ public class EzCamera : MonoBehaviour
     private void HandleInput()
     {
         // Zoom the camera using the middle mouse button + drag
-        if (Input.GetMouseButton(2))
+        if (Input.GetMouseButton(2) || Input.GetKey(KeyCode.Z))
         {
             m_zoomDelta = Input.GetAxis(ExtensionMethods.MOUSEY);
         }

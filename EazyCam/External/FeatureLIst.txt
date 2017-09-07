@@ -24,3 +24,4 @@ Current bugs:
 
 TODO:
 - Create demo scene
+- Add option to Set functions to remove components when disabling. 

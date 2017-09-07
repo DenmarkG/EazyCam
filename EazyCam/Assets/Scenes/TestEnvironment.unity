@@ -713,7 +713,6 @@ GameObject:
   - component: {fileID: 411333332}
   - component: {fileID: 411333336}
   - component: {fileID: 411333335}
-  - component: {fileID: 411333334}
   - component: {fileID: 411333333}
   m_Layer: 0
   m_Name: Main Camera
@@ -791,7 +790,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 28.96, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 35, y: 0, z: 0}
 --- !u!114 &411333332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -809,8 +808,8 @@ MonoBehaviour:
   m_allowOrbit: 1
   m_allowFollow: 1
   m_allowLockOn: 1
-  m_allowZoom: 1
-  m_checkForCollisions: 1
+  m_zoomEnabled: 0
+  m_checkForCollisions: 0
 --- !u!114 &411333333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -823,18 +822,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_controlledCamera: {fileID: 411333332}
---- !u!114 &411333334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 411333326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8199c6245174f44685230efcb387614, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_playerLayer: Player
 --- !u!114 &411333335
 MonoBehaviour:
   m_ObjectHideFlags: 0
