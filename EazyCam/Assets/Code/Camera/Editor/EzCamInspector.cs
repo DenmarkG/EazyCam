@@ -31,12 +31,27 @@ public class EzCamInspector : Editor
             // set value as default state
             if (nextIndex != selectedIndex)
             {
-                cam.SetDefaultState((EzCameraState.State)System.Enum.Parse(typeof(EzCameraState), stateNames[nextIndex]));
+                cam.SetDefaultState((EzCameraState.State)System.Enum.Parse(typeof(EzCameraState.State), stateNames[nextIndex]));
             }
 
             // Additional States
-            
+            buttonText = cam.OribtEnabled ? "Disable Orbit" : "Enable Orbit";
+            if (GUILayout.Button(buttonText))
+            {
+                cam.SetOrbitEnabled(!cam.OribtEnabled, true);
+            }
 
+            buttonText = cam.FollowEnabled ? "Make Stationary" : "Enable Follow";
+            if (GUILayout.Button(buttonText))
+            {
+                cam.SetFollowEnabled(!cam.FollowEnabled, true);
+            }
+
+            buttonText = cam.LockOnEnabled ? "Disable Lock-On" : "Enable Lock-On";
+            if (GUILayout.Button(buttonText))
+            {
+                cam.SetOrbitEnabled(!cam.LockOnEnabled, true);
+            }
 
             // Cmaera Options
             buttonText = cam.ZoomEnabled ? "Disable Zoom" : "Enable Zoom";
@@ -50,9 +65,6 @@ public class EzCamInspector : Editor
             {
                 cam.EnableCollisionCheck(!cam.CollisionsEnabled, true);
             }
-
         }
-
-
     }
 }

@@ -45,13 +45,22 @@ public class EzCamera : MonoBehaviour
         set { m_orbitState = value; }
     }
     [SerializeField] private bool m_allowOrbit = false;
-    public bool AllowOrbit { get { return m_allowOrbit; } }
-    public void SetAllowOrbit(bool allowOrbit)
+    public bool OribtEnabled { get { return m_allowOrbit; } }
+    public void SetOrbitEnabled(bool allowOrbit, bool removeComponent = false)
     {
         m_allowOrbit = allowOrbit;
-        if (m_allowOrbit)
+        if (m_orbitState != null)
         {
-            if (m_orbitState == null)
+            m_orbitState.enabled = m_allowOrbit;
+            if (!m_allowOrbit && removeComponent)
+            {
+                DestroyImmediate(m_orbitState);
+                m_orbitState = null;
+            }
+        }
+        else
+        {
+            if (m_allowOrbit)
             {
                 m_orbitState = this.GetOrAddComponent<EzOrbitState>();
                 m_orbitState.Init(this, m_settings);
@@ -67,14 +76,23 @@ public class EzCamera : MonoBehaviour
         set { m_followState = value; }
     }
 
-    [SerializeField] private bool m_allowFollow = false;
-    public bool AllowFollow { get { return m_allowFollow; } }
-    public void SetAllowFollow(bool allowFollow)
+    [SerializeField] private bool m_followEnabled = false;
+    public bool FollowEnabled { get { return m_followEnabled; } }
+    public void SetFollowEnabled(bool followEnabled, bool removeComponent = false)
     {
-        m_allowFollow = allowFollow;
-        if (m_allowFollow)
+        m_followEnabled = followEnabled;
+        if (m_followState != null)
         {
-            if (m_followState == null)
+            m_followState.enabled = m_followEnabled;
+            if (!m_followEnabled && removeComponent)
+            {
+                DestroyImmediate(m_followState);
+                m_followState = null;
+            }
+        }
+        else
+        {
+            if (m_followEnabled)
             {
                 m_followState = this.GetOrAddComponent<EzFollowState>();
                 m_followState.Init(this, m_settings);
@@ -92,14 +110,23 @@ public class EzCamera : MonoBehaviour
         set { m_lockOnState = value; }
     }
         
-    [SerializeField] private bool m_allowLockOn = true;
-    public bool AllowLockOn { get { return m_allowLockOn; } }
-    public void SetAllowTargeting(bool allowTargeting)
+    [SerializeField] private bool m_lockOnEnabled = true;
+    public bool LockOnEnabled { get { return m_lockOnEnabled; } }
+    public void SetLockOnEnabled(bool enableLockOn, bool removeComponent = false)
     {
-        m_allowLockOn = allowTargeting;
-        if (m_allowLockOn)
+        m_lockOnEnabled = enableLockOn;
+        if (m_lockOnState != null)
         {
-            if (m_lockOnState == null)
+            m_lockOnState.enabled = m_lockOnEnabled;
+            if (!m_lockOnEnabled && removeComponent)
+            {
+                DestroyImmediate(m_lockOnState);
+                m_lockOnState = null;
+            }
+        }
+        else
+        {
+            if (m_lockOnEnabled)
             {
                 m_lockOnState = this.GetOrAddComponent<EzLockOnState>();
                 m_lockOnState.Init(this, m_settings);
@@ -151,13 +178,13 @@ public class EzCamera : MonoBehaviour
         m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
         m_transform.position = m_relativePosition;
 
-        if (m_allowLockOn)
+        if (m_lockOnEnabled)
         {
             m_lockOnState = this.GetOrAddComponent<EzLockOnState>();
             m_lockOnState.Init(this, m_settings);
         }
 
-        if (m_allowFollow && m_defaultState != EzCameraState.State.FOLLOW)
+        if (m_followEnabled && m_defaultState != EzCameraState.State.FOLLOW)
         {
             m_followState = this.GetOrAddComponent<EzFollowState>();
             m_followState.Init(this, m_settings);
@@ -288,7 +315,7 @@ public class EzCamera : MonoBehaviour
                     m_followState.Init(this, m_settings);
                 }
                 
-                m_allowFollow = true;
+                m_followEnabled = true;
                 m_stateMachine.SetCurrentState(m_followState);
                 break;
             case EzCameraState.State.ORBIT:
@@ -308,7 +335,7 @@ public class EzCamera : MonoBehaviour
                     m_lockOnState.Init(this, m_settings);
                 }
 
-                m_allowLockOn = true;
+                m_lockOnEnabled = true;
                 m_stateMachine.SetCurrentState(m_lockOnState);
                 break;
             case EzCameraState.State.STATIONARY:

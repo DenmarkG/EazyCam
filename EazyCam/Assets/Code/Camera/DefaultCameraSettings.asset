@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49fa8fe2175259a43aab188776873c67, type: 3}
   m_Name: DefaultCameraSettings
   m_EditorClassIdentifier: 
-  OffsetHeight: 0
+  OffsetHeight: 1
   LateralOffset: 0
   MaxLateralOffset: 5
   OffsetDistance: 4.6666665

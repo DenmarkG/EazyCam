@@ -26,7 +26,7 @@ public class EzOrbitState : EzCameraState
 
     protected override void Update()
     {
-        if (m_controlledCamera.AllowOrbit)
+        if (m_controlledCamera.OribtEnabled)
         {
             HandleInput();
         }

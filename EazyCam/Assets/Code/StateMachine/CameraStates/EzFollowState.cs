@@ -37,7 +37,7 @@ public class EzFollowState : EzCameraState
 
     public override void LateUpdateState()
     {
-        if (m_controlledCamera.AllowFollow)
+        if (m_controlledCamera.FollowEnabled)
         {
             if (m_snapBehindPlayer)
             {

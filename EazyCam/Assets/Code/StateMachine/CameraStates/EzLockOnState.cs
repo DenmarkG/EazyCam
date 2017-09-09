@@ -53,7 +53,7 @@ public class EzLockOnState : EzCameraState
 
     protected override void Update()
     {
-        if (m_controlledCamera.AllowLockOn)
+        if (m_controlledCamera.LockOnEnabled)
         {
             HandleInput();
         }
