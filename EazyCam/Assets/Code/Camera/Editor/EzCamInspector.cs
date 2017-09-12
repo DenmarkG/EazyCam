@@ -8,12 +8,24 @@ public class EzCamInspector : Editor
 {
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
+        //base.OnInspectorGUI();
 
         EzCamera cam = (EzCamera)target;
         
         if (cam != null)
         {
+            Transform target = EditorGUILayout.ObjectField("Target", cam.Target, typeof(Transform), true) as Transform;
+            if (target != cam.Target)
+            {
+                cam.SetCameraTarget(target);
+            }
+
+            EzCameraSettings settings = EditorGUILayout.ObjectField("Camera Settings", cam.Settings, typeof(EzCameraSettings), false) as EzCameraSettings;
+            if (settings != cam.Settings)
+            {
+                cam.ReplaceSettings(settings);
+            }
+
             string buttonText = null;
             // Default State
             EzCameraState.State currentDefaultState = cam.DefaultState;

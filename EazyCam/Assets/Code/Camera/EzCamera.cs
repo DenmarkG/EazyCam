@@ -10,6 +10,13 @@ public class EzCamera : MonoBehaviour
     // Values to be set in the inspector
 	[SerializeField] private EzCameraSettings m_settings = null;
     public EzCameraSettings Settings { get { return m_settings; } }
+    public void ReplaceSettings(EzCameraSettings newSettings)
+    {
+        if (newSettings != null)
+        {
+            m_settings = newSettings;
+        }
+    }
 
     [SerializeField] private Transform m_target = null;
     public Transform Target { get { return m_target; } }

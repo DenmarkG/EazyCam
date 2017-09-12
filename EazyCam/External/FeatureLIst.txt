@@ -23,5 +23,7 @@ Current bugs:
 - separate desired, hit, and zoom distance
 
 TODO:
-- Create demo scene
+- Rename demo scene 
 - Add option to Set functions to remove components when disabling. 
+- Update Inspector (Make Stationary when not follow)
+- Update follow to remain behinid player's forward when turning
