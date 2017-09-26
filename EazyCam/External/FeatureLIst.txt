@@ -24,6 +24,6 @@ Current bugs:
 
 TODO:
 - Rename demo scene 
-- Add option to Set functions to remove components when disabling. 
+- Add option to Set functions to remove components when disabling. [done]
 - Update Inspector (Make Stationary when not follow)
 - Update follow to remain behinid player's forward when turning
