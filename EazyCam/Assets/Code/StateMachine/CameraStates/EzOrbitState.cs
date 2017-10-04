@@ -14,23 +14,9 @@ public class EzOrbitState : EzCameraState
 
     Quaternion m_destRot = Quaternion.identity;
 
-    protected override void AddStateToCamera()
-    {
-        EzCamera ezCam = this.GetComponent<EzCamera>();
-        if (ezCam != null)
-        {
-            ezCam.OrbitState = this;
-            Init(ezCam, ezCam.Settings);
-        }
-    }
+    public EzOrbitState(EzCamera camera, EzCameraSettings settings)
+        : base(camera, settings) { }
 
-    protected override void Update()
-    {
-        if (m_controlledCamera.OribtEnabled)
-        {
-            HandleInput();
-        }
-    }
 
     public override void EnterState()
     {
@@ -46,7 +32,10 @@ public class EzOrbitState : EzCameraState
 
     public override void UpdateState()
     {
-        //
+        if (m_controlledCamera.OribtEnabled)
+        {
+            HandleInput();
+        }
     }
 
     public override void LateUpdateState()

@@ -4,15 +4,8 @@ using System;
 
 public class EzStationaryState : EzCameraState
 {
-    protected override void AddStateToCamera()
-    {
-        EzCamera ezCam = this.GetComponent<EzCamera>();
-        if (ezCam != null)
-        {
-            ezCam.StationaryState = this;
-            Init(ezCam, ezCam.Settings);
-        }
-    }
+    public EzStationaryState(EzCamera camera, EzCameraSettings settings)
+        : base(camera, settings) { }
 
     public override void EnterState()
     {

@@ -51,26 +51,20 @@ public class EzCamera : MonoBehaviour
         get { return m_orbitState; }
         set { m_orbitState = value; }
     }
-    [SerializeField] private bool m_allowOrbit = false;
-    public bool OribtEnabled { get { return m_allowOrbit; } }
-    public void SetOrbitEnabled(bool allowOrbit, bool removeComponent = false)
+    [SerializeField] private bool m_orbitEnabled = false;
+    public bool OribtEnabled { get { return m_orbitEnabled; } }
+    public void SetOrbitEnabled(bool allowOrbit)
     {
-        m_allowOrbit = allowOrbit;
+        m_orbitEnabled = allowOrbit;
         if (m_orbitState != null)
         {
-            m_orbitState.enabled = m_allowOrbit;
-            if (!m_allowOrbit && removeComponent)
-            {
-                DestroyImmediate(m_orbitState);
-                m_orbitState = null;
-            }
+            m_orbitState.Enabled = m_orbitEnabled;
         }
         else
         {
-            if (m_allowOrbit)
+            if (m_orbitEnabled)
             {
-                m_orbitState = this.GetOrAddComponent<EzOrbitState>();
-                m_orbitState.Init(this, m_settings);
+                m_orbitState = new EzOrbitState(this, m_settings);
             }
         }
     }
@@ -85,24 +79,18 @@ public class EzCamera : MonoBehaviour
 
     [SerializeField] private bool m_followEnabled = false;
     public bool FollowEnabled { get { return m_followEnabled; } }
-    public void SetFollowEnabled(bool followEnabled, bool removeComponent = false)
+    public void SetFollowEnabled(bool followEnabled)
     {
         m_followEnabled = followEnabled;
         if (m_followState != null)
         {
-            m_followState.enabled = m_followEnabled;
-            if (!m_followEnabled && removeComponent)
-            {
-                DestroyImmediate(m_followState);
-                m_followState = null;
-            }
+            m_followState.Enabled = m_followEnabled;
         }
         else
         {
             if (m_followEnabled)
             {
-                m_followState = this.GetOrAddComponent<EzFollowState>();
-                m_followState.Init(this, m_settings);
+                m_followState = new EzFollowState(this, m_settings);
             }
         }
     }
@@ -119,24 +107,18 @@ public class EzCamera : MonoBehaviour
         
     [SerializeField] private bool m_lockOnEnabled = true;
     public bool LockOnEnabled { get { return m_lockOnEnabled; } }
-    public void SetLockOnEnabled(bool enableLockOn, bool removeComponent = false)
+    public void SetLockOnEnabled(bool enableLockOn)
     {
         m_lockOnEnabled = enableLockOn;
         if (m_lockOnState != null)
         {
-            m_lockOnState.enabled = m_lockOnEnabled;
-            if (!m_lockOnEnabled && removeComponent)
-            {
-                DestroyImmediate(m_lockOnState);
-                m_lockOnState = null;
-            }
+            m_lockOnState.Enabled = m_lockOnEnabled;
         }
         else
         {
             if (m_lockOnEnabled)
             {
-                m_lockOnState = this.GetOrAddComponent<EzLockOnState>();
-                m_lockOnState.Init(this, m_settings);
+                m_lockOnState = new EzLockOnState(this, m_settings);
             }
         }
     }
@@ -185,23 +167,9 @@ public class EzCamera : MonoBehaviour
         m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
         m_transform.position = m_relativePosition;
 
-        if (m_lockOnEnabled)
-        {
-            m_lockOnState = this.GetOrAddComponent<EzLockOnState>();
-            m_lockOnState.Init(this, m_settings);
-        }
-
-        if (m_followEnabled && m_defaultState != EzCameraState.State.FOLLOW)
-        {
-            m_followState = this.GetOrAddComponent<EzFollowState>();
-            m_followState.Init(this, m_settings);
-        }
-
-        if (m_allowOrbit && m_defaultState != EzCameraState.State.ORBIT)
-        {
-            m_orbitState = this.GetOrAddComponent<EzOrbitState>();
-            m_orbitState.Init(this, m_settings);
-        }
+        SetLockOnEnabled(m_lockOnEnabled);
+        SetFollowEnabled(m_followEnabled);
+        SetOrbitEnabled(m_orbitEnabled);
 
         if (m_checkForCollisions)
         {
@@ -214,20 +182,12 @@ public class EzCamera : MonoBehaviour
         {
             if (m_stateMachine.CurrentState != null)
             {
-                m_stateMachine.CurrentState.Init(this, m_settings);
+                //m_stateMachine.CurrentState.Init(this, m_settings);
             }
         }
 #endif
 
-        if (m_defaultState == EzCameraState.State.LOCKON)
-        {
-            Debug.LogWarning("Camera cannot start in a locked on stated. Please change the default value in the inspector. Switching to Stationary State");
-            SetState(EzCameraState.State.STATIONARY);
-        }
-        else
-        {
-            SetState(m_defaultState);
-        }
+        SetState(m_defaultState);
     }
 
     private void Update()
@@ -318,8 +278,7 @@ public class EzCamera : MonoBehaviour
             case EzCameraState.State.FOLLOW:
                 if (m_followState == null)
                 {
-                    m_followState = this.GetOrAddComponent<EzFollowState>();
-                    m_followState.Init(this, m_settings);
+                    m_followState = new EzFollowState(this, m_settings);
                 }
                 
                 m_followEnabled = true;
@@ -328,18 +287,16 @@ public class EzCamera : MonoBehaviour
             case EzCameraState.State.ORBIT:
                 if (m_orbitState == null)
                 {
-                    m_orbitState = this.GetOrAddComponent<EzOrbitState>();
-                    m_orbitState.Init(this, m_settings);
+                    m_orbitState = new EzOrbitState(this, m_settings);
                 }
 
-                m_allowOrbit = true;
+                m_orbitEnabled = true;
                 m_stateMachine.SetCurrentState(m_orbitState);
                 break;
             case EzCameraState.State.LOCKON:
                 if (m_lockOnState == null)
                 {
-                    m_lockOnState = this.GetOrAddComponent<EzLockOnState>();
-                    m_lockOnState.Init(this, m_settings);
+                    m_lockOnState = new EzLockOnState(this, m_settings);
                 }
 
                 m_lockOnEnabled = true;
@@ -349,8 +306,7 @@ public class EzCamera : MonoBehaviour
             default:
                 if (m_stationaryState == null)
                 {
-                    m_stationaryState = this.GetOrAddComponent<EzStationaryState>();
-                    m_stationaryState.Init(this, m_settings);
+                    m_stationaryState = new EzStationaryState(this, m_settings);
                 }
 
                 m_stateMachine.SetCurrentState(m_stationaryState);

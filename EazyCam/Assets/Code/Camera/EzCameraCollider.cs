@@ -78,7 +78,7 @@ public class EzCameraCollider : MonoBehaviour
         m_nearClipPlanePoints[3] = nearPlaneCenter + m_cameraTransform.rotation * new Vector3(-m_aspectHalfWidth, -m_aspectHalfHeight);
     }
 
-        #region Editor Only Functions
+    #region Editor Only Functions
 #if UNITY_EDITOR
     private void DrawNearPlane()
     {
@@ -100,7 +100,7 @@ public class EzCameraCollider : MonoBehaviour
 #endif
     #endregion
 
-        private void CheckCameraPlanePoints()
+    private void CheckCameraPlanePoints()
     {
 #if UNITY_EDITOR
         Color lineColor = Color.black;

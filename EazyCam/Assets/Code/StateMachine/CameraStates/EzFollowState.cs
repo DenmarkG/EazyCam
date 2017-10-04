@@ -8,21 +8,12 @@ public class EzFollowState : EzCameraState
     [SerializeField] private bool m_snapBehindPlayer = true;
     private Quaternion m_defaultRotation = Quaternion.identity;
 
-    protected override void AddStateToCamera()
+    public EzFollowState(EzCamera camera, EzCameraSettings settings)
+        : base(camera, settings) 
     {
-        EzCamera ezCam = this.GetComponent<EzCamera>();
-        if (ezCam != null)
-        {
-            ezCam.FollowState = this;
-            Init(ezCam, ezCam.Settings);
-        }
-    }
-
-    public override void Init(EzCamera camera, EzCameraSettings stateCameraSettings = null)
-    {
-        base.Init(camera, stateCameraSettings);
         m_defaultRotation = m_cameraTransform.rotation;
     }
+
     //
     public override void EnterState()
     {

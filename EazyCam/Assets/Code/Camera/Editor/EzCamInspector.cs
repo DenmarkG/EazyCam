@@ -50,19 +50,19 @@ public class EzCamInspector : Editor
             buttonText = cam.OribtEnabled ? "Disable Orbit" : "Enable Orbit";
             if (GUILayout.Button(buttonText))
             {
-                cam.SetOrbitEnabled(!cam.OribtEnabled, true);
+                cam.SetOrbitEnabled(!cam.OribtEnabled);
             }
 
             buttonText = cam.FollowEnabled ? "Make Stationary" : "Enable Follow";
             if (GUILayout.Button(buttonText))
             {
-                cam.SetFollowEnabled(!cam.FollowEnabled, true);
+                cam.SetFollowEnabled(!cam.FollowEnabled);
             }
 
             buttonText = cam.LockOnEnabled ? "Disable Lock-On" : "Enable Lock-On";
             if (GUILayout.Button(buttonText))
             {
-                cam.SetOrbitEnabled(!cam.LockOnEnabled, true);
+                cam.SetLockOnEnabled(!cam.LockOnEnabled);
             }
 
             // Cmaera Options

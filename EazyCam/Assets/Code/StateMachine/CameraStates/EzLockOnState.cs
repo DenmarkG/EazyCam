@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class EzLockOnState : EzCameraState
 {
@@ -30,19 +31,9 @@ public class EzLockOnState : EzCameraState
     /// </summary>
     [SerializeField] private float m_snapAngle = 2.5f;
 
-    protected override void AddStateToCamera()
+    public EzLockOnState(EzCamera camera, EzCameraSettings settings)
+        : base(camera, settings)
     {
-        EzCamera ezCam = this.GetComponent<EzCamera>();
-        if (ezCam != null)
-        {
-            ezCam.LockOnState = this;
-            Init(ezCam, ezCam.Settings);
-        }
-    }
-
-    public override void Init(EzCamera camera, EzCameraSettings stateCameraSettings = null)
-    {
-        base.Init(camera, stateCameraSettings);
         m_nearbyTargets = new List<EzLockOnTarget>();
     }
 
@@ -51,18 +42,12 @@ public class EzLockOnState : EzCameraState
         //
     }
 
-    protected override void Update()
+    public override void UpdateState()
     {
         if (m_controlledCamera.LockOnEnabled)
         {
             HandleInput();
         }
-    }
-
-
-    public override void UpdateState()
-    {
-        //
     }
 
     public override void ExitState()
