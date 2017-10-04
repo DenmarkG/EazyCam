@@ -237,6 +237,8 @@ public class EzCamera : MonoBehaviour
         {
             m_zoomDelta = 0;
         }
+
+        m_stateMachine.CurrentState.HandleInput();
     }
 
     public void UpdatePosition()

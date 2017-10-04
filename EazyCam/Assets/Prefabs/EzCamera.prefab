@@ -107,7 +107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_settings: {fileID: 11400000, guid: abdc4bfd564a0c749b1106e6e5544372, type: 2}
   m_target: {fileID: 0}
-  m_defaultState: 1
+  m_defaultState: 0
   m_orbitEnabled: 0
   m_followEnabled: 0
   m_lockOnEnabled: 0
