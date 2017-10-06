@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/TestEnvironment.unity
+- path: Assets/EazyCamera/Scenes/Demo.unity
   isLoaded: 1
   isActive: 1

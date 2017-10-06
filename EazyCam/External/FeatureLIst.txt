@@ -23,9 +23,7 @@ Current bugs:
 - separate desired, hit, and zoom distance
 
 TODO:
-- Rename demo scene 
-- Add option to Set functions to remove components when disabling. [done]
-- Update Inspector (Make Stationary when not follow)
 - Update follow to remain behinid player's forward when turning
 - add logic to reset camera when collisions are disabled while occluded
-- move camera settings creation to menu
+- add documentation
+- create videos
