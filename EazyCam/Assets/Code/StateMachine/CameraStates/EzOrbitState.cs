@@ -10,8 +10,6 @@ public class EzOrbitState : EzCameraState
     private float m_horizontalInput = 0;
     private float m_verticalInput = 0;
 
-    private bool m_isActive = false;
-
     Quaternion m_destRot = Quaternion.identity;
 
     public EzOrbitState(EzCamera camera, EzCameraSettings settings)
@@ -72,26 +70,21 @@ public class EzOrbitState : EzCameraState
 
     public override void HandleInput()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (m_controlledCamera.OribtEnabled && Input.GetMouseButtonDown(0))
         {
-            m_isActive = false;
+            m_controlledCamera.SetState(State.ORBIT);
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
             m_controlledCamera.SetState(State.FOLLOW);
             return;
         }
-        else if (Input.GetMouseButtonDown(0))
-        {
-            m_isActive = true;
-            m_controlledCamera.SetState(State.ORBIT);
-        }
 
-        if (m_isActive)
-        {
-            // cache the inputs
-            float horz = Input.GetAxis(MOUSEX);
-            float vert = Input.GetAxis(MOUSEY);
+        // cache the inputs
+        float horz = Input.GetAxis(MOUSEX);
+        float vert = Input.GetAxis(MOUSEY);
 
-            m_horizontalInput = horz;
-            m_verticalInput = vert;
-        }
+        m_horizontalInput = horz;
+        m_verticalInput = vert;
     }
 }

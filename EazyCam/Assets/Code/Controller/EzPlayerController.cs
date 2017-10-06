@@ -4,7 +4,7 @@ using System.Collections;
 /// <summary>
 /// This is the main class for controlling both camera and player. It is recommended to attach this to the player or camera in the scene, but not necessary
 /// </summary>
-public class EzController : MonoBehaviour 
+public class EzPlayerController : MonoBehaviour 
 {
 	[SerializeField] private EzCamera m_camera = null;
     [SerializeField] private EzMotor m_controlledPlayer = null;

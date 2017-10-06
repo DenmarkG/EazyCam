@@ -14,10 +14,10 @@ public class EzCamInspector : Editor
         
         if (cam != null)
         {
-            Transform target = EditorGUILayout.ObjectField("Target", cam.Target, typeof(Transform), true) as Transform;
-            if (target != cam.Target)
+            Transform camTarget = EditorGUILayout.ObjectField("Target", cam.Target, typeof(Transform), true) as Transform;
+            if (camTarget != cam.Target)
             {
-                cam.SetCameraTarget(target);
+                cam.SetCameraTarget(camTarget);
             }
 
             EzCameraSettings settings = EditorGUILayout.ObjectField("Camera Settings", cam.Settings, typeof(EzCameraSettings), false) as EzCameraSettings;

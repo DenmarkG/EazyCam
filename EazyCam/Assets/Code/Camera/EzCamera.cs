@@ -52,6 +52,9 @@ public class EzCamera : MonoBehaviour
         set { m_orbitState = value; }
     }
     [SerializeField] private bool m_orbitEnabled = false;
+    /// <summary>
+    /// True when the camera is  allowed to orbit the taget
+    /// </summary>
     public bool OribtEnabled { get { return m_orbitEnabled; } }
     public void SetOrbitEnabled(bool allowOrbit)
     {
@@ -65,6 +68,7 @@ public class EzCamera : MonoBehaviour
             if (m_orbitEnabled)
             {
                 m_orbitState = new EzOrbitState(this, m_settings);
+                CameraController.HandleInputCallback += m_orbitState.HandleInput;
             }
         }
     }
@@ -91,6 +95,7 @@ public class EzCamera : MonoBehaviour
             if (m_followEnabled)
             {
                 m_followState = new EzFollowState(this, m_settings);
+                CameraController.HandleInputCallback += m_followState.HandleInput;
             }
         }
     }
@@ -113,12 +118,14 @@ public class EzCamera : MonoBehaviour
         if (m_lockOnState != null)
         {
             m_lockOnState.Enabled = m_lockOnEnabled;
+
         }
         else
         {
             if (m_lockOnEnabled)
             {
                 m_lockOnState = new EzLockOnState(this, m_settings);
+                CameraController.HandleInputCallback += m_lockOnState.HandleInput;
             }
         }
     }
@@ -155,6 +162,8 @@ public class EzCamera : MonoBehaviour
 
     private EzCameraCollider m_cameraCollilder = null;
 
+    public EzCameraController CameraController { get; private set; }
+
     private void Start()
     {
         m_transform = this.transform;
@@ -175,6 +184,9 @@ public class EzCamera : MonoBehaviour
         {
             m_cameraCollilder = this.GetOrAddComponent<EzCameraCollider>();
         }
+
+        CameraController = this.GetOrAddComponent<EzCameraController>();
+        CameraController.Init(this);
 
         m_stateMachine = new EzStateMachine();
 #if UNITY_EDITOR
@@ -228,6 +240,14 @@ public class EzCamera : MonoBehaviour
 
     private void HandleInput()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (m_lockOnEnabled && !IsLockedOn)
+            {
+                SetState(EzCameraState.State.LOCKON);
+            }
+        }
+
         // Zoom the camera using the middle mouse button + drag
         if (Input.GetMouseButton(2) || Input.GetKey(KeyCode.Z))
         {
@@ -237,8 +257,6 @@ public class EzCamera : MonoBehaviour
         {
             m_zoomDelta = 0;
         }
-
-        m_stateMachine.CurrentState.HandleInput();
     }
 
     public void UpdatePosition()
@@ -278,30 +296,15 @@ public class EzCamera : MonoBehaviour
         switch (nextState)
         {
             case EzCameraState.State.FOLLOW:
-                if (m_followState == null)
-                {
-                    m_followState = new EzFollowState(this, m_settings);
-                }
-                
-                m_followEnabled = true;
-                m_stateMachine.SetCurrentState(m_followState);
+                SetFollowEnabled(true);
+                m_stateMachine.SetCurrentState(m_followState);                
                 break;
             case EzCameraState.State.ORBIT:
-                if (m_orbitState == null)
-                {
-                    m_orbitState = new EzOrbitState(this, m_settings);
-                }
-
-                m_orbitEnabled = true;
+                SetOrbitEnabled(true);
                 m_stateMachine.SetCurrentState(m_orbitState);
                 break;
             case EzCameraState.State.LOCKON:
-                if (m_lockOnState == null)
-                {
-                    m_lockOnState = new EzLockOnState(this, m_settings);
-                }
-
-                m_lockOnEnabled = true;
+                SetLockOnEnabled(true);
                 m_stateMachine.SetCurrentState(m_lockOnState);
                 break;
             case EzCameraState.State.STATIONARY:
@@ -309,6 +312,7 @@ public class EzCamera : MonoBehaviour
                 if (m_stationaryState == null)
                 {
                     m_stationaryState = new EzStationaryState(this, m_settings);
+                    CameraController.HandleInputCallback = null;
                 }
 
                 m_stateMachine.SetCurrentState(m_stationaryState);
