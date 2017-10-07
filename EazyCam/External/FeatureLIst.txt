@@ -23,6 +23,7 @@ Current bugs:
 - separate desired, hit, and zoom distance
 
 TODO:
+- Change fields that were serialized to public properties
 - Update follow to remain behinid player's forward when turning
 - add logic to reset camera when collisions are disabled while occluded
 - add documentation

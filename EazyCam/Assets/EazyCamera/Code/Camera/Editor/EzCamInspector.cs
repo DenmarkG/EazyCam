@@ -68,7 +68,7 @@ public class EzCamInspector : Editor
             isEnabled = EditorGUILayout.Toggle(toggleText, cam.CollisionsEnabled);
             if (isEnabled != cam.CollisionsEnabled)
             {
-                cam.EnableCollisionCheck(isEnabled, true);
+                cam.EnableCollisionCheck(isEnabled);
             }
 
             EditorUtility.SetDirty(cam);

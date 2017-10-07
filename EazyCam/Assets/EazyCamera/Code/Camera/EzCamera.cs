@@ -133,16 +133,19 @@ public class EzCamera : MonoBehaviour
 
     [SerializeField] private bool m_checkForCollisions = true;
     public bool CollisionsEnabled { get { return m_checkForCollisions; } }
-    public void EnableCollisionCheck(bool checkForCollisions, bool removeComponent = false)
+    public void EnableCollisionCheck(bool checkForCollisions)
     {
         m_checkForCollisions = checkForCollisions;
         if (m_cameraCollilder != null)
         {
-            m_cameraCollilder.enabled = m_checkForCollisions;
-            if (!checkForCollisions && removeComponent)
+            if (!checkForCollisions)
             {
                 DestroyImmediate(m_cameraCollilder);
                 m_cameraCollilder = null;
+            }
+            else
+            {
+                m_cameraCollilder.enabled = m_checkForCollisions;
             }
         }
         else

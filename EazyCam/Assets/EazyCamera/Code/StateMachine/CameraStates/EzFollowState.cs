@@ -4,14 +4,16 @@ using System;
 
 public class EzFollowState : EzCameraState
 {
-    [SerializeField] private float m_snapAngle = 2.5f;
-    [SerializeField] private bool m_snapBehindPlayer = true;
+    public bool SnapBehindTarget { get; set; }
+
+    //private float m_snapAngle = 2.5f;
     private Quaternion m_defaultRotation = Quaternion.identity;
 
     public EzFollowState(EzCamera camera, EzCameraSettings settings)
         : base(camera, settings) 
     {
         m_defaultRotation = m_cameraTransform.rotation;
+        SnapBehindTarget = true;
     }
 
     //
@@ -25,25 +27,18 @@ public class EzFollowState : EzCameraState
         //
     }
 
-
     public override void LateUpdateState()
     {
         if (m_controlledCamera.FollowEnabled)
         {
-            if (m_snapBehindPlayer)
+            if (SnapBehindTarget)
             {
-                if (Quaternion.Angle(m_cameraTransform.rotation, m_defaultRotation) > m_snapAngle)
-                {
-                    float step = m_stateSettings.RotateSpeed * Time.deltaTime;
-                    m_cameraTransform.rotation = Quaternion.Lerp(m_cameraTransform.rotation, m_defaultRotation, step);
-                }
-                else
-                {
-                    m_cameraTransform.rotation = m_defaultRotation;
-                }
-
+                UpdateCameraPosition();
             }
-            m_controlledCamera.UpdatePosition();
+            else
+            {
+                m_controlledCamera.UpdatePosition();
+            }
         }
     }
 
@@ -56,10 +51,19 @@ public class EzFollowState : EzCameraState
     {
         //
     }
-
     
     public override void HandleInput()
     {
         //
+    }
+
+    private void UpdateCameraPosition()
+    {
+        // Update the rotation
+
+        // Update the position of the camera to reflect any rotation changes
+        m_controlledCamera.Settings.OffsetDistance = Mathf.MoveTowards(m_controlledCamera.Settings.OffsetDistance, m_controlledCamera.Settings.DesiredDistance, Time.deltaTime * m_controlledCamera.Settings.ZoomSpeed);
+        Vector3 m_relativePosition = (m_cameraTarget.position + (Vector3.up * m_controlledCamera.Settings.OffsetHeight)) + (m_cameraTransform.rotation * (-m_cameraTarget.forward * m_controlledCamera.Settings.OffsetDistance)) + (m_cameraTransform.right * m_controlledCamera.Settings.LateralOffset);
+        m_cameraTransform.position = Vector3.MoveTowards(m_cameraTransform.position, m_relativePosition, m_controlledCamera.Settings.RotateSpeed * Time.deltaTime);
     }
 }

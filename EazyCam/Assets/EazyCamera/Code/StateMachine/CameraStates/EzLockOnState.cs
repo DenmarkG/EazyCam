@@ -17,12 +17,11 @@ public class EzLockOnState : EzCameraState
         NEAREST
     }
 
+    public LockOnStyle m_lockOnStyle = LockOnStyle.HOLD;
+    public TargetSwitchStyle m_switchStyle = TargetSwitchStyle.NEAREST;
+
     private EzLockOnTarget m_currentTarget = null;
-
     private List<EzLockOnTarget> m_nearbyTargets = null;
-
-    [SerializeField] private LockOnStyle m_lockOnStyle = LockOnStyle.HOLD;
-    [SerializeField] private TargetSwitchStyle m_switchStyle = TargetSwitchStyle.NEAREST;
 
     private bool m_isActive = false;
 
