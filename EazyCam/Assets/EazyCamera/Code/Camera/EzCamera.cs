@@ -16,6 +16,7 @@ public class EzCamera : MonoBehaviour
         if (newSettings != null)
         {
             m_settings = newSettings;
+            m_settings.StoreDefaultValues();
         }
     }
 
@@ -186,15 +187,6 @@ public class EzCamera : MonoBehaviour
         }
 
         m_stateMachine = new EzStateMachine();
-#if UNITY_EDITOR
-        if (Application.isPlaying)
-        {
-            if (m_stateMachine.CurrentState != null)
-            {
-                //m_stateMachine.CurrentState.Init(this, m_settings);
-            }
-        }
-#endif
 
         m_defaultState = m_followEnabled ? EzCameraState.State.FOLLOW : EzCameraState.State.STATIONARY;
         SetState(m_defaultState);
@@ -356,5 +348,12 @@ public class EzCamera : MonoBehaviour
 
             return false;
         } 
+    }
+
+    public Vector3 ConvertMoveInputToCameraSpace(float horz, float vert)
+    {
+        float moveX = (horz * m_transform.right.x) + (vert * m_transform.forward.x);
+        float moveZ = (horz * m_transform.right.z) + (vert * m_transform.forward.z);
+        return new Vector3(moveX, 0f, moveZ);
     }
 }

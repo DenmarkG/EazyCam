@@ -16,6 +16,12 @@ public class EzCameraSettings : ScriptableObject
         AssetDatabase.SaveAssets();
     }
 
+    public EzCameraSettings()
+    {
+        StoreDefaultValues();
+        ResetCameraSettings();
+    }
+
     public float OffsetHeight = 1.5f;
     public float LateralOffset = 0f;
     public float MaxLateralOffset = 5f;
@@ -34,9 +40,14 @@ public class EzCameraSettings : ScriptableObject
     public float ResetPositionDistance { get; set; }
     public float ZoomDistance { get; set; }
 
-    private float m_defaultHeight = 0f;
+    private float m_defaultHeight = 1f;
     private float m_defaultLateralOffset = 0f;
-    private float m_defaualtDistance = 0f;
+    private float m_defaualtDistance = 5f;
+
+    private void OnEnable()
+    {
+        StoreDefaultValues();
+    }
 
     public void StoreDefaultValues()
     {

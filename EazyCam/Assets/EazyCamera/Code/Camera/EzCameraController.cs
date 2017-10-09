@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 
+[RequireComponent(typeof(EzCamera))]
 public class EzCameraController : MonoBehaviour
 {
     EzCamera m_controlledCamera = null;

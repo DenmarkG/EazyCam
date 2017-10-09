@@ -24,14 +24,14 @@ public abstract class EzCameraState
 
     protected bool m_initialized = false;
 
-    public EzCameraState(EzCamera camera, EzCameraSettings stateCameraSettings = null)
+    public EzCameraState(EzCamera camera, EzCameraSettings stateCameraSettings)
     {
         if (!m_initialized)
         {
             m_controlledCamera = camera;
             m_cameraTransform = m_controlledCamera.transform;
             m_cameraTarget = m_controlledCamera.Target;
-            m_stateSettings = (stateCameraSettings) == null ? new EzCameraSettings() : m_controlledCamera.Settings.Clone();
+            m_stateSettings = stateCameraSettings;
             m_initialized = true;
         }
     }

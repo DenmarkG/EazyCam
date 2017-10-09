@@ -56,11 +56,9 @@ public class EzPlayerController : MonoBehaviour
         float vert = Input.GetAxis(ExtensionMethods.VERITCAL);
         
         // Convert movement to camera space
-        Transform camTransform = m_camera.transform;
-        float moveX = (horz * camTransform.right.x) + (vert * camTransform.forward.x);
-        float moveZ = (horz * camTransform.right.z) + (vert * camTransform.forward.z);
+        Vector3 moveVector = m_camera.ConvertMoveInputToCameraSpace(horz, vert);
 
         // Move the Player
-        m_controlledPlayer.MovePlayer(moveX, moveZ, Input.GetKey(KeyCode.LeftShift));
+        m_controlledPlayer.MovePlayer(moveVector.x, moveVector.z, Input.GetKey(KeyCode.LeftShift));
     }
 }

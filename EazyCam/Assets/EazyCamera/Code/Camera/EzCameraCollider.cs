@@ -121,8 +121,8 @@ public class EzCameraCollider : MonoBehaviour
 
                         if (!IsOccluded) // Only store the original position on the original hit
                         {
-                            //m_settings.ResetPositionDistance = m_settings.OffsetDistance;
-                            m_controlledCamera.Settings.ResetPositionDistance = m_controlledCamera.Settings.DesiredDistance;
+                            m_controlledCamera.Settings.ResetPositionDistance = m_controlledCamera.Settings.OffsetDistance;
+                            //m_controlledCamera.Settings.ResetPositionDistance = m_controlledCamera.Settings.DesiredDistance;
                         }
 
                         IsOccluded = true;
@@ -130,12 +130,12 @@ public class EzCameraCollider : MonoBehaviour
 
 #if UNITY_EDITOR
                         lineColor = Color.red;
-                        //Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
+                        Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
 #else
                         return;
 #endif
 
-                        
+
                     }
                 }
             }
@@ -155,7 +155,7 @@ public class EzCameraCollider : MonoBehaviour
 #endif
                 IsOccluded = true;
                 m_controlledCamera.Settings.ResetPositionDistance = m_controlledCamera.Settings.OffsetDistance;
-                m_controlledCamera.Settings.DesiredDistance = hit.distance + m_nearPlaneDistance;
+                m_controlledCamera.Settings.DesiredDistance = hit.distance - m_nearPlaneDistance;
             }
         }   
     }
@@ -165,8 +165,6 @@ public class EzCameraCollider : MonoBehaviour
         Vector3 originalCameraPosition = (m_controlledCamera.Target.position + (Vector3.up * m_controlledCamera.Settings.OffsetHeight)) + (m_cameraTransform.rotation * (Vector3.forward * -m_controlledCamera.Settings.ResetPositionDistance)) + (m_cameraTransform.right * m_controlledCamera.Settings.LateralOffset);
         Vector3 originalPlaneCenter = originalCameraPosition + m_cameraTransform.forward * m_nearPlaneDistance;
 
-        //Vector3 rearPlaneCenter = m_transform.position - m_transform.forward * m_nearPlaneDistance;
-
         float halfFOV = Mathf.Deg2Rad * (m_cameraComponent.fieldOfView / 2);
         m_aspectHalfHeight = Mathf.Tan(halfFOV) * m_nearPlaneDistance;
         m_aspectHalfWidth = m_aspectHalfHeight * m_cameraComponent.aspect;
@@ -175,6 +173,9 @@ public class EzCameraCollider : MonoBehaviour
         m_originalClipPlanePoints[1] = originalPlaneCenter + m_cameraTransform.rotation * new Vector3(m_aspectHalfWidth, m_aspectHalfHeight);
         m_originalClipPlanePoints[2] = originalPlaneCenter + m_cameraTransform.rotation * new Vector3(m_aspectHalfWidth, -m_aspectHalfHeight);
         m_originalClipPlanePoints[3] = originalPlaneCenter + m_cameraTransform.rotation * new Vector3(-m_aspectHalfWidth, -m_aspectHalfHeight);
+
+        //Vector3 rearPlaneCenter = m_transform.position - m_transform.forward * m_nearPlaneDistance;
+        m_pointBehindCamera = m_cameraTransform.position - m_cameraTransform.forward * m_nearPlaneDistance;
     }
 
     

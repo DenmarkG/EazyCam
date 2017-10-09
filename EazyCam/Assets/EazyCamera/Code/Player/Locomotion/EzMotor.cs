@@ -6,6 +6,7 @@ public class EzMotor : MonoBehaviour
 	[SerializeField] private float m_walkSpeed = 5f;
     [SerializeField] private float m_runSpeed = 15f;
     [SerializeField] private float m_acceleration = 10f;
+    [SerializeField] private float m_rotateSpeed = 5f;
     private float m_currentSpeed = 5f;
     private float m_speedDelta = 0f;
 
@@ -38,7 +39,9 @@ public class EzMotor : MonoBehaviour
 
         if (moveX != 0 || moveZ != 0)
         {
-            this.transform.rotation = Quaternion.LookRotation(m_moveVector, Vector3.up);
+            float step = m_rotateSpeed * Time.deltaTime;
+            Quaternion targetRotation = Quaternion.LookRotation(m_moveVector, Vector3.up);
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, step);
         }
     }
 
