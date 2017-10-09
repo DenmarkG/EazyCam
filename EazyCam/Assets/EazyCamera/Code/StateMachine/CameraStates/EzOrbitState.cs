@@ -18,9 +18,7 @@ public class EzOrbitState : EzCameraState
 
     public override void EnterState()
     {
-        m_rotX = m_cameraTransform.rotation.eulerAngles.x;
-        m_rotX = Mathf.Clamp(m_rotX, m_stateSettings.MinRotX, m_stateSettings.MaxRotX);
-        m_rotY = m_cameraTransform.rotation.eulerAngles.y;
+        //
     }
 
     public override void ExitState()

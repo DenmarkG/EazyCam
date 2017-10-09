@@ -23,7 +23,6 @@ Current bugs:
 - separate desired, hit, and zoom distance
 
 TODO:
-- fix orbit state so that camera stays in place when entering
 - add logic to reset camera when collisions are disabled while occluded
 - add documentation
 - create videos
