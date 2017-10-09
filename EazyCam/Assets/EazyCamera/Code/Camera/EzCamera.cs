@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
-#if UNITY_EDITOR
-[ExecuteInEditMode]
-#endif
 [System.Serializable]
 public class EzCamera : MonoBehaviour 
 {
@@ -167,12 +163,15 @@ public class EzCamera : MonoBehaviour
         m_transform = this.transform;
 
         // reset the offset distance be 1/3 of the distance from the min to max
-        m_settings.OffsetDistance = (m_settings.MaxDistance - m_settings.MinDistance) / 3f;
-        m_settings.DesiredDistance = m_settings.OffsetDistance;
-        m_settings.StoreDefaultValues();
+        if (m_settings != null)
+        {
+            m_settings.OffsetDistance = (m_settings.MaxDistance - m_settings.MinDistance) / 3f;
+            m_settings.DesiredDistance = m_settings.OffsetDistance;
+            m_settings.StoreDefaultValues();
 
-        m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
-        m_transform.position = m_relativePosition;
+            m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
+            m_transform.position = m_relativePosition;
+        }
 
         CameraController = this.GetOrAddComponent<EzCameraController>();
         CameraController.Init(this);
@@ -210,7 +209,7 @@ public class EzCamera : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (m_target != null) // prevent updating if the target is null
+        if (m_target != null && m_settings != null) // prevent updating if the target is null
         {
             if (m_stateMachine != null)
             {
