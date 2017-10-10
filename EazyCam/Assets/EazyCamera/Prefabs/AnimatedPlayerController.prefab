@@ -1609,6 +1609,7 @@ MonoBehaviour:
   m_walkSpeed: 5
   m_runSpeed: 10
   m_acceleration: 2
+  m_rotateSpeed: 5
 --- !u!137 &137000010658972852
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

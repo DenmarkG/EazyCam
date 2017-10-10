@@ -59,7 +59,10 @@ public class EzCamera : MonoBehaviour
             if (m_orbitEnabled)
             {
                 m_orbitState = new EzOrbitState(this, m_settings);
-                CameraController.HandleInputCallback += m_orbitState.HandleInput;
+                if (CameraController != null)
+                {
+                    CameraController.HandleInputCallback += m_orbitState.HandleInput;
+                }
             }
         }
     }
@@ -86,7 +89,10 @@ public class EzCamera : MonoBehaviour
             if (m_followEnabled)
             {
                 m_followState = new EzFollowState(this, m_settings);
-                CameraController.HandleInputCallback += m_followState.HandleInput;
+                if (CameraController != null)
+                {
+                    CameraController.HandleInputCallback += m_followState.HandleInput;
+                }
             }
         }
     }
@@ -116,7 +122,10 @@ public class EzCamera : MonoBehaviour
             if (m_lockOnEnabled)
             {
                 m_lockOnState = new EzLockOnState(this, m_settings);
-                CameraController.HandleInputCallback += m_lockOnState.HandleInput;
+                if (CameraController != null)
+                {
+                    CameraController.HandleInputCallback += m_lockOnState.HandleInput;
+                }
             }
         }
     }
@@ -301,7 +310,10 @@ public class EzCamera : MonoBehaviour
                 if (m_stationaryState == null)
                 {
                     m_stationaryState = new EzStationaryState(this, m_settings);
-                    CameraController.HandleInputCallback = null;
+                    if (CameraController != null)
+                    {
+                        CameraController.HandleInputCallback = null;
+                    }
                 }
 
                 m_stateMachine.SetCurrentState(m_stationaryState);
