@@ -189,9 +189,7 @@ public class EzCameraCollider : MonoBehaviour
 
         for (int i = 0; i < m_originalClipPlanePoints.Length; ++i)
         {
-#if UNITY_EDITOR
             Color lineColor = Color.blue;
-#endif
             if (Physics.Linecast(m_controlledCamera.Target.position, m_originalClipPlanePoints[i], out hit, m_layermask))
             {
                 lineColor = Color.red;

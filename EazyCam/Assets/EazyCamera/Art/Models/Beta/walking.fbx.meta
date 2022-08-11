@@ -1,165 +1,440 @@
 fileFormatVersion: 2
 guid: c5be887af9f579d4b9f081ed3357aafc
-timeCreated: 1481396758
-licenseType: Free
 ModelImporter:
-  serializedVersion: 21
-  fileIDToRecycleName:
-    100000: Head
-    100002: HeadTop_End
-    100004: Hips
-    100006: LeftArm
-    100008: LeftFoot
-    100010: LeftFootToeBase_End
-    100012: LeftForeArm
-    100014: LeftHand
-    100016: LeftHandIndex1
-    100018: LeftHandIndex2
-    100020: LeftHandIndex3
-    100022: LeftHandIndex4
-    100024: LeftHandMiddle1
-    100026: LeftHandMiddle2
-    100028: LeftHandMiddle3
-    100030: LeftHandMiddle4
-    100032: LeftHandPinky1
-    100034: LeftHandPinky2
-    100036: LeftHandPinky3
-    100038: LeftHandPinky4
-    100040: LeftHandRing1
-    100042: LeftHandRing2
-    100044: LeftHandRing3
-    100046: LeftHandRing4
-    100048: LeftHandThumb1
-    100050: LeftHandThumb2
-    100052: LeftHandThumb3
-    100054: LeftHandThumb4
-    100056: LeftLeg
-    100058: LeftShoulder
-    100060: LeftToeBase
-    100062: LeftUpLeg
-    100064: Neck
-    100066: Neck1
-    100068: RightArm
-    100070: RightFoot
-    100072: RightFootToeBase_End
-    100074: RightForeArm
-    100076: RightHand
-    100078: RightHandIndex1
-    100080: RightHandIndex2
-    100082: RightHandIndex3
-    100084: RightHandIndex4
-    100086: RightHandMiddle1
-    100088: RightHandMiddle2
-    100090: RightHandMiddle3
-    100092: RightHandMiddle4
-    100094: RightHandPinky1
-    100096: RightHandPinky2
-    100098: RightHandPinky3
-    100100: RightHandPinky4
-    100102: RightHandRing1
-    100104: RightHandRing2
-    100106: RightHandRing3
-    100108: RightHandRing4
-    100110: RightHandThumb1
-    100112: RightHandThumb2
-    100114: RightHandThumb3
-    100116: RightHandThumb4
-    100118: RightLeg
-    100120: RightShoulder
-    100122: RightToeBase
-    100124: RightUpLeg
-    100126: Spine
-    100128: Spine1
-    100130: Spine2
-    100132: //RootNode
-    400000: Head
-    400002: HeadTop_End
-    400004: Hips
-    400006: LeftArm
-    400008: LeftFoot
-    400010: LeftFootToeBase_End
-    400012: LeftForeArm
-    400014: LeftHand
-    400016: LeftHandIndex1
-    400018: LeftHandIndex2
-    400020: LeftHandIndex3
-    400022: LeftHandIndex4
-    400024: LeftHandMiddle1
-    400026: LeftHandMiddle2
-    400028: LeftHandMiddle3
-    400030: LeftHandMiddle4
-    400032: LeftHandPinky1
-    400034: LeftHandPinky2
-    400036: LeftHandPinky3
-    400038: LeftHandPinky4
-    400040: LeftHandRing1
-    400042: LeftHandRing2
-    400044: LeftHandRing3
-    400046: LeftHandRing4
-    400048: LeftHandThumb1
-    400050: LeftHandThumb2
-    400052: LeftHandThumb3
-    400054: LeftHandThumb4
-    400056: LeftLeg
-    400058: LeftShoulder
-    400060: LeftToeBase
-    400062: LeftUpLeg
-    400064: Neck
-    400066: Neck1
-    400068: RightArm
-    400070: RightFoot
-    400072: RightFootToeBase_End
-    400074: RightForeArm
-    400076: RightHand
-    400078: RightHandIndex1
-    400080: RightHandIndex2
-    400082: RightHandIndex3
-    400084: RightHandIndex4
-    400086: RightHandMiddle1
-    400088: RightHandMiddle2
-    400090: RightHandMiddle3
-    400092: RightHandMiddle4
-    400094: RightHandPinky1
-    400096: RightHandPinky2
-    400098: RightHandPinky3
-    400100: RightHandPinky4
-    400102: RightHandRing1
-    400104: RightHandRing2
-    400106: RightHandRing3
-    400108: RightHandRing4
-    400110: RightHandThumb1
-    400112: RightHandThumb2
-    400114: RightHandThumb3
-    400116: RightHandThumb4
-    400118: RightLeg
-    400120: RightShoulder
-    400122: RightToeBase
-    400124: RightUpLeg
-    400126: Spine
-    400128: Spine1
-    400130: Spine2
-    400132: //RootNode
-    7400000: Walk
-    9500000: //RootNode
+  serializedVersion: 22102
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Head
+  - first:
+      1: 100002
+    second: HeadTop_End
+  - first:
+      1: 100004
+    second: Hips
+  - first:
+      1: 100006
+    second: LeftArm
+  - first:
+      1: 100008
+    second: LeftFoot
+  - first:
+      1: 100010
+    second: LeftFootToeBase_End
+  - first:
+      1: 100012
+    second: LeftForeArm
+  - first:
+      1: 100014
+    second: LeftHand
+  - first:
+      1: 100016
+    second: LeftHandIndex1
+  - first:
+      1: 100018
+    second: LeftHandIndex2
+  - first:
+      1: 100020
+    second: LeftHandIndex3
+  - first:
+      1: 100022
+    second: LeftHandIndex4
+  - first:
+      1: 100024
+    second: LeftHandMiddle1
+  - first:
+      1: 100026
+    second: LeftHandMiddle2
+  - first:
+      1: 100028
+    second: LeftHandMiddle3
+  - first:
+      1: 100030
+    second: LeftHandMiddle4
+  - first:
+      1: 100032
+    second: LeftHandPinky1
+  - first:
+      1: 100034
+    second: LeftHandPinky2
+  - first:
+      1: 100036
+    second: LeftHandPinky3
+  - first:
+      1: 100038
+    second: LeftHandPinky4
+  - first:
+      1: 100040
+    second: LeftHandRing1
+  - first:
+      1: 100042
+    second: LeftHandRing2
+  - first:
+      1: 100044
+    second: LeftHandRing3
+  - first:
+      1: 100046
+    second: LeftHandRing4
+  - first:
+      1: 100048
+    second: LeftHandThumb1
+  - first:
+      1: 100050
+    second: LeftHandThumb2
+  - first:
+      1: 100052
+    second: LeftHandThumb3
+  - first:
+      1: 100054
+    second: LeftHandThumb4
+  - first:
+      1: 100056
+    second: LeftLeg
+  - first:
+      1: 100058
+    second: LeftShoulder
+  - first:
+      1: 100060
+    second: LeftToeBase
+  - first:
+      1: 100062
+    second: LeftUpLeg
+  - first:
+      1: 100064
+    second: Neck
+  - first:
+      1: 100066
+    second: Neck1
+  - first:
+      1: 100068
+    second: RightArm
+  - first:
+      1: 100070
+    second: RightFoot
+  - first:
+      1: 100072
+    second: RightFootToeBase_End
+  - first:
+      1: 100074
+    second: RightForeArm
+  - first:
+      1: 100076
+    second: RightHand
+  - first:
+      1: 100078
+    second: RightHandIndex1
+  - first:
+      1: 100080
+    second: RightHandIndex2
+  - first:
+      1: 100082
+    second: RightHandIndex3
+  - first:
+      1: 100084
+    second: RightHandIndex4
+  - first:
+      1: 100086
+    second: RightHandMiddle1
+  - first:
+      1: 100088
+    second: RightHandMiddle2
+  - first:
+      1: 100090
+    second: RightHandMiddle3
+  - first:
+      1: 100092
+    second: RightHandMiddle4
+  - first:
+      1: 100094
+    second: RightHandPinky1
+  - first:
+      1: 100096
+    second: RightHandPinky2
+  - first:
+      1: 100098
+    second: RightHandPinky3
+  - first:
+      1: 100100
+    second: RightHandPinky4
+  - first:
+      1: 100102
+    second: RightHandRing1
+  - first:
+      1: 100104
+    second: RightHandRing2
+  - first:
+      1: 100106
+    second: RightHandRing3
+  - first:
+      1: 100108
+    second: RightHandRing4
+  - first:
+      1: 100110
+    second: RightHandThumb1
+  - first:
+      1: 100112
+    second: RightHandThumb2
+  - first:
+      1: 100114
+    second: RightHandThumb3
+  - first:
+      1: 100116
+    second: RightHandThumb4
+  - first:
+      1: 100118
+    second: RightLeg
+  - first:
+      1: 100120
+    second: RightShoulder
+  - first:
+      1: 100122
+    second: RightToeBase
+  - first:
+      1: 100124
+    second: RightUpLeg
+  - first:
+      1: 100126
+    second: Spine
+  - first:
+      1: 100128
+    second: Spine1
+  - first:
+      1: 100130
+    second: Spine2
+  - first:
+      1: 100132
+    second: //RootNode
+  - first:
+      4: 400000
+    second: Head
+  - first:
+      4: 400002
+    second: HeadTop_End
+  - first:
+      4: 400004
+    second: Hips
+  - first:
+      4: 400006
+    second: LeftArm
+  - first:
+      4: 400008
+    second: LeftFoot
+  - first:
+      4: 400010
+    second: LeftFootToeBase_End
+  - first:
+      4: 400012
+    second: LeftForeArm
+  - first:
+      4: 400014
+    second: LeftHand
+  - first:
+      4: 400016
+    second: LeftHandIndex1
+  - first:
+      4: 400018
+    second: LeftHandIndex2
+  - first:
+      4: 400020
+    second: LeftHandIndex3
+  - first:
+      4: 400022
+    second: LeftHandIndex4
+  - first:
+      4: 400024
+    second: LeftHandMiddle1
+  - first:
+      4: 400026
+    second: LeftHandMiddle2
+  - first:
+      4: 400028
+    second: LeftHandMiddle3
+  - first:
+      4: 400030
+    second: LeftHandMiddle4
+  - first:
+      4: 400032
+    second: LeftHandPinky1
+  - first:
+      4: 400034
+    second: LeftHandPinky2
+  - first:
+      4: 400036
+    second: LeftHandPinky3
+  - first:
+      4: 400038
+    second: LeftHandPinky4
+  - first:
+      4: 400040
+    second: LeftHandRing1
+  - first:
+      4: 400042
+    second: LeftHandRing2
+  - first:
+      4: 400044
+    second: LeftHandRing3
+  - first:
+      4: 400046
+    second: LeftHandRing4
+  - first:
+      4: 400048
+    second: LeftHandThumb1
+  - first:
+      4: 400050
+    second: LeftHandThumb2
+  - first:
+      4: 400052
+    second: LeftHandThumb3
+  - first:
+      4: 400054
+    second: LeftHandThumb4
+  - first:
+      4: 400056
+    second: LeftLeg
+  - first:
+      4: 400058
+    second: LeftShoulder
+  - first:
+      4: 400060
+    second: LeftToeBase
+  - first:
+      4: 400062
+    second: LeftUpLeg
+  - first:
+      4: 400064
+    second: Neck
+  - first:
+      4: 400066
+    second: Neck1
+  - first:
+      4: 400068
+    second: RightArm
+  - first:
+      4: 400070
+    second: RightFoot
+  - first:
+      4: 400072
+    second: RightFootToeBase_End
+  - first:
+      4: 400074
+    second: RightForeArm
+  - first:
+      4: 400076
+    second: RightHand
+  - first:
+      4: 400078
+    second: RightHandIndex1
+  - first:
+      4: 400080
+    second: RightHandIndex2
+  - first:
+      4: 400082
+    second: RightHandIndex3
+  - first:
+      4: 400084
+    second: RightHandIndex4
+  - first:
+      4: 400086
+    second: RightHandMiddle1
+  - first:
+      4: 400088
+    second: RightHandMiddle2
+  - first:
+      4: 400090
+    second: RightHandMiddle3
+  - first:
+      4: 400092
+    second: RightHandMiddle4
+  - first:
+      4: 400094
+    second: RightHandPinky1
+  - first:
+      4: 400096
+    second: RightHandPinky2
+  - first:
+      4: 400098
+    second: RightHandPinky3
+  - first:
+      4: 400100
+    second: RightHandPinky4
+  - first:
+      4: 400102
+    second: RightHandRing1
+  - first:
+      4: 400104
+    second: RightHandRing2
+  - first:
+      4: 400106
+    second: RightHandRing3
+  - first:
+      4: 400108
+    second: RightHandRing4
+  - first:
+      4: 400110
+    second: RightHandThumb1
+  - first:
+      4: 400112
+    second: RightHandThumb2
+  - first:
+      4: 400114
+    second: RightHandThumb3
+  - first:
+      4: 400116
+    second: RightHandThumb4
+  - first:
+      4: 400118
+    second: RightLeg
+  - first:
+      4: 400120
+    second: RightShoulder
+  - first:
+      4: 400122
+    second: RightToeBase
+  - first:
+      4: 400124
+    second: RightUpLeg
+  - first:
+      4: 400126
+    second: Spine
+  - first:
+      4: 400128
+    second: Spine1
+  - first:
+      4: 400130
+    second: Spine2
+  - first:
+      4: 400132
+    second: //RootNode
+  - first:
+      74: 7400000
+    second: Walk
+  - first:
+      95: 9500000
+    second: //RootNode
+  externalObjects: {}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: "\nClip 'mixamo.com' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
-      improve retargeting quality.\n\t'Spine2' is inbetween humanoid transforms and
-      has rotation animation that will be discarded.\n"
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'Spine2' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
-    animationDoRetargetingWarnings: 0
+    animationDoRetargetingWarnings: 1
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -171,6 +446,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Walk
       takeName: mixamo.com
+      internalID: 0
       firstFrame: 0
       lastFrame: 31
       wrapMode: 0
@@ -336,30 +612,48 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 0
     importBlendShapes: 1
     importCameras: 0
     importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 1
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human:
     - boneName: Hips
       humanName: Hips
@@ -1133,15 +1427,19 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 1d553d340c6ed564da93547ec4058847,
     type: 3}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
+  avatarSetup: 2
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
   additionalBone: 0
   userData: 
   assetBundleName: 

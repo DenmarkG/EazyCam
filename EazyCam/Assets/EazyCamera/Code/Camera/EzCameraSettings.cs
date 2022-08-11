@@ -7,7 +7,7 @@ using UnityEditor;
 
 public class EzCameraSettings : ScriptableObject 
 {
-
+#if UNITY_EDITOR
     [MenuItem("Eazy Camera/Create Camera Settings")]
     static void Init()
     {
@@ -15,6 +15,7 @@ public class EzCameraSettings : ScriptableObject
         AssetDatabase.Refresh();
         AssetDatabase.SaveAssets();
     }
+#endif // UNITY_EDITOR
 
     public EzCameraSettings()
     {
