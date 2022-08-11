@@ -5,32 +5,32 @@ using System.Collections;
 public class EzLockOnTarget : MonoBehaviour
 {
     // need AABB and  transform
-    //public GameObject TargetIcon { get { return m_targetIcon; } }
-    [SerializeField] private GameObject m_targetIcon = null;
-    [SerializeField] private EzCamera m_playerCamera = null;
-    [SerializeField] private Color32 m_inactiveColor = new Color32(127,  127, 127, 127);
-    [SerializeField] private Color32 m_activeColor = new Color32(255, 0,  0, 255);
-    [SerializeField] private float m_activationDistance = 10f;
+    //public GameObject TargetIcon { get { return _targetIcon; } }
+    [SerializeField] private GameObject _targetIcon = null;
+    [SerializeField] private EzCamera _playerCamera = null;
+    [SerializeField] private Color32 _inactiveColor = new Color32(127,  127, 127, 127);
+    [SerializeField] private Color32 _activeColor = new Color32(255, 0,  0, 255);
+    [SerializeField] private float _activationDistance = 10f;
 
-    private SphereCollider m_collider = null;
-    private Renderer m_iconRenderer = null;
+    private SphereCollider _collider = null;
+    private Renderer _iconRenderer = null;
 
     private void Awake()
     {
-        m_collider = this.GetComponent<SphereCollider>();
-        m_collider.isTrigger = true;
-        m_collider.radius = m_activationDistance;
+        _collider = this.GetComponent<SphereCollider>();
+        _collider.isTrigger = true;
+        _collider.radius = _activationDistance;
     }
 
     private void Start()
     {
-        if (m_playerCamera == null)
+        if (_playerCamera == null)
         {
-            m_playerCamera = GameObject.FindObjectOfType<EzCamera>();
+            _playerCamera = GameObject.FindObjectOfType<EzCamera>();
         }
 
-        m_iconRenderer = m_targetIcon.GetComponent<Renderer>();
-        m_iconRenderer.enabled = false;
+        _iconRenderer = _targetIcon.GetComponent<Renderer>();
+        _iconRenderer.enabled = false;
 
         SetIconActive(false);
 
@@ -44,9 +44,9 @@ public class EzLockOnTarget : MonoBehaviour
         {
             SetIconVisible(true);
 
-            if (m_playerCamera != null)
+            if (_playerCamera != null)
             {
-                EzLockOnState lockonState = m_playerCamera.LockOnState;
+                EzLockOnState lockonState = _playerCamera.LockOnState;
                 if (lockonState != null)
                 {
                     lockonState.AddTarget(this);
@@ -61,7 +61,7 @@ public class EzLockOnTarget : MonoBehaviour
         {
             SetIconVisible(false);
 
-            EzLockOnState lockonState = m_playerCamera.LockOnState;
+            EzLockOnState lockonState = _playerCamera.LockOnState;
             if (lockonState != null)
             {
                 lockonState.RemoveTarget(this);
@@ -71,15 +71,15 @@ public class EzLockOnTarget : MonoBehaviour
 
     public void SetIconActive(bool isActive = true)
     {
-        if (m_targetIcon != null)
+        if (_targetIcon != null)
         {
-            //m_targetIcon.SetActive(isActive);
-            m_iconRenderer.material.color = (isActive) ? m_activeColor : m_inactiveColor;
+            //_targetIcon.SetActive(isActive);
+            _iconRenderer.material.color = (isActive) ? _activeColor : _inactiveColor;
         }
     }
 
     private void SetIconVisible(bool isVisible)
     {
-        m_iconRenderer.enabled = isVisible;
+        _iconRenderer.enabled = isVisible;
     }
 }

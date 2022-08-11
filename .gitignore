@@ -1,7 +1,7 @@
 /[Ll]ibrary/
-/EazyCam/[Ll]ibrary/
+/EazyCam/Library*
 /[Tt]emp/
-/EazyCam/[Tt]emp/
+/EazyCam/Temp*
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/

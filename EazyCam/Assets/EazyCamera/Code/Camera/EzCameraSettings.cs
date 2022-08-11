@@ -41,9 +41,9 @@ public class EzCameraSettings : ScriptableObject
     public float ResetPositionDistance { get; set; }
     public float ZoomDistance { get; set; }
 
-    private float m_defaultHeight = 1f;
-    private float m_defaultLateralOffset = 0f;
-    private float m_defaualtDistance = 5f;
+    private float _defaultHeight = 1f;
+    private float _defaultLateralOffset = 0f;
+    private float _defaualtDistance = 5f;
 
     private void OnEnable()
     {
@@ -52,17 +52,17 @@ public class EzCameraSettings : ScriptableObject
 
     public void StoreDefaultValues()
     {
-        m_defaultHeight = OffsetHeight;
-        m_defaultLateralOffset = LateralOffset;
-        m_defaualtDistance = OffsetDistance;
+        _defaultHeight = OffsetHeight;
+        _defaultLateralOffset = LateralOffset;
+        _defaualtDistance = OffsetDistance;
     }
 
     public void ResetCameraSettings()
     {
-        OffsetHeight = m_defaultHeight;
-        LateralOffset = m_defaultLateralOffset;
-        OffsetDistance = m_defaualtDistance;
-        DesiredDistance = m_defaualtDistance;
+        OffsetHeight = _defaultHeight;
+        LateralOffset = _defaultLateralOffset;
+        OffsetDistance = _defaualtDistance;
+        DesiredDistance = _defaualtDistance;
         ZoomDistance = OffsetDistance;
     }
 }

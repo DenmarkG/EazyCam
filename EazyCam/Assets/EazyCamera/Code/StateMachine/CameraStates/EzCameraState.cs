@@ -17,22 +17,22 @@ public abstract class EzCameraState
     public bool Enabled { get; set; }
 
 
-    [SerializeField] protected EzCamera m_controlledCamera = null;
-    protected EzCameraSettings m_stateSettings = null;
-    protected Transform m_cameraTransform = null;
-    protected Transform m_cameraTarget = null;
+    [SerializeField] protected EzCamera _controlledCamera = null;
+    protected EzCameraSettings _stateSettings = null;
+    protected Transform _cameraTransform = null;
+    protected Transform _cameraTarget = null;
 
-    protected bool m_initialized = false;
+    protected bool _initialized = false;
 
     public EzCameraState(EzCamera camera, EzCameraSettings stateCameraSettings)
     {
-        if (!m_initialized)
+        if (!_initialized)
         {
-            m_controlledCamera = camera;
-            m_cameraTransform = m_controlledCamera.transform;
-            m_cameraTarget = m_controlledCamera.Target;
-            m_stateSettings = stateCameraSettings;
-            m_initialized = true;
+            _controlledCamera = camera;
+            _cameraTransform = _controlledCamera.transform;
+            _cameraTarget = _controlledCamera.Target;
+            _stateSettings = stateCameraSettings;
+            _initialized = true;
         }
     }
 

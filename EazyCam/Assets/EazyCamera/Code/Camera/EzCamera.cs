@@ -5,93 +5,93 @@ using System.Collections;
 public class EzCamera : MonoBehaviour 
 {
     // Values to be set in the inspector
-	[SerializeField] private EzCameraSettings m_settings = null;
-    public EzCameraSettings Settings { get { return m_settings; } }
+	[SerializeField] private EzCameraSettings _settings = null;
+    public EzCameraSettings Settings { get { return _settings; } }
     public void ReplaceSettings(EzCameraSettings newSettings)
     {
         if (newSettings != null)
         {
-            m_settings = newSettings;
-            m_settings.StoreDefaultValues();
+            _settings = newSettings;
+            _settings.StoreDefaultValues();
         }
     }
 
-    [SerializeField] private Transform m_target = null;
-    public Transform Target { get { return m_target; } }
-    private Transform m_transform = null;
+    [SerializeField] private Transform _target = null;
+    public Transform Target { get { return _target; } }
+    private Transform _transform = null;
 
-    private Vector3 m_relativePosition = Vector3.zero;
+    private Vector3 _relativePosition = Vector3.zero;
 
     // State Machine and default state
-    private EzStateMachine m_stateMachine = null;
-    private EzCameraState.State m_defaultState = EzCameraState.State.FOLLOW;
-    public EzCameraState.State DefaultState { get { return m_defaultState; } }
+    private EzStateMachine _stateMachine = null;
+    private EzCameraState.State _defaultState = EzCameraState.State.FOLLOW;
+    public EzCameraState.State DefaultState { get { return _defaultState; } }
 
     // State for a stationary camera that rotates to look at a target but does not follow it
-    private EzStationaryState m_stationaryState = null;
+    private EzStationaryState _stationaryState = null;
     public EzStationaryState StationaryState
     {
-        get { return m_stationaryState; }
-        set { m_stationaryState = value; }
+        get { return _stationaryState; }
+        set { _stationaryState = value; }
     }
 
     // State for orbiting around a target
-    private EzOrbitState m_orbitState = null;
+    private EzOrbitState _orbitState = null;
     public EzOrbitState OrbitState
     {
-        get { return m_orbitState; }
-        set { m_orbitState = value; }
+        get { return _orbitState; }
+        set { _orbitState = value; }
     }
-    [SerializeField] private bool m_orbitEnabled = false;
+    [SerializeField] private bool _orbitEnabled = false;
     /// <summary>
     /// True when the camera is  allowed to orbit the taget
     /// </summary>
-    public bool OribtEnabled { get { return m_orbitEnabled; } }
+    public bool OribtEnabled { get { return _orbitEnabled; } }
     public void SetOrbitEnabled(bool allowOrbit)
     {
-        m_orbitEnabled = allowOrbit;
-        if (m_orbitState != null)
+        _orbitEnabled = allowOrbit;
+        if (_orbitState != null)
         {
-            m_orbitState.Enabled = m_orbitEnabled;
+            _orbitState.Enabled = _orbitEnabled;
         }
         else
         {
-            if (m_orbitEnabled)
+            if (_orbitEnabled)
             {
-                m_orbitState = new EzOrbitState(this, m_settings);
+                _orbitState = new EzOrbitState(this, _settings);
                 if (CameraController != null)
                 {
-                    CameraController.HandleInputCallback += m_orbitState.HandleInput;
+                    CameraController.HandleInputCallback += _orbitState.HandleInput;
                 }
             }
         }
     }
 
     // State for tracking a target object's position around the environment
-    private EzFollowState m_followState = null;
+    private EzFollowState _followState = null;
     public EzFollowState FollowState
     {
-        get { return m_followState; }
-        set { m_followState = value; }
+        get { return _followState; }
+        set { _followState = value; }
     }
 
-    [SerializeField] private bool m_followEnabled = false;
-    public bool FollowEnabled { get { return m_followEnabled; } }
+    [SerializeField] private bool _followEnabled = false;
+    public bool FollowEnabled { get { return _followEnabled; } }
     public void SetFollowEnabled(bool followEnabled)
     {
-        m_followEnabled = followEnabled;
-        if (m_followState != null)
+        _followEnabled = followEnabled;
+        if (_followState != null)
         {
-            m_followState.Enabled = m_followEnabled;
+            _followState.Enabled = _followEnabled;
         }
         else
         {
-            if (m_followEnabled)
+            if (_followEnabled)
             {
-                m_followState = new EzFollowState(this, m_settings);
+                _followState = new EzFollowState(this, _settings);
                 if (CameraController != null)
                 {
-                    CameraController.HandleInputCallback += m_followState.HandleInput;
+                    CameraController.HandleInputCallback += _followState.HandleInput;
                 }
             }
         }
@@ -100,104 +100,104 @@ public class EzCamera : MonoBehaviour
     /// <summary>
     /// Set the value to true if you want the camera to be able to track an object while still following the player
     /// </summary>
-    private EzLockOnState m_lockOnState = null;
+    private EzLockOnState _lockOnState = null;
     public EzLockOnState LockOnState
     {
-        get { return m_lockOnState; }
-        set { m_lockOnState = value; }
+        get { return _lockOnState; }
+        set { _lockOnState = value; }
     }
         
-    [SerializeField] private bool m_lockOnEnabled = true;
-    public bool LockOnEnabled { get { return m_lockOnEnabled; } }
+    [SerializeField] private bool _lockOnEnabled = true;
+    public bool LockOnEnabled { get { return _lockOnEnabled; } }
     public void SetLockOnEnabled(bool enableLockOn)
     {
-        m_lockOnEnabled = enableLockOn;
-        if (m_lockOnState != null)
+        _lockOnEnabled = enableLockOn;
+        if (_lockOnState != null)
         {
-            m_lockOnState.Enabled = m_lockOnEnabled;
+            _lockOnState.Enabled = _lockOnEnabled;
 
         }
         else
         {
-            if (m_lockOnEnabled)
+            if (_lockOnEnabled)
             {
-                m_lockOnState = new EzLockOnState(this, m_settings);
+                _lockOnState = new EzLockOnState(this, _settings);
                 if (CameraController != null)
                 {
-                    CameraController.HandleInputCallback += m_lockOnState.HandleInput;
+                    CameraController.HandleInputCallback += _lockOnState.HandleInput;
                 }
             }
         }
     }
 
-    public bool ZoomEnabled { get { return m_zoomEnabled; } }
-    [SerializeField] private bool m_zoomEnabled = true;
-    private float m_zoomDelta = 0f;
+    public bool ZoomEnabled { get { return _zoomEnabled; } }
+    [SerializeField] private bool _zoomEnabled = true;
+    private float _zoomDelta = 0f;
     private const float ZOOM_DEAD_ZONE = .01f;
-    public void SetZoomEnabled(bool isEnabled) { m_zoomEnabled = isEnabled; }
+    public void SetZoomEnabled(bool isEnabled) { _zoomEnabled = isEnabled; }
 
 
-    [SerializeField] private bool m_checkForCollisions = true;
-    public bool CollisionsEnabled { get { return m_checkForCollisions; } }
+    [SerializeField] private bool _checkForCollisions = true;
+    public bool CollisionsEnabled { get { return _checkForCollisions; } }
     public void EnableCollisionCheck(bool checkForCollisions)
     {
-        m_checkForCollisions = checkForCollisions;
-        if (m_cameraCollilder != null)
+        _checkForCollisions = checkForCollisions;
+        if (_cameraCollilder != null)
         {
             if (!checkForCollisions)
             {
-                DestroyImmediate(m_cameraCollilder);
-                m_cameraCollilder = null;
+                DestroyImmediate(_cameraCollilder);
+                _cameraCollilder = null;
             }
             else
             {
-                m_cameraCollilder.enabled = m_checkForCollisions;
+                _cameraCollilder.enabled = _checkForCollisions;
             }
         }
         else
         {
-            if (m_checkForCollisions)
+            if (_checkForCollisions)
             {
-                m_cameraCollilder = this.GetOrAddComponent<EzCameraCollider>();
+                _cameraCollilder = this.GetOrAddComponent<EzCameraCollider>();
             }
         }
     }
 
-    private EzCameraCollider m_cameraCollilder = null;
+    private EzCameraCollider _cameraCollilder = null;
 
     public EzCameraController CameraController { get; private set; }
 
     private void Start()
     {
-        m_transform = this.transform;
+        _transform = this.transform;
 
         // reset the offset distance be 1/3 of the distance from the min to max
-        if (m_settings != null)
+        if (_settings != null)
         {
-            m_settings.OffsetDistance = (m_settings.MaxDistance - m_settings.MinDistance) / 3f;
-            m_settings.DesiredDistance = m_settings.OffsetDistance;
-            m_settings.StoreDefaultValues();
+            _settings.OffsetDistance = (_settings.MaxDistance - _settings.MinDistance) / 3f;
+            _settings.DesiredDistance = _settings.OffsetDistance;
+            _settings.StoreDefaultValues();
 
-            m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
-            m_transform.position = m_relativePosition;
+            _relativePosition = (_target.position + (Vector3.up * _settings.OffsetHeight)) + (_transform.rotation * (Vector3.forward * -_settings.OffsetDistance)) + (_transform.right * _settings.LateralOffset);
+            _transform.position = _relativePosition;
         }
 
         CameraController = this.GetOrAddComponent<EzCameraController>();
         CameraController.Init(this);
 
-        SetLockOnEnabled(m_lockOnEnabled);
-        SetFollowEnabled(m_followEnabled);
-        SetOrbitEnabled(m_orbitEnabled);
+        SetLockOnEnabled(_lockOnEnabled);
+        SetFollowEnabled(_followEnabled);
+        SetOrbitEnabled(_orbitEnabled);
 
-        if (m_checkForCollisions)
+        if (_checkForCollisions)
         {
-            m_cameraCollilder = this.GetOrAddComponent<EzCameraCollider>();
+            _cameraCollilder = this.GetOrAddComponent<EzCameraCollider>();
         }
 
-        m_stateMachine = new EzStateMachine();
+        _stateMachine = new EzStateMachine();
 
-        m_defaultState = m_followEnabled ? EzCameraState.State.FOLLOW : EzCameraState.State.STATIONARY;
-        SetState(m_defaultState);
+        _defaultState = _followEnabled ? EzCameraState.State.FOLLOW : EzCameraState.State.STATIONARY;
+        SetState(_defaultState);
     }
 
     private void Update()
@@ -206,10 +206,10 @@ public class EzCamera : MonoBehaviour
         if (Application.isPlaying)
         {
 #endif
-            if (m_stateMachine != null)
+            if (_stateMachine != null)
             {
                 HandleInput();
-                m_stateMachine.UpdateState();
+                _stateMachine.UpdateState();
             }
 #if UNITY_EDITOR
         }
@@ -218,29 +218,29 @@ public class EzCamera : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (m_target != null && m_settings != null) // prevent updating if the target is null
+        if (_target != null && _settings != null) // prevent updating if the target is null
         {
-            if (m_stateMachine != null)
+            if (_stateMachine != null)
             {
-                if (m_zoomEnabled && Mathf.Abs(m_zoomDelta) > ZOOM_DEAD_ZONE)
+                if (_zoomEnabled && Mathf.Abs(_zoomDelta) > ZOOM_DEAD_ZONE)
                 {
-                    ZoomCamera(m_zoomDelta);
+                    ZoomCamera(_zoomDelta);
                 }
-                m_stateMachine.LateUpdateState();
+                _stateMachine.LateUpdateState();
             }
         }
     }
 
     private void OnApplicationQuit()
     {
-        m_settings.ResetCameraSettings();
+        _settings.ResetCameraSettings();
     }
 
     private void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (m_lockOnEnabled && !IsLockedOn)
+            if (_lockOnEnabled && !IsLockedOn)
             {
                 SetState(EzCameraState.State.LOCKON);
             }
@@ -249,29 +249,29 @@ public class EzCamera : MonoBehaviour
         // Zoom the camera using the middle mouse button + drag
         if (Input.GetMouseButton(2) || Input.GetKey(KeyCode.Z))
         {
-            m_zoomDelta = Input.GetAxis(ExtensionMethods.MOUSEY);
+            _zoomDelta = Input.GetAxis(ExtensionMethods.MOUSEY);
         }
         else
         {
-            m_zoomDelta = 0;
+            _zoomDelta = 0;
         }
     }
 
     public void UpdatePosition()
     {
         // Update the position of the camera to reflect any rotation changes
-        m_settings.OffsetDistance = Mathf.MoveTowards(m_settings.OffsetDistance, m_settings.DesiredDistance, Time.deltaTime * m_settings.ZoomSpeed);
-        m_relativePosition = (m_target.position + (Vector3.up * m_settings.OffsetHeight)) + (m_transform.rotation * (Vector3.forward * -m_settings.OffsetDistance)) + (m_transform.right * m_settings.LateralOffset);
-        this.transform.position = m_relativePosition;
+        _settings.OffsetDistance = Mathf.MoveTowards(_settings.OffsetDistance, _settings.DesiredDistance, Time.deltaTime * _settings.ZoomSpeed);
+        _relativePosition = (_target.position + (Vector3.up * _settings.OffsetHeight)) + (_transform.rotation * (Vector3.forward * -_settings.OffsetDistance)) + (_transform.right * _settings.LateralOffset);
+        this.transform.position = _relativePosition;
     }
 
     public void SmoothLookAt()
     {
-        Vector3 relativePlayerPosition = m_target.position - m_transform.position + m_transform.right * m_settings.LateralOffset;
+        Vector3 relativePlayerPosition = _target.position - _transform.position + _transform.right * _settings.LateralOffset;
 
-        Vector3 destDir = Vector3.ProjectOnPlane(relativePlayerPosition, m_transform.up);
+        Vector3 destDir = Vector3.ProjectOnPlane(relativePlayerPosition, _transform.up);
         Quaternion lookAtRotation = Quaternion.LookRotation(destDir, Vector3.up);
-        m_transform.rotation = Quaternion.Lerp(m_transform.rotation, lookAtRotation, m_settings.RotateSpeed * Time.deltaTime);
+        _transform.rotation = Quaternion.Lerp(_transform.rotation, lookAtRotation, _settings.RotateSpeed * Time.deltaTime);
     }
 
     public void ZoomCamera(float zDelta)
@@ -279,14 +279,14 @@ public class EzCamera : MonoBehaviour
         // clamp the value to the min/max ranges
         if (!IsOccluded)
         {
-            float step = Time.deltaTime * m_settings.ZoomSpeed * zDelta;
-            m_settings.DesiredDistance = Mathf.Clamp(m_settings.OffsetDistance + step, m_settings.MinDistance, m_settings.MaxDistance);
+            float step = Time.deltaTime * _settings.ZoomSpeed * zDelta;
+            _settings.DesiredDistance = Mathf.Clamp(_settings.OffsetDistance + step, _settings.MinDistance, _settings.MaxDistance);
         }
     }
 
     public void SetCameraTarget(Transform target)
     {
-        m_target = target;
+        _target = target;
     }
 
     public void SetState(EzCameraState.State nextState)
@@ -295,28 +295,28 @@ public class EzCamera : MonoBehaviour
         {
             case EzCameraState.State.FOLLOW:
                 SetFollowEnabled(true);
-                m_stateMachine.SetCurrentState(m_followState);                
+                _stateMachine.SetCurrentState(_followState);                
                 break;
             case EzCameraState.State.ORBIT:
                 SetOrbitEnabled(true);
-                m_stateMachine.SetCurrentState(m_orbitState);
+                _stateMachine.SetCurrentState(_orbitState);
                 break;
             case EzCameraState.State.LOCKON:
                 SetLockOnEnabled(true);
-                m_stateMachine.SetCurrentState(m_lockOnState);
+                _stateMachine.SetCurrentState(_lockOnState);
                 break;
             case EzCameraState.State.STATIONARY:
             default:
-                if (m_stationaryState == null)
+                if (_stationaryState == null)
                 {
-                    m_stationaryState = new EzStationaryState(this, m_settings);
+                    _stationaryState = new EzStationaryState(this, _settings);
                     if (CameraController != null)
                     {
                         CameraController.HandleInputCallback = null;
                     }
                 }
 
-                m_stateMachine.SetCurrentState(m_stationaryState);
+                _stateMachine.SetCurrentState(_stationaryState);
                 break;
         }
     }
@@ -326,12 +326,12 @@ public class EzCamera : MonoBehaviour
     {
         get
         {
-            if (!m_checkForCollisions)
+            if (!_checkForCollisions)
             {
                 return false;
             }
 
-            return m_cameraCollilder.IsOccluded;
+            return _cameraCollilder.IsOccluded;
         }
     }
 
@@ -339,9 +339,9 @@ public class EzCamera : MonoBehaviour
     { 
         get 
         {
-            if (m_orbitState != null)
+            if (_orbitState != null)
             {
-                return m_stateMachine.CurrentState == m_orbitState;
+                return _stateMachine.CurrentState == _orbitState;
             }
 
             return false;
@@ -352,9 +352,9 @@ public class EzCamera : MonoBehaviour
     { 
         get 
         {
-            if (m_lockOnState != null)
+            if (_lockOnState != null)
             {
-                return m_stateMachine.CurrentState == m_lockOnState;
+                return _stateMachine.CurrentState == _lockOnState;
             }
 
             return false;
@@ -363,8 +363,8 @@ public class EzCamera : MonoBehaviour
 
     public Vector3 ConvertMoveInputToCameraSpace(float horz, float vert)
     {
-        float moveX = (horz * m_transform.right.x) + (vert * m_transform.forward.x);
-        float moveZ = (horz * m_transform.right.z) + (vert * m_transform.forward.z);
+        float moveX = (horz * _transform.right.x) + (vert * _transform.forward.x);
+        float moveZ = (horz * _transform.right.z) + (vert * _transform.forward.z);
         return new Vector3(moveX, 0f, moveZ);
     }
 }

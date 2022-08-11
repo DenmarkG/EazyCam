@@ -21,7 +21,7 @@ public class EzStationaryState : EzCameraState
 
     public override void LateUpdateState()
     {
-        m_controlledCamera.SmoothLookAt();
+        _controlledCamera.SmoothLookAt();
     }
 
     public override void UpdateState()

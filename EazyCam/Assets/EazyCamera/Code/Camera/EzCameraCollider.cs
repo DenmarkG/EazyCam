@@ -3,40 +3,40 @@ using System.Collections;
 
 public class EzCameraCollider : MonoBehaviour
 {
-    private EzCamera m_controlledCamera = null;
-    private Camera m_cameraComponent = null;
-    private Transform m_cameraTransform = null;
+    private EzCamera _controlledCamera = null;
+    private Camera _cameraComponent = null;
+    private Transform _cameraTransform = null;
     public bool IsOccluded { get; private set; }
     
-    private Vector3[] m_nearClipPlanePoints = new Vector3[4];
-    private Vector3[] m_originalClipPlanePoints = new Vector3[4];
-    private Vector3 m_pointBehindCamera = new Vector3();
+    private Vector3[] _nearClipPlanePoints = new Vector3[4];
+    private Vector3[] _originalClipPlanePoints = new Vector3[4];
+    private Vector3 _pointBehindCamera = new Vector3();
 
-    private float m_nearPlaneDistance = 0f;
-    private float m_aspectHalfHeight = 0f;
-    private float m_aspectHalfWidth = 0f;
+    private float _nearPlaneDistance = 0f;
+    private float _aspectHalfHeight = 0f;
+    private float _aspectHalfWidth = 0f;
 
-    [SerializeField] private string m_playerLayer = "Player";
-    private int m_layermask = 0;
+    [SerializeField] private string _playerLayer = "Player";
+    private int _layermask = 0;
 
 
     private void Start()
     {
-        m_controlledCamera = this.GetComponent<EzCamera>();
-        m_cameraComponent = this.GetComponent<Camera>();
-        m_cameraTransform = this.transform;
+        _controlledCamera = this.GetComponent<EzCamera>();
+        _cameraComponent = this.GetComponent<Camera>();
+        _cameraTransform = this.transform;
 
-        m_nearPlaneDistance = m_cameraComponent.nearClipPlane;
+        _nearPlaneDistance = _cameraComponent.nearClipPlane;
         
-        m_layermask = (1 << LayerMask.NameToLayer(m_playerLayer)) | (1 << LayerMask.NameToLayer("Ignore Raycast"));
-        m_layermask = ~m_layermask;
+        _layermask = (1 << LayerMask.NameToLayer(_playerLayer)) | (1 << LayerMask.NameToLayer("Ignore Raycast"));
+        _layermask = ~_layermask;
 
         UpdateNearClipPlanePoints();
     }
 
     private void LateUpdate()
     {
-        if (m_controlledCamera.CollisionsEnabled)
+        if (_controlledCamera.CollisionsEnabled)
         {
             HandleCollisions();
         }
@@ -65,37 +65,37 @@ public class EzCameraCollider : MonoBehaviour
 
     private void UpdateNearClipPlanePoints()
     {
-        Vector3 nearPlaneCenter = m_cameraTransform.position + m_cameraTransform.forward * m_nearPlaneDistance;
-        m_pointBehindCamera = m_cameraTransform.position - m_cameraTransform.forward * m_nearPlaneDistance;
+        Vector3 nearPlaneCenter = _cameraTransform.position + _cameraTransform.forward * _nearPlaneDistance;
+        _pointBehindCamera = _cameraTransform.position - _cameraTransform.forward * _nearPlaneDistance;
 
-        float halfFOV = Mathf.Deg2Rad * (m_cameraComponent.fieldOfView / 2);
-        m_aspectHalfHeight = Mathf.Tan(halfFOV) * m_nearPlaneDistance;
-        m_aspectHalfWidth = m_aspectHalfHeight * m_cameraComponent.aspect;
+        float halfFOV = Mathf.Deg2Rad * (_cameraComponent.fieldOfView / 2);
+        _aspectHalfHeight = Mathf.Tan(halfFOV) * _nearPlaneDistance;
+        _aspectHalfWidth = _aspectHalfHeight * _cameraComponent.aspect;
 
-        m_nearClipPlanePoints[0] = nearPlaneCenter + m_cameraTransform.rotation * new Vector3(-m_aspectHalfWidth, m_aspectHalfHeight);
-        m_nearClipPlanePoints[1] = nearPlaneCenter + m_cameraTransform.rotation * new Vector3(m_aspectHalfWidth, m_aspectHalfHeight);
-        m_nearClipPlanePoints[2] = nearPlaneCenter + m_cameraTransform.rotation * new Vector3(m_aspectHalfWidth , -m_aspectHalfHeight);
-        m_nearClipPlanePoints[3] = nearPlaneCenter + m_cameraTransform.rotation * new Vector3(-m_aspectHalfWidth, -m_aspectHalfHeight);
+        _nearClipPlanePoints[0] = nearPlaneCenter + _cameraTransform.rotation * new Vector3(-_aspectHalfWidth, _aspectHalfHeight);
+        _nearClipPlanePoints[1] = nearPlaneCenter + _cameraTransform.rotation * new Vector3(_aspectHalfWidth, _aspectHalfHeight);
+        _nearClipPlanePoints[2] = nearPlaneCenter + _cameraTransform.rotation * new Vector3(_aspectHalfWidth , -_aspectHalfHeight);
+        _nearClipPlanePoints[3] = nearPlaneCenter + _cameraTransform.rotation * new Vector3(-_aspectHalfWidth, -_aspectHalfHeight);
     }
 
     #region Editor Only Functions
 #if UNITY_EDITOR
     private void DrawNearPlane()
     {
-        Debug.DrawLine(m_nearClipPlanePoints[0], m_nearClipPlanePoints[1], Color.red);
-        Debug.DrawLine(m_nearClipPlanePoints[1], m_nearClipPlanePoints[2], Color.red);
-        Debug.DrawLine(m_nearClipPlanePoints[2], m_nearClipPlanePoints[3], Color.red);
-        Debug.DrawLine(m_nearClipPlanePoints[3], m_nearClipPlanePoints[0], Color.red);
-        Debug.DrawLine(m_pointBehindCamera, m_controlledCamera.Target.position, Color.red);
+        Debug.DrawLine(_nearClipPlanePoints[0], _nearClipPlanePoints[1], Color.red);
+        Debug.DrawLine(_nearClipPlanePoints[1], _nearClipPlanePoints[2], Color.red);
+        Debug.DrawLine(_nearClipPlanePoints[2], _nearClipPlanePoints[3], Color.red);
+        Debug.DrawLine(_nearClipPlanePoints[3], _nearClipPlanePoints[0], Color.red);
+        Debug.DrawLine(_pointBehindCamera, _controlledCamera.Target.position, Color.red);
     }
 
     private void DrawOriginalPlane()
     {
-        Debug.DrawLine(m_originalClipPlanePoints[0], m_originalClipPlanePoints[1], Color.cyan);
-        Debug.DrawLine(m_originalClipPlanePoints[1], m_originalClipPlanePoints[2], Color.cyan);
-        Debug.DrawLine(m_originalClipPlanePoints[2], m_originalClipPlanePoints[3], Color.cyan);
-        Debug.DrawLine(m_originalClipPlanePoints[3], m_originalClipPlanePoints[0], Color.cyan);
-        Debug.DrawLine(m_pointBehindCamera, m_controlledCamera.Target.position, Color.cyan);
+        Debug.DrawLine(_originalClipPlanePoints[0], _originalClipPlanePoints[1], Color.cyan);
+        Debug.DrawLine(_originalClipPlanePoints[1], _originalClipPlanePoints[2], Color.cyan);
+        Debug.DrawLine(_originalClipPlanePoints[2], _originalClipPlanePoints[3], Color.cyan);
+        Debug.DrawLine(_originalClipPlanePoints[3], _originalClipPlanePoints[0], Color.cyan);
+        Debug.DrawLine(_pointBehindCamera, _controlledCamera.Target.position, Color.cyan);
     }
 #endif
     #endregion
@@ -108,12 +108,12 @@ public class EzCameraCollider : MonoBehaviour
         RaycastHit hit;
         float hitDistance = 0;
 
-        for (int i = 0; i < m_nearClipPlanePoints.Length; ++i)
+        for (int i = 0; i < _nearClipPlanePoints.Length; ++i)
         {
 
-            if (Physics.Linecast(m_controlledCamera.Target.position, m_nearClipPlanePoints[i], out hit, m_layermask))
+            if (Physics.Linecast(_controlledCamera.Target.position, _nearClipPlanePoints[i], out hit, _layermask))
             {
-                if (hit.collider.gameObject.transform.root != m_controlledCamera.Target.root)
+                if (hit.collider.gameObject.transform.root != _controlledCamera.Target.root)
                 {
                     if (hit.distance > hitDistance)
                     {
@@ -121,12 +121,12 @@ public class EzCameraCollider : MonoBehaviour
 
                         if (!IsOccluded) // Only store the original position on the original hit
                         {
-                            m_controlledCamera.Settings.ResetPositionDistance = m_controlledCamera.Settings.OffsetDistance;
-                            //m_controlledCamera.Settings.ResetPositionDistance = m_controlledCamera.Settings.DesiredDistance;
+                            _controlledCamera.Settings.ResetPositionDistance = _controlledCamera.Settings.OffsetDistance;
+                            //_controlledCamera.Settings.ResetPositionDistance = _controlledCamera.Settings.DesiredDistance;
                         }
 
                         IsOccluded = true;
-                        m_controlledCamera.Settings.DesiredDistance = hitDistance - m_nearPlaneDistance;
+                        _controlledCamera.Settings.DesiredDistance = hitDistance - _nearPlaneDistance;
 
 #if UNITY_EDITOR
                         lineColor = Color.red;
@@ -141,41 +141,41 @@ public class EzCameraCollider : MonoBehaviour
             }
 
 #if UNITY_EDITOR
-            Debug.DrawLine(m_nearClipPlanePoints[i], m_controlledCamera.Target.position, lineColor);
+            Debug.DrawLine(_nearClipPlanePoints[i], _controlledCamera.Target.position, lineColor);
 #endif
         }
 
         if (!IsOccluded)
         {
-            if (Physics.Linecast(m_controlledCamera.Target.position, m_pointBehindCamera, out hit, m_layermask))
+            if (Physics.Linecast(_controlledCamera.Target.position, _pointBehindCamera, out hit, _layermask))
             {
 #if UNITY_EDITOR
                 lineColor = Color.red;
                 Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
 #endif
                 IsOccluded = true;
-                m_controlledCamera.Settings.ResetPositionDistance = m_controlledCamera.Settings.OffsetDistance;
-                m_controlledCamera.Settings.DesiredDistance = hit.distance - m_nearPlaneDistance;
+                _controlledCamera.Settings.ResetPositionDistance = _controlledCamera.Settings.OffsetDistance;
+                _controlledCamera.Settings.DesiredDistance = hit.distance - _nearPlaneDistance;
             }
         }   
     }
 
     private void UpdateOriginalClipPlanePoints()
     {
-        Vector3 originalCameraPosition = (m_controlledCamera.Target.position + (Vector3.up * m_controlledCamera.Settings.OffsetHeight)) + (m_cameraTransform.rotation * (Vector3.forward * -m_controlledCamera.Settings.ResetPositionDistance)) + (m_cameraTransform.right * m_controlledCamera.Settings.LateralOffset);
-        Vector3 originalPlaneCenter = originalCameraPosition + m_cameraTransform.forward * m_nearPlaneDistance;
+        Vector3 originalCameraPosition = (_controlledCamera.Target.position + (Vector3.up * _controlledCamera.Settings.OffsetHeight)) + (_cameraTransform.rotation * (Vector3.forward * -_controlledCamera.Settings.ResetPositionDistance)) + (_cameraTransform.right * _controlledCamera.Settings.LateralOffset);
+        Vector3 originalPlaneCenter = originalCameraPosition + _cameraTransform.forward * _nearPlaneDistance;
 
-        float halfFOV = Mathf.Deg2Rad * (m_cameraComponent.fieldOfView / 2);
-        m_aspectHalfHeight = Mathf.Tan(halfFOV) * m_nearPlaneDistance;
-        m_aspectHalfWidth = m_aspectHalfHeight * m_cameraComponent.aspect;
+        float halfFOV = Mathf.Deg2Rad * (_cameraComponent.fieldOfView / 2);
+        _aspectHalfHeight = Mathf.Tan(halfFOV) * _nearPlaneDistance;
+        _aspectHalfWidth = _aspectHalfHeight * _cameraComponent.aspect;
 
-        m_originalClipPlanePoints[0] = originalPlaneCenter + m_cameraTransform.rotation * new Vector3(-m_aspectHalfWidth, m_aspectHalfHeight);
-        m_originalClipPlanePoints[1] = originalPlaneCenter + m_cameraTransform.rotation * new Vector3(m_aspectHalfWidth, m_aspectHalfHeight);
-        m_originalClipPlanePoints[2] = originalPlaneCenter + m_cameraTransform.rotation * new Vector3(m_aspectHalfWidth, -m_aspectHalfHeight);
-        m_originalClipPlanePoints[3] = originalPlaneCenter + m_cameraTransform.rotation * new Vector3(-m_aspectHalfWidth, -m_aspectHalfHeight);
+        _originalClipPlanePoints[0] = originalPlaneCenter + _cameraTransform.rotation * new Vector3(-_aspectHalfWidth, _aspectHalfHeight);
+        _originalClipPlanePoints[1] = originalPlaneCenter + _cameraTransform.rotation * new Vector3(_aspectHalfWidth, _aspectHalfHeight);
+        _originalClipPlanePoints[2] = originalPlaneCenter + _cameraTransform.rotation * new Vector3(_aspectHalfWidth, -_aspectHalfHeight);
+        _originalClipPlanePoints[3] = originalPlaneCenter + _cameraTransform.rotation * new Vector3(-_aspectHalfWidth, -_aspectHalfHeight);
 
-        //Vector3 rearPlaneCenter = m_transform.position - m_transform.forward * m_nearPlaneDistance;
-        m_pointBehindCamera = m_cameraTransform.position - m_cameraTransform.forward * m_nearPlaneDistance;
+        //Vector3 rearPlaneCenter = _transform.position - _transform.forward * _nearPlaneDistance;
+        _pointBehindCamera = _cameraTransform.position - _cameraTransform.forward * _nearPlaneDistance;
     }
 
     
@@ -187,10 +187,10 @@ public class EzCameraCollider : MonoBehaviour
         RaycastHit hit;
         float closestHitDistance = float.MaxValue;
 
-        for (int i = 0; i < m_originalClipPlanePoints.Length; ++i)
+        for (int i = 0; i < _originalClipPlanePoints.Length; ++i)
         {
             Color lineColor = Color.blue;
-            if (Physics.Linecast(m_controlledCamera.Target.position, m_originalClipPlanePoints[i], out hit, m_layermask))
+            if (Physics.Linecast(_controlledCamera.Target.position, _originalClipPlanePoints[i], out hit, _layermask))
             {
                 lineColor = Color.red;
                 objectWasHit = true;
@@ -201,19 +201,19 @@ public class EzCameraCollider : MonoBehaviour
                 }
             }
 
-            Debug.DrawLine(m_controlledCamera.Target.position, m_originalClipPlanePoints[i], lineColor);
+            Debug.DrawLine(_controlledCamera.Target.position, _originalClipPlanePoints[i], lineColor);
         }
 
         if (!objectWasHit)
         {
-            m_controlledCamera.Settings.DesiredDistance = m_controlledCamera.Settings.ResetPositionDistance;
+            _controlledCamera.Settings.DesiredDistance = _controlledCamera.Settings.ResetPositionDistance;
             IsOccluded = false;
         }
         else
         {
-            if (closestHitDistance > m_controlledCamera.Settings.DesiredDistance)
+            if (closestHitDistance > _controlledCamera.Settings.DesiredDistance)
             {
-                m_controlledCamera.Settings.DesiredDistance = closestHitDistance;
+                _controlledCamera.Settings.DesiredDistance = closestHitDistance;
             }
         }
     }

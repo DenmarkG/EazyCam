@@ -5,12 +5,12 @@ using System.Collections;
 [RequireComponent(typeof(EzCamera))]
 public class EzCameraController : MonoBehaviour
 {
-    EzCamera m_controlledCamera = null;
+    EzCamera _controlledCamera = null;
     public Action HandleInputCallback = null;
 
     public void Init(EzCamera camera)
     {
-        m_controlledCamera = camera;
+        _controlledCamera = camera;
     }
 
     private void Update()
@@ -20,7 +20,7 @@ public class EzCameraController : MonoBehaviour
 
     private void HandleInput()
     {
-        if (m_controlledCamera != null)
+        if (_controlledCamera != null)
         {
             if (HandleInputCallback != null)
             {

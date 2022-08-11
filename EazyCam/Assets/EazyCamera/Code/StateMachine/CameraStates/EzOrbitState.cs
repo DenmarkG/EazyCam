@@ -4,13 +4,13 @@ using System;
 
 public class EzOrbitState : EzCameraState
 {
-    private float m_rotY = 0; // Camera's current rotation around the X axis (up/down)
-    private float m_rotX = 0; // Camera's current rotation around the Y axis (left/right)
+    private float _rotY = 0; // Camera's current rotation around the X axis (up/down)
+    private float _rotX = 0; // Camera's current rotation around the Y axis (left/right)
 
-    private float m_horizontalInput = 0;
-    private float m_verticalInput = 0;
+    private float _horizontalInput = 0;
+    private float _verticalInput = 0;
 
-    Quaternion m_destRot = Quaternion.identity;
+    Quaternion _destRot = Quaternion.identity;
 
     public EzOrbitState(EzCamera camera, EzCameraSettings settings)
         : base(camera, settings) { }
@@ -28,7 +28,7 @@ public class EzOrbitState : EzCameraState
 
     public override void UpdateState()
     {
-        if (m_controlledCamera.OribtEnabled)
+        if (_controlledCamera.OribtEnabled)
         {
             HandleInput();
         }
@@ -36,7 +36,7 @@ public class EzOrbitState : EzCameraState
 
     public override void LateUpdateState()
     {
-        OrbitCamera(m_horizontalInput, m_verticalInput);
+        OrbitCamera(_horizontalInput, _verticalInput);
     }
 
     public override void UpdateStateFixed()
@@ -47,34 +47,34 @@ public class EzOrbitState : EzCameraState
     private void OrbitCamera(float horz, float vert)
     {
         // cache the step and update the roation from input
-        float step = Time.deltaTime * m_stateSettings.RotateSpeed;
-        m_rotY += horz * step; 
-        m_rotX += vert * step;
-        m_rotX = Mathf.Clamp(m_rotX, m_stateSettings.MinRotX, m_stateSettings.MaxRotX);
+        float step = Time.deltaTime * _stateSettings.RotateSpeed;
+        _rotY += horz * step; 
+        _rotX += vert * step;
+        _rotX = Mathf.Clamp(_rotX, _stateSettings.MinRotX, _stateSettings.MaxRotX);
         
         // compose the quaternions from Euler vectors to get the new rotation
-        Quaternion addRot = Quaternion.Euler(0f, m_rotY, 0f);
-        m_destRot = addRot * Quaternion.Euler(m_rotX, 0f, 0f); // Not commutative
+        Quaternion addRot = Quaternion.Euler(0f, _rotY, 0f);
+        _destRot = addRot * Quaternion.Euler(_rotX, 0f, 0f); // Not commutative
 
-        m_cameraTransform.rotation = m_destRot;
+        _cameraTransform.rotation = _destRot;
 
 #if UNITY_EDITOR
-        Debug.DrawLine(m_cameraTransform.position, m_cameraTarget.transform.position, Color.red);
-        Debug.DrawRay(m_cameraTransform.position, m_cameraTransform.forward, Color.blue);
+        Debug.DrawLine(_cameraTransform.position, _cameraTarget.transform.position, Color.red);
+        Debug.DrawRay(_cameraTransform.position, _cameraTransform.forward, Color.blue);
 #endif
 
-        m_controlledCamera.UpdatePosition();
+        _controlledCamera.UpdatePosition();
     }
 
     public override void HandleInput()
     {
-        if (m_controlledCamera.OribtEnabled && Input.GetMouseButtonDown(0))
+        if (_controlledCamera.OribtEnabled && Input.GetMouseButtonDown(0))
         {
-            m_controlledCamera.SetState(State.ORBIT);
+            _controlledCamera.SetState(State.ORBIT);
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            m_controlledCamera.SetState(State.FOLLOW);
+            _controlledCamera.SetState(State.FOLLOW);
             return;
         }
 
@@ -82,7 +82,7 @@ public class EzOrbitState : EzCameraState
         float horz = Input.GetAxis(MOUSEX);
         float vert = Input.GetAxis(MOUSEY);
 
-        m_horizontalInput = horz;
-        m_verticalInput = vert;
+        _horizontalInput = horz;
+        _verticalInput = vert;
     }
 }

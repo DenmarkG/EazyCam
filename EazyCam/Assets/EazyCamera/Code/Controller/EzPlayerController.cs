@@ -6,8 +6,8 @@ using System.Collections;
 /// </summary>
 public class EzPlayerController : MonoBehaviour 
 {
-	[SerializeField] private EzCamera m_camera = null;
-    [SerializeField] private EzMotor m_controlledPlayer = null;
+	[SerializeField] private EzCamera _camera = null;
+    [SerializeField] private EzMotor _controlledPlayer = null;
 
     private void Start()
     {
@@ -18,7 +18,7 @@ public class EzPlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (m_controlledPlayer != null && m_camera != null)
+        if (_controlledPlayer != null && _camera != null)
         {
             HandleInput();
         }
@@ -26,24 +26,24 @@ public class EzPlayerController : MonoBehaviour
 
     private void SetUpControlledPlayer()
     {
-        if (m_controlledPlayer == null)
+        if (_controlledPlayer == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null)
             {
-                m_controlledPlayer = playerObj.GetComponent<EzMotor>();
+                _controlledPlayer = playerObj.GetComponent<EzMotor>();
             }
         }
     }
 
     private void SetUpCamera()
     {
-        if (m_camera == null)
+        if (_camera == null)
         {
-            m_camera = Camera.main.GetComponent<EzCamera>();
-            if (m_camera == null)
+            _camera = Camera.main.GetComponent<EzCamera>();
+            if (_camera == null)
             {
-                m_camera = Camera.main.gameObject.AddComponent<EzCamera>();
+                _camera = Camera.main.gameObject.AddComponent<EzCamera>();
             }
         }
     }
@@ -56,9 +56,9 @@ public class EzPlayerController : MonoBehaviour
         float vert = Input.GetAxis(ExtensionMethods.VERITCAL);
         
         // Convert movement to camera space
-        Vector3 moveVector = m_camera.ConvertMoveInputToCameraSpace(horz, vert);
+        Vector3 moveVector = _camera.ConvertMoveInputToCameraSpace(horz, vert);
 
         // Move the Player
-        m_controlledPlayer.MovePlayer(moveVector.x, moveVector.z, Input.GetKey(KeyCode.LeftShift));
+        _controlledPlayer.MovePlayer(moveVector.x, moveVector.z, Input.GetKey(KeyCode.LeftShift));
     }
 }
