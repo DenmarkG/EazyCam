@@ -8,70 +8,69 @@ public class EzCamInspector : Editor
 {
     public override void OnInspectorGUI()
     {
-        //base.OnInspectorGUI();
-        //return;
-
         EzCamera cam = (EzCamera)target;
 
-        if (cam != null)
+        EditorGUI.BeginChangeCheck();
         {
-            Transform camTarget = EditorGUILayout.ObjectField("Target", cam.Target, typeof(Transform), true) as Transform;
-            if (camTarget != cam.Target)
+            if (cam != null)
             {
-                cam.SetCameraTarget(camTarget);
-            }
-
-            EzCameraSettings settings = EditorGUILayout.ObjectField("Camera Settings", cam.Settings, typeof(EzCameraSettings), false) as EzCameraSettings;
-            if (settings != cam.Settings)
-            {
-                cam.ReplaceSettings(settings);
-            }
-
-            string toggleText = null;
-
-            // Additional States
-            toggleText = "Orbit Enabled";
-            bool isEnabled = EditorGUILayout.Toggle(toggleText, cam.OribtEnabled);
-            if (isEnabled != cam.OribtEnabled)
-            {
-                cam.SetOrbitEnabled(isEnabled);
-                cam.SetFollowEnabled(isEnabled); // An orbit cam includes follow logic
-            }
-
-
-            if (!cam.OribtEnabled)
-            {
-                toggleText = "Follow Enabled";
-                isEnabled = EditorGUILayout.Toggle(toggleText, cam.FollowEnabled);
-                if (isEnabled != cam.FollowEnabled)
+                Transform camTarget = EditorGUILayout.ObjectField("Target", cam.Target, typeof(Transform), true) as Transform;
+                if (camTarget != cam.Target)
                 {
-                    cam.SetFollowEnabled(isEnabled);
+                    cam.SetCameraTarget(camTarget);
                 }
+
+                EzCameraSettings settings = EditorGUILayout.ObjectField("Camera Settings", cam.Settings, typeof(EzCameraSettings), false) as EzCameraSettings;
+                if (settings != cam.Settings)
+                {
+                    cam.ReplaceSettings(settings);
+                }
+
+                // #DG: TODO:
+                //SerializedProperty settingsProperty = serializedObject.FindProperty("_settings");
+                //if (settingsProperty != null)
+                //{
+                //    using (new EditorGUI.IndentLevelScope())
+                //    {
+                //        EditorGUILayout.PropertyField(settingsProperty);
+                //    }
+                //}
+
+                // Additional States
+                SerializedProperty orbitProperty = serializedObject.FindProperty("_orbitEnabled");
+                orbitProperty.boolValue = EditorGUILayout.Toggle("Orbit Enabled", orbitProperty.boolValue);
+
+                EditorGUI.BeginDisabledGroup(orbitProperty.boolValue);
+                {
+                    SerializedProperty followProperty = serializedObject.FindProperty("_followEnabled");
+                    if (orbitProperty.boolValue == false)
+                    {
+                        followProperty.boolValue = EditorGUILayout.Toggle("Follow Enabled", followProperty.boolValue);
+                    }
+                    else
+                    {
+                        followProperty.boolValue = EditorGUILayout.Toggle("Follow Enabled", true);
+                    }
+                    
+                }
+                EditorGUI.EndDisabledGroup();
+
+                SerializedProperty lockOnProperty = serializedObject.FindProperty("_lockOnEnabled");
+                lockOnProperty.boolValue = EditorGUILayout.Toggle("Lock On Enabled", lockOnProperty.boolValue);
+
+                SerializedProperty zoomProperty = serializedObject.FindProperty("_zoomEnabled");
+                zoomProperty.boolValue = EditorGUILayout.Toggle("Zoom Enabled", zoomProperty.boolValue);
+
+                SerializedProperty collisionProperty = serializedObject.FindProperty("_checkForCollisions");
+                collisionProperty.boolValue = EditorGUILayout.Toggle("Collisions Enabled", collisionProperty.boolValue);
             }
 
-            toggleText = "Lock On Enabled";
-            isEnabled = EditorGUILayout.Toggle(toggleText, cam.LockOnEnabled);
-            if (isEnabled != cam.LockOnEnabled)
+            if (EditorGUI.EndChangeCheck())
             {
-                cam.SetLockOnEnabled(isEnabled);
+                serializedObject.ApplyModifiedProperties();
+                serializedObject.Update();
+                EditorUtility.SetDirty(cam);
             }
-
-            // Cmaera Options
-            toggleText = "Zoom Enabled";
-            isEnabled = EditorGUILayout.Toggle(toggleText, cam.ZoomEnabled);
-            if (isEnabled != cam.ZoomEnabled)
-            {
-                cam.SetZoomEnabled(isEnabled);
-            }
-
-            toggleText = "Collisions Enabled";
-            isEnabled = EditorGUILayout.Toggle(toggleText, cam.CollisionsEnabled);
-            if (isEnabled != cam.CollisionsEnabled)
-            {
-                cam.EnableCollisionCheck(isEnabled);
-            }
-
-            EditorUtility.SetDirty(cam);
         }
     }
 }

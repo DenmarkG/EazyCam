@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 
+[System.Serializable]
 public class EzStationaryState : EzCameraState
 {
     public EzStationaryState(EzCamera camera, EzCameraSettings settings)

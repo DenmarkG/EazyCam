@@ -157,7 +157,12 @@ public class EzCameraCollider : MonoBehaviour
                 _controlledCamera.Settings.ResetPositionDistance = _controlledCamera.Settings.OffsetDistance;
                 _controlledCamera.Settings.DesiredDistance = hit.distance - _nearPlaneDistance;
             }
-        }   
+        }
+
+        //if (!IsOccluded)
+        //{
+        //    _controlledCamera.Settings.DesiredDistance = _controlledCamera.Settings.ResetPositionDistance;
+        //}
     }
 
     private void UpdateOriginalClipPlanePoints()

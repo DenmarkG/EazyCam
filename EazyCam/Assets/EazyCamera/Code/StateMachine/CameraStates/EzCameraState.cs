@@ -43,11 +43,11 @@ public abstract class EzCameraState
 	public abstract void ExitState();
 
         // Cache any needed strings
-    protected const string HORIZONTAL = "Horizontal";
-    protected const string VERITCAL = "Vertical";
-    protected const string MOUSEX = "Mouse X";
-    protected const string MOUSEY = "Mouse Y";
-    protected const string MOUSE_WHEEL = "Mouse ScrollWheel";
+    protected static readonly string HORIZONTAL = "Horizontal";
+    protected static readonly string VERITCAL = "Vertical";
+    protected static readonly string MOUSEX = "Mouse X";
+    protected static readonly string MOUSEY = "Mouse Y";
+    protected static readonly string MOUSE_WHEEL = "Mouse ScrollWheel";
 
     public abstract void HandleInput();
     public virtual void Reset() { }

@@ -2,6 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
+[ExecuteInEditMode]
 public class EzCamera : MonoBehaviour 
 {
     // Values to be set in the inspector
@@ -18,6 +19,8 @@ public class EzCamera : MonoBehaviour
 
     [SerializeField] private Transform _target = null;
     public Transform Target { get { return _target; } }
+
+    public Transform CameraTransform => _transform;
     private Transform _transform = null;
 
     private Vector3 _relativePosition = Vector3.zero;
@@ -77,6 +80,7 @@ public class EzCamera : MonoBehaviour
 
     [SerializeField] private bool _followEnabled = false;
     public bool FollowEnabled { get { return _followEnabled; } }
+
     public void SetFollowEnabled(bool followEnabled)
     {
         _followEnabled = followEnabled;
@@ -174,6 +178,11 @@ public class EzCamera : MonoBehaviour
         // reset the offset distance be 1/3 of the distance from the min to max
         if (_settings != null)
         {
+            if (Application.isPlaying)
+            {
+                _settings = Instantiate(_settings);
+            }
+
             _settings.OffsetDistance = (_settings.MaxDistance - _settings.MinDistance) / 3f;
             _settings.DesiredDistance = _settings.OffsetDistance;
             _settings.StoreDefaultValues();
@@ -229,11 +238,6 @@ public class EzCamera : MonoBehaviour
                 _stateMachine.LateUpdateState();
             }
         }
-    }
-
-    private void OnApplicationQuit()
-    {
-        _settings.ResetCameraSettings();
     }
 
     private void HandleInput()
@@ -366,5 +370,10 @@ public class EzCamera : MonoBehaviour
         float moveX = (horz * _transform.right.x) + (vert * _transform.forward.x);
         float moveZ = (horz * _transform.right.z) + (vert * _transform.forward.z);
         return new Vector3(moveX, 0f, moveZ);
+    }
+
+    public IEnumerator Reset()
+    {
+        yield return null;
     }
 }

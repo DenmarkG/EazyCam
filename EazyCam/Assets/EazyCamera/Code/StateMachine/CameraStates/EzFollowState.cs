@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 
+[System.Serializable]
 public class EzFollowState : EzCameraState
 {
     private Vector3 _targetPosition = Vector3.zero;
@@ -25,10 +26,13 @@ public class EzFollowState : EzCameraState
 
     public override void LateUpdateState()
     {
-        if (_controlledCamera.FollowEnabled)
+        if (_controlledCamera != null)
         {
-            UpdateCameraPosition();
-            UpdateCameraRotation();
+            if (_controlledCamera.FollowEnabled)
+            {
+                UpdateCameraPosition();
+                UpdateCameraRotation();
+            }
         }
     }
 

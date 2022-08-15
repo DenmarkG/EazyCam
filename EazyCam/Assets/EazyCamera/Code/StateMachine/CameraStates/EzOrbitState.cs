@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 
+[System.Serializable]
 public class EzOrbitState : EzCameraState
 {
     private float _rotY = 0; // Camera's current rotation around the X axis (up/down)
@@ -18,7 +19,9 @@ public class EzOrbitState : EzCameraState
 
     public override void EnterState()
     {
-        //
+        Vector3 rotation = _controlledCamera.CameraTransform.rotation.eulerAngles;
+        _rotY = rotation.y;
+        _rotX = rotation.x;
     }
 
     public override void ExitState()

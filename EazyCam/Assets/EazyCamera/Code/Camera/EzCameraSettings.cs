@@ -38,6 +38,7 @@ public class EzCameraSettings : ScriptableObject
     public float MinRotX = -90f;
 
     public float DesiredDistance { get; set; }
+    public float CullDistance { get; set; }
     public float ResetPositionDistance { get; set; }
     public float ZoomDistance { get; set; }
 
