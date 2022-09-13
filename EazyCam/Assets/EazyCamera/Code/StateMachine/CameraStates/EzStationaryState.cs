@@ -2,41 +2,44 @@
 using System.Collections;
 using System;
 
-[System.Serializable]
-public class EzStationaryState : EzCameraState
+namespace EazyCam.Legacy
 {
-    public EzStationaryState(EzCamera camera, EzCameraSettings settings)
-        : base(camera, settings) { }
-
-    public override void EnterState()
+    [System.Serializable]
+    public class EzStationaryState : EzCameraState
     {
-        //
-    }
+        public EzStationaryState(EzCamera camera, EzCameraSettings settings)
+            : base(camera, settings) { }
 
-    public override void ExitState()
-    {
-        //
-    }
+        public override void EnterState()
+        {
+            //
+        }
+
+        public override void ExitState()
+        {
+            //
+        }
 
 
 
-    public override void LateUpdateState()
-    {
-        _controlledCamera.SmoothLookAt();
-    }
+        public override void LateUpdateState()
+        {
+            _controlledCamera.SmoothLookAt();
+        }
 
-    public override void UpdateState()
-    {
-        //
-    }
+        public override void UpdateState()
+        {
+            //
+        }
 
-    public override void UpdateStateFixed()
-    {
-        //
-    }
+        public override void UpdateStateFixed()
+        {
+            //
+        }
 
-    public override void HandleInput()
-    {
-        //
+        public override void HandleInput()
+        {
+            //
+        }
     }
 }

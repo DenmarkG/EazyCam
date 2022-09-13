@@ -2,48 +2,51 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EzStateMachine 
+namespace EazyCam.Legacy
 {
-	public EzCameraState CurrentState { get; private set; }
-    public EzCameraState PreviousState { get; private set; }
-	
-	public void UpdateState()
+	public class EzStateMachine
 	{
-		if(CurrentState != null)
-		{
-			CurrentState.UpdateState(); 
-		}
-	}
+		public EzCameraState CurrentState { get; private set; }
+		public EzCameraState PreviousState { get; private set; }
 
-	public void UpdateStateFixed()
-	{
-		if(CurrentState != null)
+		public void UpdateState()
 		{
-			CurrentState.UpdateStateFixed(); 
+			if (CurrentState != null)
+			{
+				CurrentState.UpdateState();
+			}
 		}
-	}
 
-	public void LateUpdateState()
-	{
-		if (CurrentState != null)
+		public void UpdateStateFixed()
 		{
-			CurrentState.LateUpdateState();
+			if (CurrentState != null)
+			{
+				CurrentState.UpdateStateFixed();
+			}
 		}
-	}
-	
-	public void SetCurrentState(EzCameraState newState)
-	{
-		if(CurrentState != null)
+
+		public void LateUpdateState()
 		{
-            PreviousState = CurrentState;
-			CurrentState.ExitState();
+			if (CurrentState != null)
+			{
+				CurrentState.LateUpdateState();
+			}
 		}
-		
-		CurrentState = newState; 
-		
-		if(CurrentState != null)
+
+		public void SetCurrentState(EzCameraState newState)
 		{
-			CurrentState.EnterState();
+			if (CurrentState != null)
+			{
+				PreviousState = CurrentState;
+				CurrentState.ExitState();
+			}
+
+			CurrentState = newState;
+
+			if (CurrentState != null)
+			{
+				CurrentState.EnterState();
+			}
 		}
 	}
 }

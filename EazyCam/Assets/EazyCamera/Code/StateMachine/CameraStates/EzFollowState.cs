@@ -2,79 +2,82 @@
 using System.Collections;
 using System;
 
-[System.Serializable]
-public class EzFollowState : EzCameraState
+namespace EazyCam.Legacy
 {
-    private Vector3 _targetPosition = Vector3.zero;
-
-    public EzFollowState(EzCamera camera, EzCameraSettings settings)
-        : base(camera, settings) 
+    [System.Serializable]
+    public class EzFollowState : EzCameraState
     {
-        //
-    }
+        private Vector3 _targetPosition = Vector3.zero;
 
-    //
-    public override void EnterState()
-    {
-        //
-    }
-
-    public override void ExitState()
-    {
-        //
-    }
-
-    public override void LateUpdateState()
-    {
-        if (_controlledCamera != null)
+        public EzFollowState(EzCamera camera, EzCameraSettings settings)
+            : base(camera, settings)
         {
-            if (_controlledCamera.FollowEnabled)
+            //
+        }
+
+        //
+        public override void EnterState()
+        {
+            //
+        }
+
+        public override void ExitState()
+        {
+            //
+        }
+
+        public override void LateUpdateState()
+        {
+            if (_controlledCamera != null)
             {
-                UpdateCameraPosition();
-                UpdateCameraRotation();
+                if (_controlledCamera.FollowEnabled)
+                {
+                    UpdateCameraPosition();
+                    UpdateCameraRotation();
+                }
             }
         }
-    }
 
-    public override void UpdateState()
-    {
-        //
-    }
-
-    public override void UpdateStateFixed()
-    {
-        //
-    }
-    
-    public override void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
+        public override void UpdateState()
         {
-            ResetBehindPlayer();
+            //
         }
-    }
 
-    private void UpdateCameraPosition()
-    {
-        _stateSettings.OffsetDistance = Mathf.MoveTowards(_stateSettings.OffsetDistance, _stateSettings.DesiredDistance, Time.deltaTime * _stateSettings.ZoomSpeed);
-        _targetPosition = _cameraTarget.position + ((_cameraTarget.up * _stateSettings.OffsetHeight) + (_cameraTarget.right * _stateSettings.LateralOffset) + (_cameraTransform.forward * -_stateSettings.OffsetDistance));
-        _cameraTransform.position = Vector3.Lerp(_cameraTransform.position, _targetPosition, _stateSettings .RotateSpeed * Time.deltaTime);
-    }
+        public override void UpdateStateFixed()
+        {
+            //
+        }
 
-    private void UpdateCameraRotation()
-    {
-        Vector3 relativePos = (_cameraTarget.position + (Vector3.right * _stateSettings.LateralOffset) + (Vector3.up * _stateSettings.OffsetHeight)) - _cameraTransform.position;
-        Quaternion lookRotation = Quaternion.LookRotation(relativePos);
-        _cameraTransform.rotation = Quaternion.Lerp(_cameraTransform.rotation, lookRotation, _stateSettings.RotateSpeed * Time.deltaTime);
-    }
+        public override void HandleInput()
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                ResetBehindPlayer();
+            }
+        }
 
-    public void ResetBehindPlayer()
-    {
-        _targetPosition = _cameraTarget.position + ((_cameraTarget.up * _stateSettings.OffsetHeight) + (_cameraTarget.right * _stateSettings.LateralOffset) + (_cameraTarget.forward * -_stateSettings.OffsetDistance));
-        _cameraTransform.position = _targetPosition;
+        private void UpdateCameraPosition()
+        {
+            _stateSettings.OffsetDistance = Mathf.MoveTowards(_stateSettings.OffsetDistance, _stateSettings.DesiredDistance, Time.deltaTime * _stateSettings.ZoomSpeed);
+            _targetPosition = _cameraTarget.position + ((_cameraTarget.up * _stateSettings.OffsetHeight) + (_cameraTarget.right * _stateSettings.LateralOffset) + (_cameraTransform.forward * -_stateSettings.OffsetDistance));
+            _cameraTransform.position = Vector3.Lerp(_cameraTransform.position, _targetPosition, _stateSettings.RotateSpeed * Time.deltaTime);
+        }
 
-        Vector3 relativePos = (_cameraTarget.position + (Vector3.right * _stateSettings.LateralOffset) + (Vector3.up * _stateSettings.OffsetHeight)) - _cameraTransform.position;
-        Quaternion lookRotation = Quaternion.LookRotation(relativePos);
-        _cameraTransform.rotation = lookRotation;
+        private void UpdateCameraRotation()
+        {
+            Vector3 relativePos = (_cameraTarget.position + (Vector3.right * _stateSettings.LateralOffset) + (Vector3.up * _stateSettings.OffsetHeight)) - _cameraTransform.position;
+            Quaternion lookRotation = Quaternion.LookRotation(relativePos);
+            _cameraTransform.rotation = Quaternion.Lerp(_cameraTransform.rotation, lookRotation, _stateSettings.RotateSpeed * Time.deltaTime);
+        }
+
+        public void ResetBehindPlayer()
+        {
+            _targetPosition = _cameraTarget.position + ((_cameraTarget.up * _stateSettings.OffsetHeight) + (_cameraTarget.right * _stateSettings.LateralOffset) + (_cameraTarget.forward * -_stateSettings.OffsetDistance));
+            _cameraTransform.position = _targetPosition;
+
+            Vector3 relativePos = (_cameraTarget.position + (Vector3.right * _stateSettings.LateralOffset) + (Vector3.up * _stateSettings.OffsetHeight)) - _cameraTransform.position;
+            Quaternion lookRotation = Quaternion.LookRotation(relativePos);
+            _cameraTransform.rotation = lookRotation;
+        }
     }
 }
