@@ -8,14 +8,19 @@ namespace EazyCam.Legacy
     /// </summary>
     public class EzPlayerController : MonoBehaviour
     {
-        [SerializeField] private EzCamera _camera = null;
+        [SerializeField] private Camera _camera = null;
+        private Transform _cameraTransform = null;
         [SerializeField] private EzMotor _controlledPlayer = null;
+
+        private void Awake()
+        {
+            _cameraTransform = _camera.transform;
+        }
 
         private void Start()
         {
             // if either the player or camera are null, attempt to find them
             SetUpControlledPlayer();
-            SetUpCamera();
         }
 
         private void Update()
@@ -38,18 +43,6 @@ namespace EazyCam.Legacy
             }
         }
 
-        private void SetUpCamera()
-        {
-            if (_camera == null)
-            {
-                _camera = Camera.main.GetComponent<EzCamera>();
-                if (_camera == null)
-                {
-                    _camera = Camera.main.gameObject.AddComponent<EzCamera>();
-                }
-            }
-        }
-
         private void HandleInput()
         {
             // Update player movement first
@@ -58,7 +51,7 @@ namespace EazyCam.Legacy
             float vert = Input.GetAxis(ExtensionMethods.VERITCAL);
 
             // Convert movement to camera space
-            Vector3 moveVector = _camera.ConvertMoveInputToCameraSpace(horz, vert);
+            Vector3 moveVector = EazyCameraUtility.ConvertMoveInputToCameraSpace(_cameraTransform, horz, vert);
 
             // Move the Player
             _controlledPlayer.MovePlayer(moveVector.x, moveVector.z, Input.GetKey(KeyCode.LeftShift));

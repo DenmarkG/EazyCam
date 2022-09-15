@@ -15,7 +15,7 @@ MonoBehaviour:
   OffsetHeight: 1.68
   LateralOffset: 0
   MaxLateralOffset: 5
-  OffsetDistance: 4.6666665
+  OffsetDistance: 5
   MaxDistance: 15
   MinDistance: 1
   ZoomSpeed: 10

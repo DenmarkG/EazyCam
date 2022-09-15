@@ -367,13 +367,6 @@ namespace EazyCam.Legacy
             }
         }
 
-        public Vector3 ConvertMoveInputToCameraSpace(float horz, float vert)
-        {
-            float moveX = (horz * _transform.right.x) + (vert * _transform.forward.x);
-            float moveZ = (horz * _transform.right.z) + (vert * _transform.forward.z);
-            return new Vector3(moveX, 0f, moveZ);
-        }
-
         public IEnumerator Reset()
         {
             yield return null;
