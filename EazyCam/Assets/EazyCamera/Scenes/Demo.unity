@@ -1609,6 +1609,11 @@ PrefabInstance:
       propertyPath: _settings.Offset.z
       value: -5
       objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.SanpFactor
+      value: 0.232
+      objectReference: {fileID: 0}
     - target: {fileID: 4055929309831659383, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: m_Name
