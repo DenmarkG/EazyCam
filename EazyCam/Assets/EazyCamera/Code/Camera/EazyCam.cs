@@ -11,7 +11,8 @@ namespace EazyCam
         public struct Settings
         {
             public Vector3 Offset;
-            [Range(0f, 1f)] public float SanpFactor;
+            public float MoveSpeed;
+            [Range(0f, 1f)] public float LagFactor;
         }
 
         [SerializeField] private Settings _settings = new Settings() { Offset = new Vector3(0f, 3f, -5f) };
@@ -35,19 +36,11 @@ namespace EazyCam
             float travelDistance = travelDirection.sqrMagnitude;
 
             float dt = Time.deltaTime;
-            float step = dt;
-
-            float t = 1 - _settings.SanpFactor;
-
-            if (_settings.SanpFactor > 0f)
-            {
-                step = 1 / (dt * _settings.SanpFactor);
-            }
+            float step = dt * (1 - _settings.LagFactor) * _settings.MoveSpeed;
 
             if (travelDistance > SnapDistanceSq)
             {
-                // #DG: at t = 0 cam should not move. At t = 1, camera should snap directly into place
-                followPos = Vector3.Lerp(_transform.position, followPos, dt * _settings.SanpFactor);
+                followPos = Vector3.Lerp(_transform.position, followPos, step);
             }
 
             _transform.position = followPos;
