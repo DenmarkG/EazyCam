@@ -59,7 +59,7 @@ namespace EazyCam.Legacy
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.GetComponent<EzMotor>() != null)
+            if (other.GetComponent<EzMotor>() != null && _playerCamera != null)
             {
                 SetIconVisible(false);
 

@@ -18,6 +18,8 @@ namespace EazyCam
             public float MoveSpeed;
             [Range(0f, 1f)] public float LagFactor;
 
+            public float MaxLagDistance;
+
             // Rotation
             public float RotationSpeed;
             public FloatRange HorizontalRoation;
@@ -29,20 +31,21 @@ namespace EazyCam
             Offset = new Vector3(0f, 3f, -5f),
             MoveSpeed = 15f,
             LagFactor = .75f,
+            MaxLagDistance = 1f,
             RotationSpeed = 30f,
             HorizontalRoation = new FloatRange(-360f, 360f),
             VerticalRotation = new FloatRange(-89f, 89f)
         };
 
         [SerializeField] private Transform _target = null;
+        private Vector3 _focalPoint = new Vector3();
 
         private Vector3 _rotation = new Vector3();
 
         public Transform CameraTransform => _transform;
         private Transform _transform = null;
 
-        private const float DeadZone = .01f;
-        private const float SnapDistanceSq = DeadZone * DeadZone;
+        private const float DeadZone = .001f;
 
         private void Awake()
         {
@@ -63,19 +66,16 @@ namespace EazyCam
 
         private void UpdatePosition()
         {
-            Vector3 followPos = GetFollowPosition();
-            Vector3 travelDirection = followPos - _transform.position;
+            Vector3 travelDirection = _focalPoint - _target.position;
             float travelDistance = travelDirection.sqrMagnitude;
 
             float dt = Time.deltaTime;
             float step = dt * (1 - _settings.LagFactor) * _settings.MoveSpeed;
 
-            if (travelDistance > SnapDistanceSq)
+            if (travelDistance > _settings.MaxLagDistance.Squared())
             {
-                followPos = Vector3.Lerp(_transform.position, followPos, step);
+                _focalPoint = Vector3.Lerp(_target.position, _focalPoint, step);
             }
-
-            _transform.position = followPos;
         }
 
         private void UpdateRotation()
@@ -87,14 +87,16 @@ namespace EazyCam
             // cache the step and update the roation from input
             float step = Time.deltaTime * _settings.RotationSpeed;
             _rotation.y += horz * step;
+            _rotation.y = Mathf.Clamp(_rotation.y, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
+
             _rotation.x += vert * step;
             _rotation.x = Mathf.Clamp(_rotation.x, _settings.HorizontalRoation.Min, _settings.HorizontalRoation.Max);
 
             // compose the quaternions from Euler vectors to get the new rotation
-            Quaternion addRot = Quaternion.Euler(0f, _rotation.y, 0f);
-            Quaternion destRot = addRot * Quaternion.Euler(_rotation.x, 0f, 0f); // Not commutative
+            //Quaternion addRot = Quaternion.Euler(0f, _rotation.y, 0f);
+            //Quaternion destRot = addRot * Quaternion.Euler(_rotation.x, 0f, 0f); // Not commutative
 
-            _transform.rotation = destRot;
+            //_transform.rotation = Quaternion.Euler(_rotation);
         }
 
         private Vector3 GetFollowPosition()
