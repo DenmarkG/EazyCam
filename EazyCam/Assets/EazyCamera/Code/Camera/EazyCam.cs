@@ -17,8 +17,7 @@ namespace EazyCam
             // Movement
             public float MoveSpeed;
             [Range(0f, 1f)] public float LagFactor;
-
-            public float MaxLagDistance;
+            [Range(0f, 1000f)] public float MaxLagDistance;
 
             // Rotation
             public float RotationSpeed;
@@ -29,7 +28,7 @@ namespace EazyCam
         [SerializeField] private Settings _settings = new Settings()
         {
             Offset = new Vector3(0f, 3f, -5f),
-            MoveSpeed = 15f,
+            MoveSpeed = 5f,
             LagFactor = .75f,
             MaxLagDistance = 1f,
             RotationSpeed = 30f,
@@ -60,29 +59,43 @@ namespace EazyCam
 
         private void LateUpdate()
         {
-            UpdateRotation();
+            //UpdateRotation();
             UpdatePosition();
+
+            DebugDrawFocualCross(_focalPoint);
         }
 
         private void UpdatePosition()
         {
-            Vector3 travelDirection = _focalPoint - _target.position;
+            Vector3 travelDirection = _target.position - _focalPoint;
             float travelDistance = travelDirection.sqrMagnitude;
+            float maxDistance = _settings.MaxLagDistance.Squared();
 
             float dt = Time.deltaTime;
-            float step = dt * (1 - _settings.LagFactor) * _settings.MoveSpeed;
 
-            if (travelDistance > _settings.MaxLagDistance.Squared())
+            float step = 0f;
+            if (travelDistance > maxDistance)
             {
-                _focalPoint = Vector3.Lerp(_target.position, _focalPoint, step);
+                travelDistance = Mathf.Min(travelDistance, maxDistance);
+                travelDistance -= dt;
+
+                travelDistance = (maxDistance - travelDistance) / maxDistance;
             }
+
+            if (travelDistance > DeadZone)
+            {
+                step = (1 - travelDistance) * dt * _settings.MoveSpeed;
+                Debug.Log($"step = {step}; distance = {travelDistance}");
+            }
+
+            _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position, step);
+            _transform.position = _focalPoint + _settings.Offset;
         }
 
         private void UpdateRotation()
         {
             float horz = Input.GetAxis(Util.MouseX);
             float vert = Input.GetAxis(Util.MouseY);
-
 
             // cache the step and update the roation from input
             float step = Time.deltaTime * _settings.RotationSpeed;
@@ -102,6 +115,13 @@ namespace EazyCam
         private Vector3 GetFollowPosition()
         {
             return _target.position + (_settings.Offset.x * _transform.right) + (_settings.Offset.y * Vector3.up) + (_transform.rotation * (_settings.Offset.z * _transform.forward));
+        }
+
+        private void DebugDrawFocualCross(Vector3 position)
+        {
+            Debug.DrawLine(position - (Vector3.up / 2f), position + (Vector3.up / 2f), Color.green);
+            Debug.DrawLine(position - (Vector3.right / 2f), position + (Vector3.right / 2f), Color.red);
+            Debug.DrawLine(position - (Vector3.forward / 2f), position + (Vector3.forward / 2f), Color.blue);
         }
     }
 }

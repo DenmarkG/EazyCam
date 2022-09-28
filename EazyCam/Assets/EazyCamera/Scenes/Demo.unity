@@ -1582,6 +1582,11 @@ PrefabInstance:
       objectReference: {fileID: 1772410004}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
+      propertyPath: _settings.MoveSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
       propertyPath: _settings.VerticalRotation.Max
       value: 89
       objectReference: {fileID: 0}
