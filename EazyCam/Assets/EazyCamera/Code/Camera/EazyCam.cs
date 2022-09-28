@@ -16,7 +16,7 @@ namespace EazyCam
 
             // Movement
             public float MoveSpeed;
-            [Range(0f, 1f)] public float LagFactor;
+            [Range(.1f, 1f)] public float SnapFactor;
             [Range(0f, 1000f)] public float MaxLagDistance;
 
             // Rotation
@@ -29,7 +29,7 @@ namespace EazyCam
         {
             Offset = new Vector3(0f, 3f, -5f),
             MoveSpeed = 5f,
-            LagFactor = .75f,
+            SnapFactor = .75f,
             MaxLagDistance = 1f,
             RotationSpeed = 30f,
             HorizontalRoation = new FloatRange(-360f, 360f),
@@ -71,22 +71,13 @@ namespace EazyCam
             float travelDistance = travelDirection.sqrMagnitude;
             float maxDistance = _settings.MaxLagDistance.Squared();
 
-            float dt = Time.deltaTime;
-
-            float step = 0f;
             if (travelDistance > maxDistance)
             {
-                travelDistance = Mathf.Min(travelDistance, maxDistance);
-                travelDistance -= dt;
-
-                travelDistance = (maxDistance - travelDistance) / maxDistance;
+                _focalPoint = _target.position - (travelDirection.normalized * _settings.MaxLagDistance);
             }
 
-            if (travelDistance > DeadZone)
-            {
-                step = (1 - travelDistance) * dt * _settings.MoveSpeed;
-                Debug.Log($"step = {step}; distance = {travelDistance}");
-            }
+            float dt = Time.deltaTime;
+            float step = _settings.SnapFactor * dt * _settings.MoveSpeed;
 
             _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position, step);
             _transform.position = _focalPoint + _settings.Offset;

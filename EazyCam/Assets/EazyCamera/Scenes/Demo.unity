@@ -1587,6 +1587,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
+      propertyPath: _settings.SnapFactor
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.MaxLagDistance
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
       propertyPath: _settings.VerticalRotation.Max
       value: 89
       objectReference: {fileID: 0}
