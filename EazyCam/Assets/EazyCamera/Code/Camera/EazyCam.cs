@@ -17,12 +17,13 @@ namespace EazyCam
             // Movement
             public float MoveSpeed;
             [Range(.1f, 1f)] public float SnapFactor;
-            [Range(0f, 1000f)] public float MaxLagDistance;
+            [Range(0f, 10f)] public float MaxLagDistance;
 
             // Rotation
             public float RotationSpeed;
             public FloatRange HorizontalRoation;
             public FloatRange VerticalRotation;
+            public AnimationCurve EaseCurve;
         }
 
         [SerializeField] private Settings _settings = new Settings()
@@ -33,7 +34,8 @@ namespace EazyCam
             MaxLagDistance = 1f,
             RotationSpeed = 30f,
             HorizontalRoation = new FloatRange(-360f, 360f),
-            VerticalRotation = new FloatRange(-89f, 89f)
+            VerticalRotation = new FloatRange(-89f, 89f),
+            EaseCurve = AnimationCurve.Linear(0f, 1f, 1f, 1f),
         };
 
         [SerializeField] private Transform _target = null;
@@ -67,19 +69,37 @@ namespace EazyCam
 
         private void UpdatePosition()
         {
-            Vector3 travelDirection = _target.position - _focalPoint;
-            float travelDistance = travelDirection.sqrMagnitude;
-            float maxDistance = _settings.MaxLagDistance.Squared();
-
-            if (travelDistance > maxDistance)
+            if (_settings.MaxLagDistance > 0f && _settings.SnapFactor < 1f)
             {
-                _focalPoint = _target.position - (travelDirection.normalized * _settings.MaxLagDistance);
+                Vector3 travelDirection = _target.position - _focalPoint;
+                float travelDistance = travelDirection.sqrMagnitude;
+                float maxDistance = _settings.MaxLagDistance.Squared();
+
+                if (travelDistance > maxDistance)
+                {
+                    _focalPoint = _target.position - (travelDirection.normalized * _settings.MaxLagDistance);
+                }
+                else if (travelDistance < DeadZone.Squared())
+                {
+                    _focalPoint = _target.position;
+                }
+
+                float dt = Time.deltaTime;
+
+                float pointOnCurve = 1 - Mathf.Clamp01(travelDistance / maxDistance);
+                float speed = _settings.MoveSpeed * _settings.EaseCurve.Evaluate(pointOnCurve);
+
+                Debug.Log($"t = {pointOnCurve}; eval = {_settings.EaseCurve.Evaluate(pointOnCurve)}; speed = {speed}");
+
+                float step = _settings.SnapFactor * dt * speed;
+
+                _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position, step);
+            }
+            else
+            {
+                _focalPoint = _target.position;
             }
 
-            float dt = Time.deltaTime;
-            float step = _settings.SnapFactor * dt * _settings.MoveSpeed;
-
-            _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position, step);
             _transform.position = _focalPoint + _settings.Offset;
         }
 
