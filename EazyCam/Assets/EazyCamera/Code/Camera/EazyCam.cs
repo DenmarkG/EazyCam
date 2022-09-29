@@ -41,7 +41,7 @@ namespace EazyCam
         [SerializeField] private Transform _target = null;
         private Vector3 _focalPoint = new Vector3();
 
-        private Vector3 _rotation = new Vector3();
+        private Vector2 _rotation = new Vector2();
 
         public Transform CameraTransform => _transform;
         private Transform _transform = null;
@@ -66,9 +66,11 @@ namespace EazyCam
             UpdatePosition();
             UpdateRotation();
 
-            Quaternion lookRotation = Quaternion.LookRotation(_rotation);
+            Quaternion addRot = Quaternion.Euler(0f, _rotation.y, 0f);
+            Quaternion destRot = addRot * Quaternion.Euler(_rotation.x, 0f, 0f); // Not commutative
 
-            _transform.SetPositionAndRotation(_focalPoint + (lookRotation * _settings.Offset), lookRotation);
+
+            _transform.SetPositionAndRotation(_focalPoint + (destRot * Vector3.forward) * _settings.Offset.z, destRot);
 
             DebugDrawFocualCross(_focalPoint);
         }
@@ -103,8 +105,6 @@ namespace EazyCam
             {
                 _focalPoint = _target.position;
             }
-
-            //_transform.position = _focalPoint + _settings.Offset;
         }
 
         private void UpdateRotation()
@@ -114,19 +114,11 @@ namespace EazyCam
 
             // cache the step and update the roation from input
             float step = Time.deltaTime * _settings.RotationSpeed;
-            _rotation.z += horz * step;
-            _rotation.z = Mathf.Clamp(_rotation.z, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
+            _rotation.y += horz * step;
+            _rotation.y = Mathf.Clamp(_rotation.y, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
 
             _rotation.x += vert * step;
             _rotation.x = Mathf.Clamp(_rotation.x, _settings.HorizontalRoation.Min, _settings.HorizontalRoation.Max);
-
-            Debug.Log($"rotation = {_rotation}");
-
-            // compose the quaternions from Euler vectors to get the new rotation
-            //Quaternion addRot = Quaternion.Euler(0f, _rotation.y, 0f);
-            //Quaternion destRot = addRot * Quaternion.Euler(_rotation.x, 0f, 0f); // Not commutative
-
-            //_transform.rotation = Quaternion.Euler(_rotation);
         }
 
         private Vector3 GetFollowPosition()
