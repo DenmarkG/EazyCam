@@ -57,12 +57,18 @@ namespace EazyCam
         {
             _transform.position = GetFollowPosition();
             _rotation = transform.rotation.eulerAngles;
+
+            Cursor.lockState = CursorLockMode.Confined;
         }
 
         private void LateUpdate()
         {
-            //UpdateRotation();
             UpdatePosition();
+            UpdateRotation();
+
+            Quaternion lookRotation = Quaternion.LookRotation(_rotation);
+
+            _transform.SetPositionAndRotation(_focalPoint + (lookRotation * _settings.Offset), lookRotation);
 
             DebugDrawFocualCross(_focalPoint);
         }
@@ -89,8 +95,6 @@ namespace EazyCam
                 float pointOnCurve = 1 - Mathf.Clamp01(travelDistance / maxDistance);
                 float speed = _settings.MoveSpeed * _settings.EaseCurve.Evaluate(pointOnCurve);
 
-                Debug.Log($"t = {pointOnCurve}; eval = {_settings.EaseCurve.Evaluate(pointOnCurve)}; speed = {speed}");
-
                 float step = _settings.SnapFactor * dt * speed;
 
                 _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position, step);
@@ -100,7 +104,7 @@ namespace EazyCam
                 _focalPoint = _target.position;
             }
 
-            _transform.position = _focalPoint + _settings.Offset;
+            //_transform.position = _focalPoint + _settings.Offset;
         }
 
         private void UpdateRotation()
@@ -110,11 +114,13 @@ namespace EazyCam
 
             // cache the step and update the roation from input
             float step = Time.deltaTime * _settings.RotationSpeed;
-            _rotation.y += horz * step;
-            _rotation.y = Mathf.Clamp(_rotation.y, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
+            _rotation.z += horz * step;
+            _rotation.z = Mathf.Clamp(_rotation.z, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
 
             _rotation.x += vert * step;
             _rotation.x = Mathf.Clamp(_rotation.x, _settings.HorizontalRoation.Min, _settings.HorizontalRoation.Max);
+
+            Debug.Log($"rotation = {_rotation}");
 
             // compose the quaternions from Euler vectors to get the new rotation
             //Quaternion addRot = Quaternion.Euler(0f, _rotation.y, 0f);
