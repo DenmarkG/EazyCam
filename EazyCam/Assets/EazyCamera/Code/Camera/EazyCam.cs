@@ -63,9 +63,13 @@ namespace EazyCam
 
             //_transform.SetPositionAndRotation(initialPosition, lookDirection);
 
+            _focalPoint = _target.position;
+
+            Debug.Log($"OffsetMagnitude = {_settings.Offset.magnitude}");
+
             if (Application.isPlaying)
             {
-                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.lockState = CursorLockMode.Locked;
             }
         }
 
@@ -76,11 +80,14 @@ namespace EazyCam
 
             Quaternion rotation = CalculateRotationFromVector(_rotation);
             Vector3 position = rotation * (_focalPoint + _settings.Offset);
+            //Vector3 position = _focalPoint + (((Vector3.up * _settings.Offset.y)) + ((rotation * Vector3.forward) * _settings.Offset.z) + (_transform.right * _settings.Offset.x));
+
             _transform.SetPositionAndRotation(position, Quaternion.LookRotation(_target.position - position));
 
             DebugDrawFocualCross(_focalPoint);
 
             Debug.DrawLine(_focalPoint, position, Color.black);
+            Debug.Log($"Distance = {(_target.position - _transform.position).magnitude}");
         }
 
         private void UpdatePosition()
@@ -131,8 +138,8 @@ namespace EazyCam
 
         private Quaternion CalculateRotationFromVector(Vector3 rotation)
         {
-            Quaternion addRot = Quaternion.Euler(0f, _rotation.y, 0f);
-            return addRot * Quaternion.Euler(_rotation.x, 0f, 0f); // Not commutative
+            Quaternion addRot = Quaternion.Euler(0f, rotation.y, 0f);
+            return addRot * Quaternion.Euler(rotation.x, 0f, 0f); // Not commutative
         }
 
         private void DebugDrawFocualCross(Vector3 position)
