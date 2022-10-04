@@ -12,7 +12,7 @@ namespace EazyCam
         [System.Serializable]
         public struct Settings
         {
-            public Vector3 Offset;
+            public float Distance;
 
             // Movement
             public float MoveSpeed;
@@ -28,7 +28,7 @@ namespace EazyCam
 
         [SerializeField] private Settings _settings = new Settings()
         {
-            Offset = new Vector3(0f, 3f, -5f),
+            Distance = -5f,
             MoveSpeed = 5f,
             SnapFactor = .75f,
             MaxLagDistance = 1f,
@@ -65,8 +65,6 @@ namespace EazyCam
 
             _focalPoint = _target.position;
 
-            Debug.Log($"OffsetMagnitude = {_settings.Offset.magnitude}");
-
             if (Application.isPlaying)
             {
                 Cursor.lockState = CursorLockMode.Locked;
@@ -79,8 +77,7 @@ namespace EazyCam
             UpdateRotation();
 
             Quaternion rotation = CalculateRotationFromVector(_rotation);
-            Vector3 position = rotation * (_focalPoint + _settings.Offset);
-            //Vector3 position = _focalPoint + (((Vector3.up * _settings.Offset.y)) + ((rotation * Vector3.forward) * _settings.Offset.z) + (_transform.right * _settings.Offset.x));
+            Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
 
             _transform.SetPositionAndRotation(position, Quaternion.LookRotation(_target.position - position));
 
