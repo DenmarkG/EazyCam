@@ -55,10 +55,18 @@ namespace EazyCam
 
         private void Start()
         {
-            _transform.position = GetFollowPosition();
-            _rotation = transform.rotation.eulerAngles;
+            // #DG: set the rotation from the look direction of the offest
 
-            Cursor.lockState = CursorLockMode.Confined;
+            //Vector3 initialPosition = _target.position + _settings.Offset;
+            //Quaternion lookDirection = Quaternion.LookRotation(_target.position - initialPosition);
+            //_rotation = lookDirection.eulerAngles;
+
+            //_transform.SetPositionAndRotation(initialPosition, lookDirection);
+
+            if (Application.isPlaying)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+            }
         }
 
         private void LateUpdate()
@@ -66,13 +74,13 @@ namespace EazyCam
             UpdatePosition();
             UpdateRotation();
 
-            Quaternion addRot = Quaternion.Euler(0f, _rotation.y, 0f);
-            Quaternion destRot = addRot * Quaternion.Euler(_rotation.x, 0f, 0f); // Not commutative
-
-
-            _transform.SetPositionAndRotation(_focalPoint + (destRot * Vector3.forward) * _settings.Offset.z, destRot);
+            Quaternion rotation = CalculateRotationFromVector(_rotation);
+            Vector3 position = rotation * (_focalPoint + _settings.Offset);
+            _transform.SetPositionAndRotation(position, Quaternion.LookRotation(_target.position - position));
 
             DebugDrawFocualCross(_focalPoint);
+
+            Debug.DrawLine(_focalPoint, position, Color.black);
         }
 
         private void UpdatePosition()
@@ -115,15 +123,16 @@ namespace EazyCam
             // cache the step and update the roation from input
             float step = Time.deltaTime * _settings.RotationSpeed;
             _rotation.y += horz * step;
-            _rotation.y = Mathf.Clamp(_rotation.y, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
+            _rotation.y = Mathf.Clamp(_rotation.y, _settings.HorizontalRoation.Min, _settings.HorizontalRoation.Max);
 
             _rotation.x += vert * step;
-            _rotation.x = Mathf.Clamp(_rotation.x, _settings.HorizontalRoation.Min, _settings.HorizontalRoation.Max);
+            _rotation.x = Mathf.Clamp(_rotation.x, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
         }
 
-        private Vector3 GetFollowPosition()
+        private Quaternion CalculateRotationFromVector(Vector3 rotation)
         {
-            return _target.position + (_settings.Offset.x * _transform.right) + (_settings.Offset.y * Vector3.up) + (_transform.rotation * (_settings.Offset.z * _transform.forward));
+            Quaternion addRot = Quaternion.Euler(0f, _rotation.y, 0f);
+            return addRot * Quaternion.Euler(_rotation.x, 0f, 0f); // Not commutative
         }
 
         private void DebugDrawFocualCross(Vector3 position)
