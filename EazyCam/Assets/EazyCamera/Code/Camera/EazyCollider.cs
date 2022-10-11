@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-namespace EazyCam.Legacy
+namespace EazyCam
 {
-    public class EzCameraCollider : MonoBehaviour
+    public class EazyCollider
     {
-        private EzCamera _controlledCamera = null;
+        private EazyCam _controlledCamera = null;
         private Camera _cameraComponent = null;
         private Transform _cameraTransform = null;
         public bool IsOccluded { get; private set; }
@@ -21,12 +20,14 @@ namespace EazyCam.Legacy
         [SerializeField] private string _playerLayer = "Player";
         private int _layermask = 0;
 
+        private bool _enabled = true;
 
-        private void Start()
+        public EazyCollider(EazyCam camera)
         {
-            _controlledCamera = this.GetComponent<EzCamera>();
-            _cameraComponent = this.GetComponent<Camera>();
-            _cameraTransform = this.transform;
+            Debug.Assert(camera != null, "Attempting to create collsions on a non-camera object");
+            _controlledCamera = camera;
+            _cameraComponent = camera.AttachedCamera;
+            _cameraTransform = camera.CameraTransform;
 
             _nearPlaneDistance = _cameraComponent.nearClipPlane;
 
@@ -36,9 +37,9 @@ namespace EazyCam.Legacy
             UpdateNearClipPlanePoints();
         }
 
-        private void LateUpdate()
+        public void Tick()
         {
-            if (_controlledCamera.CollisionsEnabled)
+            if (_enabled)
             {
                 HandleCollisions();
             }
@@ -88,7 +89,7 @@ namespace EazyCam.Legacy
             Debug.DrawLine(_nearClipPlanePoints[1], _nearClipPlanePoints[2], Color.red);
             Debug.DrawLine(_nearClipPlanePoints[2], _nearClipPlanePoints[3], Color.red);
             Debug.DrawLine(_nearClipPlanePoints[3], _nearClipPlanePoints[0], Color.red);
-            Debug.DrawLine(_pointBehindCamera, _controlledCamera.Target.position, Color.red);
+            Debug.DrawLine(_pointBehindCamera, _controlledCamera.FocalPoint, Color.red);
         }
 
         private void DrawOriginalPlane()
@@ -97,7 +98,7 @@ namespace EazyCam.Legacy
             Debug.DrawLine(_originalClipPlanePoints[1], _originalClipPlanePoints[2], Color.cyan);
             Debug.DrawLine(_originalClipPlanePoints[2], _originalClipPlanePoints[3], Color.cyan);
             Debug.DrawLine(_originalClipPlanePoints[3], _originalClipPlanePoints[0], Color.cyan);
-            Debug.DrawLine(_pointBehindCamera, _controlledCamera.Target.position, Color.cyan);
+            Debug.DrawLine(_pointBehindCamera, _controlledCamera.FocalPoint, Color.cyan);
         }
 #endif
         #endregion
@@ -113,9 +114,9 @@ namespace EazyCam.Legacy
             for (int i = 0; i < _nearClipPlanePoints.Length; ++i)
             {
 
-                if (Physics.Linecast(_controlledCamera.Target.position, _nearClipPlanePoints[i], out hit, _layermask))
+                if (Physics.Linecast(_controlledCamera.FocalPoint, _nearClipPlanePoints[i], out hit, _layermask))
                 {
-                    if (hit.collider.gameObject.transform.root != _controlledCamera.Target.root)
+                    if (hit.collider.gameObject.transform.root != _controlledCamera.TargetRoot)
                     {
                         if (hit.distance > hitDistance)
                         {
@@ -123,12 +124,11 @@ namespace EazyCam.Legacy
 
                             if (!IsOccluded) // Only store the original position on the original hit
                             {
-                                _controlledCamera.Settings.ResetPositionDistance = _controlledCamera.Settings.OffsetDistance;
-                                //_controlledCamera.Settings.ResetPositionDistance = _controlledCamera.Settings.DesiredDistance;
+                                _controlledCamera.ResetDistance();
                             }
 
                             IsOccluded = true;
-                            _controlledCamera.Settings.DesiredDistance = hitDistance - _nearPlaneDistance;
+                            _controlledCamera.SetDistance(_nearPlaneDistance - hitDistance);
 
 #if UNITY_EDITOR
                             lineColor = Color.red;
@@ -136,40 +136,32 @@ namespace EazyCam.Legacy
 #else
                         return;
 #endif
-
-
                         }
                     }
                 }
 
 #if UNITY_EDITOR
-                Debug.DrawLine(_nearClipPlanePoints[i], _controlledCamera.Target.position, lineColor);
+                Debug.DrawLine(_nearClipPlanePoints[i], _controlledCamera.FocalPoint, lineColor);
 #endif
             }
 
             if (!IsOccluded)
             {
-                if (Physics.Linecast(_controlledCamera.Target.position, _pointBehindCamera, out hit, _layermask))
+                if (Physics.Linecast(_controlledCamera.FocalPoint, _pointBehindCamera, out hit, _layermask))
                 {
 #if UNITY_EDITOR
                     lineColor = Color.red;
                     Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
 #endif
                     IsOccluded = true;
-                    _controlledCamera.Settings.ResetPositionDistance = _controlledCamera.Settings.OffsetDistance;
-                    _controlledCamera.Settings.DesiredDistance = hit.distance - _nearPlaneDistance;
+                    _controlledCamera.SetDistance(_nearPlaneDistance - hit.distance);
                 }
             }
-
-            //if (!IsOccluded)
-            //{
-            //    _controlledCamera.Settings.DesiredDistance = _controlledCamera.Settings.ResetPositionDistance;
-            //}
         }
 
         private void UpdateOriginalClipPlanePoints()
         {
-            Vector3 originalCameraPosition = (_controlledCamera.Target.position + (Vector3.up * _controlledCamera.Settings.OffsetHeight)) + (_cameraTransform.rotation * (Vector3.forward * -_controlledCamera.Settings.ResetPositionDistance)) + (_cameraTransform.right * _controlledCamera.Settings.LateralOffset);
+            Vector3 originalCameraPosition = _controlledCamera.GetDefaultPosition();
             Vector3 originalPlaneCenter = originalCameraPosition + _cameraTransform.forward * _nearPlaneDistance;
 
             float halfFOV = Mathf.Deg2Rad * (_cameraComponent.fieldOfView / 2);
@@ -181,7 +173,6 @@ namespace EazyCam.Legacy
             _originalClipPlanePoints[2] = originalPlaneCenter + _cameraTransform.rotation * new Vector3(_aspectHalfWidth, -_aspectHalfHeight);
             _originalClipPlanePoints[3] = originalPlaneCenter + _cameraTransform.rotation * new Vector3(-_aspectHalfWidth, -_aspectHalfHeight);
 
-            //Vector3 rearPlaneCenter = _transform.position - _transform.forward * _nearPlaneDistance;
             _pointBehindCamera = _cameraTransform.position - _cameraTransform.forward * _nearPlaneDistance;
         }
 
@@ -197,7 +188,7 @@ namespace EazyCam.Legacy
             for (int i = 0; i < _originalClipPlanePoints.Length; ++i)
             {
                 Color lineColor = Color.blue;
-                if (Physics.Linecast(_controlledCamera.Target.position, _originalClipPlanePoints[i], out hit, _layermask))
+                if (Physics.Linecast(_controlledCamera.FocalPoint, _originalClipPlanePoints[i], out hit, _layermask))
                 {
                     lineColor = Color.red;
                     objectWasHit = true;
@@ -208,21 +199,26 @@ namespace EazyCam.Legacy
                     }
                 }
 
-                Debug.DrawLine(_controlledCamera.Target.position, _originalClipPlanePoints[i], lineColor);
+                Debug.DrawLine(_controlledCamera.FocalPoint, _originalClipPlanePoints[i], lineColor);
             }
 
             if (!objectWasHit)
             {
-                _controlledCamera.Settings.DesiredDistance = _controlledCamera.Settings.ResetPositionDistance;
+                _controlledCamera.ResetDistance();
                 IsOccluded = false;
             }
             else
             {
-                if (closestHitDistance > _controlledCamera.Settings.DesiredDistance)
+                if (closestHitDistance > _controlledCamera.GetDistance())
                 {
-                    _controlledCamera.Settings.DesiredDistance = closestHitDistance;
+                    _controlledCamera.SetDistance(-closestHitDistance);
                 }
             }
+        }
+
+        public void SetEnabled(bool isEnabled)
+        {
+            _enabled = isEnabled;
         }
     }
 }

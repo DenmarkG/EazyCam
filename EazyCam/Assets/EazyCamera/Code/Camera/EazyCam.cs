@@ -5,7 +5,8 @@ using UnityEngine;
 namespace EazyCam
 {
     using Util = EazyCameraUtility;
-
+    
+    [RequireComponent(typeof(Camera))]
     [ExecuteInEditMode]
     public class EazyCam : MonoBehaviour
     {
@@ -13,6 +14,7 @@ namespace EazyCam
         public struct Settings
         {
             public float Distance;
+            public float DefaultDistance;
 
             // Movement
             public float MoveSpeed;
@@ -23,32 +25,60 @@ namespace EazyCam
             public float RotationSpeed;
             public FloatRange VerticalRotation;
             public AnimationCurve EaseCurve;
+
+            // Optional Components
+            public bool EnableCollision;
+
+            public bool EnableZoom;
+            public FloatRange ZoomDistance;
         }
 
+        public Settings CameraSettings => _settings;
         [SerializeField] private Settings _settings = new Settings()
         {
             Distance = -5f,
+            DefaultDistance = -5f,
             MoveSpeed = 5f,
             SnapFactor = .75f,
             MaxLagDistance = 1f,
             RotationSpeed = 30f,
             VerticalRotation = new FloatRange(-89f, 89f),
             EaseCurve = AnimationCurve.Linear(0f, 1f, 1f, 1f),
+            EnableCollision = true,
         };
 
         [SerializeField] private Transform _target = null;
+        public Transform TargetRoot { get; private set; }
+
+        public Vector3 FocalPoint => _focalPoint;
         private Vector3 _focalPoint = new Vector3();
+
+        public Camera AttachedCamera { get; private set; }
+        
+        public Transform CameraTransform => _transform;
+        private Transform _transform = null;
 
         private Vector2 _rotation = new Vector2();
 
-        public Transform CameraTransform => _transform;
-        private Transform _transform = null;
+        private EazyCollider _collider = null;
 
         private const float DeadZone = .001f;
 
         private void Awake()
         {
             _transform = this.transform;
+            
+            Debug.Assert(_target != null, "Target should not be null on an EazyCam component");
+            TargetRoot = _target.root;
+
+            AttachedCamera = this.GetComponent<Camera>();
+
+
+
+            if (_settings.EnableCollision)
+            {
+                _collider = new EazyCollider(this);
+            }
         }
 
         private void Start()
@@ -78,6 +108,11 @@ namespace EazyCam
             _transform.SetPositionAndRotation(position, Quaternion.LookRotation(_target.position - position));
 
             DebugDrawFocualCross(_focalPoint);
+
+            if (_collider != null)
+            {
+                _collider.Tick();
+            }
 
             Debug.DrawLine(_focalPoint, position, Color.black);
         }
@@ -136,6 +171,11 @@ namespace EazyCam
             _rotation.x = Mathf.Clamp(_rotation.x, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
         }
 
+        public Vector3 GetDefaultPosition()
+        {
+            return _focalPoint + ((CalculateRotationFromVector(_rotation) * Vector3.forward) * _settings.DefaultDistance);
+        }
+
         private Quaternion CalculateRotationFromVector(Vector3 rotation)
         {
             Quaternion addRot = Quaternion.Euler(0f, rotation.y, 0f);
@@ -147,6 +187,21 @@ namespace EazyCam
             Debug.DrawLine(position - (Vector3.up / 2f), position + (Vector3.up / 2f), Color.green);
             Debug.DrawLine(position - (Vector3.right / 2f), position + (Vector3.right / 2f), Color.red);
             Debug.DrawLine(position - (Vector3.forward / 2f), position + (Vector3.forward / 2f), Color.blue);
+        }
+
+        public void SetDistance(float distance)
+        {
+            _settings.Distance = distance;
+        }
+
+        public float GetDistance()
+        {
+            return _settings.Distance;
+        }
+
+        public void ResetDistance()
+        {
+            _settings.Distance = _settings.DefaultDistance;
         }
     }
 }
