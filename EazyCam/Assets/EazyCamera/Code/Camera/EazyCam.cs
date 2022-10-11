@@ -21,7 +21,6 @@ namespace EazyCam
 
             // Rotation
             public float RotationSpeed;
-            public FloatRange HorizontalRoation;
             public FloatRange VerticalRotation;
             public AnimationCurve EaseCurve;
         }
@@ -33,7 +32,6 @@ namespace EazyCam
             SnapFactor = .75f,
             MaxLagDistance = 1f,
             RotationSpeed = 30f,
-            HorizontalRoation = new FloatRange(-360f, 360f),
             VerticalRotation = new FloatRange(-89f, 89f),
             EaseCurve = AnimationCurve.Linear(0f, 1f, 1f, 1f),
         };
@@ -55,13 +53,11 @@ namespace EazyCam
 
         private void Start()
         {
-            // #DG: set the rotation from the look direction of the offest
+            Vector3 initialPosition = _target.position + (_target.forward * _settings.Distance);
+            Quaternion lookDirection = Quaternion.LookRotation(_target.position - initialPosition);
+            _rotation = lookDirection.eulerAngles;
 
-            //Vector3 initialPosition = _target.position + _settings.Offset;
-            //Quaternion lookDirection = Quaternion.LookRotation(_target.position - initialPosition);
-            //_rotation = lookDirection.eulerAngles;
-
-            //_transform.SetPositionAndRotation(initialPosition, lookDirection);
+            _transform.SetPositionAndRotation(initialPosition, lookDirection);
 
             _focalPoint = _target.position;
 
@@ -84,7 +80,6 @@ namespace EazyCam
             DebugDrawFocualCross(_focalPoint);
 
             Debug.DrawLine(_focalPoint, position, Color.black);
-            Debug.Log($"Distance = {(_target.position - _transform.position).magnitude}");
         }
 
         private void UpdatePosition()
@@ -97,7 +92,7 @@ namespace EazyCam
 
                 if (travelDistance > maxDistance)
                 {
-                    _focalPoint = _target.position - (travelDirection.normalized * _settings.MaxLagDistance);
+                    _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position - (travelDirection.normalized * _settings.MaxLagDistance), _settings.MoveSpeed * Time.deltaTime);
                 }
                 else if (travelDistance < DeadZone.Squared())
                 {
@@ -127,7 +122,15 @@ namespace EazyCam
             // cache the step and update the roation from input
             float step = Time.deltaTime * _settings.RotationSpeed;
             _rotation.y += horz * step;
-            _rotation.y = Mathf.Clamp(_rotation.y, _settings.HorizontalRoation.Min, _settings.HorizontalRoation.Max);
+
+            if (_rotation.y > 360f)
+            {
+                _rotation.y -= 360f;
+            }
+            else if (_rotation.y < -360f)
+            {
+                _rotation.y += 360f;
+            }
 
             _rotation.x += vert * step;
             _rotation.x = Mathf.Clamp(_rotation.x, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);

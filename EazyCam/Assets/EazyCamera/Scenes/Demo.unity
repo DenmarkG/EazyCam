@@ -549,6 +549,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerControllerAnimated
       objectReference: {fileID: 0}
+    - target: {fileID: 1000012512917500, guid: f81e35786288c274795cfd1ff5a2ad50, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4000010972474810, guid: f81e35786288c274795cfd1ff5a2ad50, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -1582,6 +1586,11 @@ PrefabInstance:
       objectReference: {fileID: 1772410004}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
+      propertyPath: _settings.Distance
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
       propertyPath: _settings.Offset.y
       value: 0
       objectReference: {fileID: 0}
@@ -1603,7 +1612,7 @@ PrefabInstance:
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: _settings.MaxLagDistance
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
@@ -1648,22 +1657,22 @@ PrefabInstance:
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: _settings.EaseCurve.m_Curve.Array.data[1].value
-      value: 0.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: _settings.EaseCurve.m_Curve.Array.data[0].inSlope
-      value: -2.4779437
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: _settings.EaseCurve.m_Curve.Array.data[0].outSlope
-      value: -2.4779437
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: _settings.EaseCurve.m_Curve.Array.data[0].outWeight
-      value: 0.06338939
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
@@ -1723,7 +1732,7 @@ PrefabInstance:
     - target: {fileID: 4061309984124418449, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 30.93
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4061309984124418449, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
