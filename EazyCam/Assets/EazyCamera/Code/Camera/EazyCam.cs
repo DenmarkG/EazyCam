@@ -30,7 +30,8 @@ namespace EazyCam
             public bool EnableCollision;
 
             public bool EnableZoom;
-            public FloatRange ZoomDistance;
+            public float ZoomDistance;
+            public FloatRange ZoomRange;
         }
 
         public Settings CameraSettings => _settings;
@@ -45,6 +46,9 @@ namespace EazyCam
             VerticalRotation = new FloatRange(-89f, 89f),
             EaseCurve = AnimationCurve.Linear(0f, 1f, 1f, 1f),
             EnableCollision = true,
+            EnableZoom = true,
+            ZoomDistance = -5,
+            ZoomRange = new FloatRange(-1f, -10f),
         };
 
         [SerializeField] private Transform _target = null;
@@ -192,6 +196,11 @@ namespace EazyCam
         public void SetDistance(float distance)
         {
             _settings.Distance = distance;
+        }
+
+        public void SetZoomDistance(float zoomDistance)
+        {
+            _settings.ZoomDistance = Util.Clamp(zoomDistance, _settings.ZoomRange);
         }
 
         public float GetDistance()

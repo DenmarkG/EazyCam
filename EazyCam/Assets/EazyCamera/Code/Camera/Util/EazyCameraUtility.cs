@@ -20,5 +20,11 @@ namespace EazyCam
         {
             return num * num;
         }
+
+        public static float Clamp(float value, FloatRange range)
+        {
+            return Mathf.Clamp(value, range.Min, range.Max);
+        }
+
     }
 }
