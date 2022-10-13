@@ -128,7 +128,7 @@ namespace EazyCam
                             }
 
                             IsOccluded = true;
-                            _controlledCamera.SetDistance(_nearPlaneDistance - hitDistance);
+                            _controlledCamera.SetDistance(-_nearPlaneDistance - hitDistance);
 
 #if UNITY_EDITOR
                             lineColor = Color.red;
@@ -154,7 +154,7 @@ namespace EazyCam
                     Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
 #endif
                     IsOccluded = true;
-                    _controlledCamera.SetDistance(_nearPlaneDistance - hit.distance);
+                    _controlledCamera.SetDistance(-_nearPlaneDistance - hit.distance);
                 }
             }
         }
