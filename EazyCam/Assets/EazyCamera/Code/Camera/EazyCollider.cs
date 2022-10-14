@@ -122,17 +122,12 @@ namespace EazyCam
                         {
                             hitDistance = hit.distance;
 
-                            if (!IsOccluded) // Only store the original position on the original hit
-                            {
-                                _controlledCamera.ResetDistance();
-                            }
-
                             IsOccluded = true;
                             _controlledCamera.SetDistance(-_nearPlaneDistance - hitDistance);
 
 #if UNITY_EDITOR
                             lineColor = Color.red;
-                            Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
+                            //Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
 #else
                         return;
 #endif
@@ -151,7 +146,7 @@ namespace EazyCam
                 {
 #if UNITY_EDITOR
                     lineColor = Color.red;
-                    Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
+                    //Debug.Log("camera is occluded by " + hit.collider.gameObject.name);
 #endif
                     IsOccluded = true;
                     _controlledCamera.SetDistance(-_nearPlaneDistance - hit.distance);

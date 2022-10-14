@@ -107,14 +107,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _settings:
-    Offset: {x: 0, y: 3, z: -5}
+    Distance: -5
+    DefaultDistance: -5
     MoveSpeed: 15
-    LagFactor: 0.75
+    SnapFactor: 0.75
+    MaxLagDistance: 1
     RotationSpeed: 30
-    HorizontalRoation:
-      Min: -360
-      Max: 360
     VerticalRotation:
       Min: -89
       Max: 89
+    EaseCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    EnableCollision: 1
+    EnableZoom: 1
+    ZoomDistance: -5
+    ZoomRange:
+      Min: -10
+      Max: -1
   _target: {fileID: 0}

@@ -16,17 +16,19 @@ namespace EazyCam
             public float Distance;
             public float DefaultDistance;
 
-            // Movement
+            [Header("Movement")]
             public float MoveSpeed;
             [Range(.1f, 1f)] public float SnapFactor;
             [Range(0f, 10f)] public float MaxLagDistance;
 
-            // Rotation
+            [Header("Rotation")]
             public float RotationSpeed;
             public FloatRange VerticalRotation;
             public AnimationCurve EaseCurve;
 
-            // Optional Components
+            // public Vector2 InitialRotaion;
+
+            [Header("Optional Components")]
             public bool EnableCollision;
 
             public bool EnableZoom;
@@ -48,7 +50,7 @@ namespace EazyCam
             EnableCollision = true,
             EnableZoom = true,
             ZoomDistance = -5,
-            ZoomRange = new FloatRange(-1f, -10f),
+            ZoomRange = new FloatRange(-10f, -1f),
         };
 
         [SerializeField] private Transform _target = null;
@@ -77,8 +79,6 @@ namespace EazyCam
 
             AttachedCamera = this.GetComponent<Camera>();
 
-
-
             if (_settings.EnableCollision)
             {
                 _collider = new EazyCollider(this);
@@ -98,6 +98,15 @@ namespace EazyCam
             if (Application.isPlaying)
             {
                 Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+
+        private void Update()
+        {
+            float scrollDelta = Input.mouseScrollDelta.y;
+            if (scrollDelta > DeadZone || scrollDelta < -DeadZone)
+            {
+                IncreaseZoomDistance(scrollDelta * _settings.MoveSpeed * Time.deltaTime);
             }
         }
 
@@ -177,7 +186,8 @@ namespace EazyCam
 
         public Vector3 GetDefaultPosition()
         {
-            return _focalPoint + ((CalculateRotationFromVector(_rotation) * Vector3.forward) * _settings.DefaultDistance);
+            float distance = _settings.EnableZoom ? _settings.ZoomDistance : _settings.Distance;
+            return _focalPoint + ((CalculateRotationFromVector(_rotation) * Vector3.forward) * distance);
         }
 
         private Quaternion CalculateRotationFromVector(Vector3 rotation)
@@ -195,22 +205,72 @@ namespace EazyCam
 
         public void SetDistance(float distance)
         {
-            _settings.Distance = distance;
+            if (_settings.EnableZoom)
+            {
+                // #DG: account for camera in front (take abs of both values and pick the smaller)
+                _settings.Distance = Mathf.Max(distance, _settings.ZoomDistance);
+            }
+            else
+            {
+                _settings.Distance = distance;
+            }
         }
 
         public void SetZoomDistance(float zoomDistance)
         {
-            _settings.ZoomDistance = Util.Clamp(zoomDistance, _settings.ZoomRange);
+            _settings.ZoomDistance = Util.ClampToRange(zoomDistance, _settings.ZoomRange);
+            SetDistance(_settings.ZoomDistance);
+        }
+
+        public void IncreaseZoomDistance(float distance)
+        {
+            if (_settings.EnableZoom)
+            {
+                distance += _settings.ZoomDistance;
+                _settings.ZoomDistance = Util.ClampToRange(distance, _settings.ZoomRange);
+                SetDistance(_settings.ZoomDistance);
+            }
         }
 
         public float GetDistance()
         {
+            if (_settings.EnableZoom)
+            {
+                return Mathf.Max(_settings.Distance, _settings.ZoomDistance);
+            }
+
             return _settings.Distance;
         }
 
         public void ResetDistance()
         {
-            _settings.Distance = _settings.DefaultDistance;
+            _settings.Distance = _settings.EnableZoom ? _settings.ZoomDistance : _settings.DefaultDistance;
+        }
+
+        public void SetZoomEnabled(EnabledState state)
+        {
+            _settings.EnableZoom = state == EnabledState.Enabled;
+        }
+
+        public void SetCollisionEnabled(EnabledState state)
+        {
+            _settings.EnableCollision = state == EnabledState.Enabled;
+            if (_settings.EnableCollision)
+            {
+                if (_collider != null)
+                {
+                    _collider = new EazyCollider(this);
+                }
+            }
+            else
+            {
+                if (_collider != null)
+                {
+                    ResetDistance();
+                }
+
+                _collider = null;
+            }
         }
     }
 }

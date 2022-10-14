@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace EazyCam
 {
+    public enum EnabledState
+    {
+        Disabled = 0,
+        Enabled = 1,
+    }
+
     public static class EazyCameraUtility
     {
         public static readonly string MouseX = "Mouse X";
@@ -21,7 +27,7 @@ namespace EazyCam
             return num * num;
         }
 
-        public static float Clamp(float value, FloatRange range)
+        public static float ClampToRange(float value, FloatRange range)
         {
             return Mathf.Clamp(value, range.Min, range.Max);
         }
