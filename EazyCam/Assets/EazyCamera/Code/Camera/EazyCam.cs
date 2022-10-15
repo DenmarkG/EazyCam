@@ -34,6 +34,8 @@ namespace EazyCam
             public bool EnableZoom;
             public float ZoomDistance;
             public FloatRange ZoomRange;
+
+            public bool EnableTargetting;
         }
 
         public Settings CameraSettings => _settings;
@@ -107,6 +109,11 @@ namespace EazyCam
             if (scrollDelta > DeadZone || scrollDelta < -DeadZone)
             {
                 IncreaseZoomDistance(scrollDelta * _settings.MoveSpeed * Time.deltaTime);
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                ResetPositionAndRotation();
             }
         }
 
@@ -242,9 +249,14 @@ namespace EazyCam
             return _settings.Distance;
         }
 
-        public void ResetDistance()
+        public void ResetToUnoccludedDistance()
         {
             _settings.Distance = _settings.EnableZoom ? _settings.ZoomDistance : _settings.DefaultDistance;
+        }
+
+        public void ResetToDefaultDistance()
+        {
+            _settings.Distance = _settings.DefaultDistance;
         }
 
         public void SetZoomEnabled(EnabledState state)
@@ -266,11 +278,22 @@ namespace EazyCam
             {
                 if (_collider != null)
                 {
-                    ResetDistance();
+                    ResetToUnoccludedDistance();
                 }
 
                 _collider = null;
             }
+        }
+
+        public void ResetPositionAndRotation()
+        {
+            _rotation = new Vector2();
+            _focalPoint = _target.position;
+            ResetToDefaultDistance();
+            //Quaternion rotation = Quaternion.LookRotation(_rotation);
+            //Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
+
+            //_transform.SetPositionAndRotation(position, Quaternion.LookRotation(_target.position - position));
         }
     }
 }

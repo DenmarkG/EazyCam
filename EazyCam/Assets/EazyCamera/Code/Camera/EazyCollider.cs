@@ -199,7 +199,7 @@ namespace EazyCam
 
             if (!objectWasHit)
             {
-                _controlledCamera.ResetDistance();
+                _controlledCamera.ResetToUnoccludedDistance();
                 IsOccluded = false;
             }
             else
