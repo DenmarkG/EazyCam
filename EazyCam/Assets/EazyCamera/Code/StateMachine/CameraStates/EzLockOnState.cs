@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
     public class EzLockOnState : EzCameraState
     {

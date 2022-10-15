@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace EazyCam
+namespace EazyCamera
 {
     public enum EnabledState
     {

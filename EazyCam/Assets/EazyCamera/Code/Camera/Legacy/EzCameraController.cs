@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
     [RequireComponent(typeof(EzCamera))]
     public class EzCameraController : MonoBehaviour

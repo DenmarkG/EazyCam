@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
     /// <summary>
     /// This is the main class for controlling both camera and player. It is recommended to attach this to the player or camera in the scene, but not necessary

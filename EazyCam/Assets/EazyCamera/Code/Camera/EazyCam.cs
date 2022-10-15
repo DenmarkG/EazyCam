@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace EazyCam
+namespace EazyCamera
 {
     using Util = EazyCameraUtility;
     
@@ -70,8 +70,6 @@ namespace EazyCam
 
         private EazyCollider _collider = null;
 
-        private const float DeadZone = .001f;
-
         private void Awake()
         {
             _transform = this.transform;
@@ -103,24 +101,9 @@ namespace EazyCam
             }
         }
 
-        private void Update()
-        {
-            float scrollDelta = Input.mouseScrollDelta.y;
-            if (scrollDelta > DeadZone || scrollDelta < -DeadZone)
-            {
-                IncreaseZoomDistance(scrollDelta * _settings.MoveSpeed * Time.deltaTime);
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                ResetPositionAndRotation();
-            }
-        }
-
         private void LateUpdate()
         {
             UpdatePosition();
-            UpdateRotation();
 
             Quaternion rotation = CalculateRotationFromVector(_rotation);
             Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
@@ -149,7 +132,7 @@ namespace EazyCam
                 {
                     _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position - (travelDirection.normalized * _settings.MaxLagDistance), _settings.MoveSpeed * Time.deltaTime);
                 }
-                else if (travelDistance < DeadZone.Squared())
+                else if (travelDistance < Constants.DeadZone.Squared())
                 {
                     _focalPoint = _target.position;
                 }
@@ -169,15 +152,28 @@ namespace EazyCam
             }
         }
 
-        private void UpdateRotation()
+        public void SetRotation(float horzRot, float vertRot)
         {
-            float horz = Input.GetAxis(Util.MouseX);
-            float vert = Input.GetAxis(Util.MouseY);
+            _rotation.x = vertRot;
+            ClampHorizontalRotation();
 
-            // cache the step and update the roation from input
-            float step = Time.deltaTime * _settings.RotationSpeed;
-            _rotation.y += horz * step;
+            _rotation.y = horzRot;
+            ClampVerticalRotation();
+        }
 
+        public void IncreaseRotation(float horzRotDelta, float vertRotDelta, float deltaTime)
+        {
+            float step = deltaTime * _settings.RotationSpeed;
+            _rotation.y += horzRotDelta * step;
+
+            ClampVerticalRotation();
+
+            _rotation.x += vertRotDelta * step;
+            ClampHorizontalRotation();
+        }
+
+        private void ClampVerticalRotation()
+        {
             if (_rotation.y > 360f)
             {
                 _rotation.y -= 360f;
@@ -186,8 +182,10 @@ namespace EazyCam
             {
                 _rotation.y += 360f;
             }
+        }
 
-            _rotation.x += vert * step;
+        private void ClampHorizontalRotation()
+        {
             _rotation.x = Mathf.Clamp(_rotation.x, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
         }
 
@@ -229,12 +227,13 @@ namespace EazyCam
             SetDistance(_settings.ZoomDistance);
         }
 
-        public void IncreaseZoomDistance(float distance)
+        public void IncreaseZoomDistance(float inputDelta, float deltaTime)
         {
             if (_settings.EnableZoom)
             {
-                distance += _settings.ZoomDistance;
-                _settings.ZoomDistance = Util.ClampToRange(distance, _settings.ZoomRange);
+                inputDelta *= _settings.MoveSpeed * deltaTime;
+                inputDelta += _settings.ZoomDistance;
+                _settings.ZoomDistance = Util.ClampToRange(inputDelta, _settings.ZoomRange);
                 SetDistance(_settings.ZoomDistance);
             }
         }
@@ -290,10 +289,6 @@ namespace EazyCam
             _rotation = new Vector2();
             _focalPoint = _target.position;
             ResetToDefaultDistance();
-            //Quaternion rotation = Quaternion.LookRotation(_rotation);
-            //Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
-
-            //_transform.SetPositionAndRotation(position, Quaternion.LookRotation(_target.position - position));
         }
     }
 }

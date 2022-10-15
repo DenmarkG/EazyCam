@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
     [System.Serializable]
     [ExecuteInEditMode]

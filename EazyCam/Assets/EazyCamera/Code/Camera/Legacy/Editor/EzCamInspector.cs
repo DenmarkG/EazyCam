@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
     [CustomEditor(typeof(EzCamera))]
     public class EzCamInspector : Editor

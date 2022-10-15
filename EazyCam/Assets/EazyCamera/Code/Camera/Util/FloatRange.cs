@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace EazyCam
+namespace EazyCamera
 {
     [System.Serializable]
     public struct FloatRange

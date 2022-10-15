@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace EazyCam
+namespace EazyCamera
 {
     public class EazyCollider
     {

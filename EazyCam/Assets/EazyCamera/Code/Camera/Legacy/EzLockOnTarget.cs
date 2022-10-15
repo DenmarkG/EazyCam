@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
     [RequireComponent(typeof(SphereCollider))]
     public class EzLockOnTarget : MonoBehaviour

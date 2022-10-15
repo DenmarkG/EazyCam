@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
 	public class EzStateMachine
 	{

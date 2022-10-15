@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
     [System.Serializable]
     public class EzStationaryState : EzCameraState

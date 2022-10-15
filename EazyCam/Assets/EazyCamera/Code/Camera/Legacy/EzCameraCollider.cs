@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace EazyCam.Legacy
+namespace EazyCamera.Legacy
 {
     public class EzCameraCollider : MonoBehaviour
     {
