@@ -10,6 +10,18 @@ namespace EazyCamera
         Enabled = 1,
     }
 
+    public enum LockOnStyle
+    {
+        TOGGLE, // Press button to turn targeting on/off
+        HOLD // Targeting active while button held down
+    }
+
+    public enum TargetSwitchStyle
+    {
+        CYCLE,
+        NEAREST
+    }
+
     public static class EazyCameraUtility
     {
         public static readonly string MouseX = "Mouse X";

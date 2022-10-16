@@ -35,7 +35,7 @@ namespace EazyCamera
             public float ZoomDistance;
             public FloatRange ZoomRange;
 
-            public bool EnableTargetting;
+            public bool EnableTargetLock;
         }
 
         public Settings CameraSettings => _settings;
@@ -53,6 +53,7 @@ namespace EazyCamera
             EnableZoom = true,
             ZoomDistance = -5,
             ZoomRange = new FloatRange(-10f, -1f),
+            EnableTargetLock = true,
         };
 
         [SerializeField] private Transform _target = null;

@@ -7,18 +7,6 @@ namespace EazyCamera.Legacy
 {
     public class EzLockOnState : EzCameraState
     {
-        public enum LockOnStyle
-        {
-            TOGGLE, // Press button to turn targeting on/off
-            HOLD // Targeting active while button held down
-        }
-
-        public enum TargetSwitchStyle
-        {
-            CYCLE,
-            NEAREST
-        }
-
         public LockOnStyle _lockOnStyle = LockOnStyle.HOLD;
         public TargetSwitchStyle _switchStyle = TargetSwitchStyle.NEAREST;
 
