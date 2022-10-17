@@ -70,6 +70,7 @@ namespace EazyCamera
         private Vector2 _rotation = new Vector2();
 
         private EazyCollider _collider = null;
+        private EazyTargetManager _targetManager = null;
 
         private void Awake()
         {
@@ -269,7 +270,7 @@ namespace EazyCamera
             _settings.EnableCollision = state == EnabledState.Enabled;
             if (_settings.EnableCollision)
             {
-                if (_collider != null)
+                if (_collider == null)
                 {
                     _collider = new EazyCollider(this);
                 }
@@ -290,6 +291,44 @@ namespace EazyCamera
             _rotation = new Vector2();
             _focalPoint = _target.position;
             ResetToDefaultDistance();
+        }
+
+        // Targeting
+        public void SetTargetingEnabled(EnabledState state)
+        {
+            _settings.EnableTargetLock = state == EnabledState.Enabled;
+            if (_settings.EnableCollision)
+            {
+                if (_targetManager == null)
+                {
+                    _targetManager = new EazyTargetManager(this);
+                }
+            }
+            else
+            {
+                if (_targetManager != null)
+                {
+                    _targetManager.ClearTargetsInRange();
+                }
+
+                _targetManager = null;
+            }
+        }
+
+        public void AddTargetInRange(ITargetable target)
+        {
+            if (_settings.EnableTargetLock && _targetManager != null)
+            {
+                _targetManager.AddTargetInRange(target);
+            }
+        }
+
+        public void RemoveTargetInRange(ITargetable target)
+        {
+            if (_settings.EnableTargetLock && _targetManager != null)
+            {
+                _targetManager.AddTargetInRange(target);
+            }
         }
     }
 }

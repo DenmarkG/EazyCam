@@ -16,9 +16,28 @@ namespace EazyCamera
         private List<ITargetable> _targetsInRange = new List<ITargetable>();
         private EazyCam _controlledCamera = null;
 
+        public bool IsEnabled { get; private set; } = true;
+
         public EazyTargetManager(EazyCam cam)
         {
             _controlledCamera = cam;
+        }
+
+        public void SetEnabled(EnabledState state)
+        {
+            IsEnabled = state == EnabledState.Enabled;
+        }
+
+        public void ClearTargetsInRange()
+        {
+            int numTargets = _targetsInRange.Count;
+
+            for (int i = 0; i < numTargets; ++i)
+            {
+                _targetsInRange[i].SetActive(EnabledState.Disabled);
+            }
+
+            _targetsInRange.Clear();
         }
 
         public void AddTargetInRange(ITargetable target)
