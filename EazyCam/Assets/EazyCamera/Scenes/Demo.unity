@@ -332,7 +332,7 @@ GameObject:
   - component: {fileID: 144377143}
   - component: {fileID: 144377141}
   - component: {fileID: 144377145}
-  - component: {fileID: 144377142}
+  - component: {fileID: 144377146}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -382,27 +382,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &144377142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 144377140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25d678b71f002944595c9c8b4dd4f543, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _targetIcon: {fileID: 263318989}
-  _playerCamera: {fileID: 0}
-  _inactiveColor:
-    serializedVersion: 2
-    rgba: 2139062143
-  _activeColor:
-    serializedVersion: 2
-    rgba: 4278190335
-  _activationDistance: 10
 --- !u!33 &144377143
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -435,11 +414,24 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 144377140}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 3.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &144377146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144377140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0ff1f9b29d8404493c9e5a7e082bcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lookTarget: {fileID: 263318993}
 --- !u!1 &263318989
 GameObject:
   m_ObjectHideFlags: 0
@@ -967,7 +959,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1019037414}
   m_Layer: 0
-  m_Name: Cubes
+  m_Name: TargetCubes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1117,7 +1109,7 @@ GameObject:
   - component: {fileID: 1433923037}
   - component: {fileID: 1433923035}
   - component: {fileID: 1433923039}
-  - component: {fileID: 1433923036}
+  - component: {fileID: 1433923040}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -1167,27 +1159,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1433923036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1433923034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25d678b71f002944595c9c8b4dd4f543, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _targetIcon: {fileID: 1002579395}
-  _playerCamera: {fileID: 0}
-  _inactiveColor:
-    serializedVersion: 2
-    rgba: 2139062143
-  _activeColor:
-    serializedVersion: 2
-    rgba: 4278190335
-  _activationDistance: 10
 --- !u!33 &1433923037
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1220,11 +1191,24 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433923034}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 3.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1433923040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433923034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0ff1f9b29d8404493c9e5a7e082bcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lookTarget: {fileID: 1002579396}
 --- !u!1 &1472462989
 GameObject:
   m_ObjectHideFlags: 0
@@ -1335,7 +1319,6 @@ GameObject:
   - component: {fileID: 1629737649}
   - component: {fileID: 1629737647}
   - component: {fileID: 1629737651}
-  - component: {fileID: 1629737648}
   - component: {fileID: 1629737652}
   m_Layer: 0
   m_Name: Cube (2)
@@ -1386,27 +1369,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1629737648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1629737646}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25d678b71f002944595c9c8b4dd4f543, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _targetIcon: {fileID: 1993401905}
-  _playerCamera: {fileID: 0}
-  _inactiveColor:
-    serializedVersion: 2
-    rgba: 2139062143
-  _activeColor:
-    serializedVersion: 2
-    rgba: 4278190335
-  _activationDistance: 10
 --- !u!33 &1629737649
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1439,7 +1401,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1629737646}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 3.5
@@ -1887,6 +1849,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _settings.EnableZoom
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.RotationSpeed
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4055929309831659383, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}

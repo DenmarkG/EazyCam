@@ -39,6 +39,7 @@ namespace EazyCamera
 
             // Targeting
             public bool EnableTargetLock;
+            public GameObject TargetImage;
         }
 
         public Settings CameraSettings => _settings;
