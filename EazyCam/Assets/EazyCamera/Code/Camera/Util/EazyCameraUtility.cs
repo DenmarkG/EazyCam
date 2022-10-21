@@ -26,6 +26,10 @@ namespace EazyCamera
     {
         public static readonly string MouseX = "Mouse X";
         public static readonly string MouseY = "Mouse Y";
+        public static readonly string PlayerTag = "Player";
+
+        public static void NoOp<T>(T t) { }
+        public static void NoOp<T, U>(T t, U u) { }
 
         public static Vector3 ConvertMoveInputToCameraSpace(Transform cameraTransform, float horz, float vert)
         {

@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace EazyCamera
 {
+    using EazyCamera.Events;
+
     public interface ITargetable
     {
         Vector3 LookAtPosition { get; }
@@ -11,21 +13,30 @@ namespace EazyCamera
         void SetActive(EnabledState state);
     }
 
-    public class EazyTargetManager
+    public class EazyTargetManager : IEventListener
     {
         private List<ITargetable> _targetsInRange = new List<ITargetable>();
         private EazyCam _controlledCamera = null;
 
-        public bool IsEnabled { get; private set; } = true;
+        public bool IsEnabled { get; private set; }
 
-        public EazyTargetManager(EazyCam cam)
+        public EazyTargetManager(EazyCam cam, EnabledState defaultState = EnabledState.Enabled)
         {
             _controlledCamera = cam;
+            SetEnabled(defaultState);
         }
 
         public void SetEnabled(EnabledState state)
         {
             IsEnabled = state == EnabledState.Enabled;
+            if (IsEnabled)
+            {
+                BindEvents();
+            }
+            else
+            {
+                UnbindEvents();
+            }
         }
 
         public void ClearTargetsInRange()
@@ -40,11 +51,28 @@ namespace EazyCamera
             _targetsInRange.Clear();
         }
 
+        public void OnEnterFocusRange(EventData data)
+        {
+            if (data is EnterFocusRangeData rangeEntryData)
+            {
+                AddTargetInRange(rangeEntryData.Target);
+            }
+        }
+
         public void AddTargetInRange(ITargetable target)
         {
             if (target != null)
             {
                 _targetsInRange.Add(target);
+                Debug.Log($"{target} is in range");
+            }
+        }
+
+        public void OnExitFocusRange(EventData data)
+        {
+            if (data is ExitFocusRangeData rangeExitData)
+            {
+                RemoveTargetInRange(rangeExitData.Target);
             }
         }
 
@@ -62,7 +90,21 @@ namespace EazyCamera
                 {
                     _targetsInRange.RemoveAt(index);
                 }
+
+                Debug.Log($"{target} is in no longer range");
             }
+        }
+
+        public void BindEvents()
+        {
+            EazyEventManager.BindToEvent(EazyEventKeys.OnEnterFocasableRange, OnEnterFocusRange);
+            EazyEventManager.BindToEvent(EazyEventKeys.OnExitFocasableRange, OnExitFocusRange);
+        }
+
+        public void UnbindEvents()
+        {
+            EazyEventManager.UnbindFromEvent(EazyEventKeys.OnEnterFocasableRange, OnEnterFocusRange);
+            EazyEventManager.UnbindFromEvent(EazyEventKeys.OnExitFocasableRange, OnExitFocusRange);
         }
     }
 }

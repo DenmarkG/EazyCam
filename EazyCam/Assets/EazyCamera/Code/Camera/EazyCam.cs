@@ -26,15 +26,18 @@ namespace EazyCamera
             public FloatRange VerticalRotation;
             public AnimationCurve EaseCurve;
 
-            // public Vector2 InitialRotaion;
+            public bool InvertY;
 
             [Header("Optional Components")]
+            // Collision
             public bool EnableCollision;
 
+            // Zoom
             public bool EnableZoom;
             public float ZoomDistance;
             public FloatRange ZoomRange;
 
+            // Targeting
             public bool EnableTargetLock;
         }
 
@@ -84,6 +87,11 @@ namespace EazyCamera
             if (_settings.EnableCollision)
             {
                 _collider = new EazyCollider(this);
+            }
+
+            if (_settings.EnableTargetLock)
+            {
+                _targetManager = new EazyTargetManager(this);
             }
         }
 
@@ -157,20 +165,20 @@ namespace EazyCamera
         public void SetRotation(float horzRot, float vertRot)
         {
             _rotation.x = vertRot;
-            ClampHorizontalRotation();
-
             _rotation.y = horzRot;
+
             ClampVerticalRotation();
+            ClampHorizontalRotation();
         }
 
         public void IncreaseRotation(float horzRotDelta, float vertRotDelta, float deltaTime)
         {
             float step = deltaTime * _settings.RotationSpeed;
             _rotation.y += horzRotDelta * step;
-
             ClampVerticalRotation();
 
-            _rotation.x += vertRotDelta * step;
+
+            _rotation.x += vertRotDelta * step * (_settings.InvertY ? 1f : -1f);
             ClampHorizontalRotation();
         }
 
