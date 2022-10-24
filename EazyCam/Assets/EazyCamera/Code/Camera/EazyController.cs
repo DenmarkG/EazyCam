@@ -10,7 +10,6 @@ namespace EazyCamera
 
         private void Start()
         {
-            _controlledCamera = this.GetComponent<EazyCam>();
             Debug.Assert(_controlledCamera != null, "Attempting to use a controller on a GameOjbect without an EazyCam component");
         }
 
@@ -32,11 +31,32 @@ namespace EazyCamera
             {
                 _controlledCamera.ResetPositionAndRotation();
             }
+
+
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                ToggleLockOn();
+            }
         }
 
         public void SetControlledCamera(EazyCam cam)
         {
             _controlledCamera = cam;
+        }
+
+        private void BeginLockOn()
+        {
+            //
+        }
+
+        private void EndLockOn()
+        {
+            //
+        }
+
+        private void ToggleLockOn()
+        {
+            _controlledCamera.ToggleLockOn();
         }
     }
 }

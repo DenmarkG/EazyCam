@@ -10,13 +10,16 @@ namespace EazyCamera
     {
         Vector3 LookAtPosition { get; }
         bool IsActive { get; }
-        void SetActive(EnabledState state);
+        void OnFocusReceived();
+        void OnFocusLost();
     }
 
     public class EazyTargetManager : IEventListener
     {
         private List<ITargetable> _targetsInRange = new List<ITargetable>();
         private EazyCam _controlledCamera = null;
+
+        private ITargetable _currentTarget = null;
 
         public bool IsEnabled { get; private set; }
 
@@ -45,7 +48,7 @@ namespace EazyCamera
 
             for (int i = 0; i < numTargets; ++i)
             {
-                _targetsInRange[i].SetActive(EnabledState.Disabled);
+                _targetsInRange[i].OnFocusReceived();
             }
 
             _targetsInRange.Clear();
@@ -82,7 +85,7 @@ namespace EazyCamera
             {
                 if (target.IsActive)
                 {
-                    target.SetActive(EnabledState.Disabled);
+                    target.OnFocusLost();
                 }
 
                 int index = _targetsInRange.IndexOf(target);
@@ -93,6 +96,82 @@ namespace EazyCamera
 
                 Debug.Log($"{target} is in no longer range");
             }
+        }
+
+        public void BeginTargetLock()
+        {
+            //
+        }
+
+        public void EndTargetLock()
+        {
+            //
+        }
+
+        public void ToggleLockOn()
+        {
+            if (_targetsInRange.Count > 0)
+            {
+                ITargetable nearestTarget = FindNearestTarget();
+                if (_currentTarget != null)
+                {
+                    if (_currentTarget != nearestTarget)
+                    {
+                        _currentTarget.OnFocusLost();
+                    }
+                }
+
+                // #DG: prevent re-enabling target when these are the same
+                _currentTarget = nearestTarget;
+
+                if (_currentTarget != null)
+                {
+                    _currentTarget.OnFocusReceived();
+                    _controlledCamera.CameraSettings.TargetLockIcon.SetActive(true);
+                    _controlledCamera.CameraSettings.TargetLockIcon.transform.position = _currentTarget.LookAtPosition;
+                }
+            }
+        }
+
+        private ITargetable FindNearestTarget()
+        {
+            if (_targetsInRange.Count > 0)
+            {
+                // if two targets, toggle between them
+                if (_targetsInRange.Count == 2)
+                {
+                    return _currentTarget == _targetsInRange[0] ? _targetsInRange[1] : _targetsInRange[0]; ;
+                }
+
+                // if more than two targets:
+                // Find the target nearest to the direction we want to move 
+                ITargetable nearestTarget = _currentTarget;
+                ITargetable nextTarget = null;
+                float currentNearestDistance = float.MaxValue;
+
+                Transform cameraTransform = _controlledCamera.CameraTransform;
+
+                for (int i = 0; i < _targetsInRange.Count; ++i)
+                {
+                    nextTarget = _targetsInRange[i];
+                    if (nextTarget == _currentTarget)
+                    {
+                        continue;
+                    }
+
+                    Vector3 relativeDirection = nextTarget.LookAtPosition - cameraTransform.position;
+                    float distance = relativeDirection.sqrMagnitude;
+                    if (distance < currentNearestDistance)
+                    {
+                        nearestTarget = nextTarget;
+                        currentNearestDistance = distance;
+                    }
+                }
+
+                return nearestTarget;
+            }
+
+            return null;
         }
 
         public void BindEvents()

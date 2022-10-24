@@ -7,8 +7,8 @@ namespace EazyCamera.Legacy
 {
     public class EzLockOnState : EzCameraState
     {
-        public LockOnStyle _lockOnStyle = LockOnStyle.HOLD;
-        public TargetSwitchStyle _switchStyle = TargetSwitchStyle.NEAREST;
+        public LockOnStyle _lockOnStyle = LockOnStyle.Hold;
+        public TargetSwitchStyle _switchStyle = TargetSwitchStyle.Nearest;
 
         private EzLockOnTarget _currentTarget = null;
         private List<EzLockOnTarget> _nearbyTargets = null;
@@ -70,7 +70,7 @@ namespace EazyCamera.Legacy
 
             if (_isActive)
             {
-                if (_switchStyle == TargetSwitchStyle.NEAREST)
+                if (_switchStyle == TargetSwitchStyle.Nearest)
                 {
                     if (Input.GetKeyDown(KeyCode.E))
                     {
@@ -81,7 +81,7 @@ namespace EazyCamera.Legacy
                         MoveToNextTarget(-_cameraTransform.right);
                     }
                 }
-                else if (_switchStyle == TargetSwitchStyle.CYCLE)
+                else if (_switchStyle == TargetSwitchStyle.Cycle)
                 {
                     if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Q))
                     {
@@ -97,7 +97,7 @@ namespace EazyCamera.Legacy
                     _controlledCamera.SetState(State.LOCKON);
                 }
 
-                if (_lockOnStyle == LockOnStyle.TOGGLE)
+                if (_lockOnStyle == LockOnStyle.Toggle)
                 {
                     _isActive = !_isActive;
                 }
@@ -115,7 +115,7 @@ namespace EazyCamera.Legacy
                     _controlledCamera.SetState(_controlledCamera.DefaultState);
                 }
             }
-            else if (Input.GetKeyUp(KeyCode.Space) && _lockOnStyle == LockOnStyle.HOLD)
+            else if (Input.GetKeyUp(KeyCode.Space) && _lockOnStyle == LockOnStyle.Hold)
             {
                 _isActive = false;
                 _controlledCamera.SetState(_controlledCamera.DefaultState);

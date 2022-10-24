@@ -12,14 +12,14 @@ namespace EazyCamera
 
     public enum LockOnStyle
     {
-        TOGGLE, // Press button to turn targeting on/off
-        HOLD // Targeting active while button held down
+        Toggle, // Press button to turn targeting on/off
+        Hold // Targeting active while button held down
     }
 
     public enum TargetSwitchStyle
     {
-        CYCLE,
-        NEAREST
+        Cycle,
+        Nearest
     }
 
     public static class EazyCameraUtility
@@ -29,7 +29,6 @@ namespace EazyCamera
         public static readonly string PlayerTag = "Player";
 
         public static void NoOp<T>(T t) { }
-        public static void NoOp<T, U>(T t, U u) { }
 
         public static Vector3 ConvertMoveInputToCameraSpace(Transform cameraTransform, float horz, float vert)
         {

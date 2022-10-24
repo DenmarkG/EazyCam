@@ -39,7 +39,7 @@ namespace EazyCamera
 
             // Targeting
             public bool EnableTargetLock;
-            public GameObject TargetImage;
+            public GameObject TargetLockIcon;
         }
 
         public Settings CameraSettings => _settings;
@@ -75,6 +75,8 @@ namespace EazyCamera
 
         private EazyCollider _collider = null;
         private EazyTargetManager _targetManager = null;
+
+        private bool IsTargetLockAllowed => _settings.EnableTargetLock && _targetManager != null;
 
         private void Awake()
         {
@@ -326,7 +328,7 @@ namespace EazyCamera
 
         public void AddTargetInRange(ITargetable target)
         {
-            if (_settings.EnableTargetLock && _targetManager != null)
+            if (IsTargetLockAllowed)
             {
                 _targetManager.AddTargetInRange(target);
             }
@@ -334,11 +336,36 @@ namespace EazyCamera
 
         public void RemoveTargetInRange(ITargetable target)
         {
-            if (_settings.EnableTargetLock && _targetManager != null)
+            if (IsTargetLockAllowed)
             {
                 _targetManager.AddTargetInRange(target);
             }
         }
+
+        public void BeginLockOn()
+        {
+            if (IsTargetLockAllowed)
+            {
+                _targetManager.BeginTargetLock();
+            }
+        }
+
+        public void EndLockOn()
+        {
+            if (IsTargetLockAllowed)
+            {
+                _targetManager.EndTargetLock();
+            }
+        }
+
+        public void ToggleLockOn()
+        {
+            if (IsTargetLockAllowed)
+            {
+                _targetManager.ToggleLockOn();
+            }
+        }
+
     }
 }
 
