@@ -12,6 +12,9 @@ namespace EazyCamera
         public Vector3 LookAtPosition => _lookTarget?.position ?? this.transform.position;
         [SerializeField] private Transform _lookTarget = null;
         [SerializeField] private GameObject _interactionIcon = null;
+        
+        public Color TargetColor => _targetColor;
+        [SerializeField] private Color _targetColor = Constants.NeutralTargetColor;
 
         public bool IsActive { get; private set; }
 

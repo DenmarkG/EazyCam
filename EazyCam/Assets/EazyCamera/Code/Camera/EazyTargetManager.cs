@@ -9,6 +9,7 @@ namespace EazyCamera
     public interface ITargetable
     {
         Vector3 LookAtPosition { get; }
+        Color TargetColor { get; }
         bool IsActive { get; }
         void OnFocusReceived();
         void OnFocusLost();
@@ -67,7 +68,6 @@ namespace EazyCamera
             if (target != null)
             {
                 _targetsInRange.Add(target);
-                Debug.Log($"{target} is in range");
             }
         }
 
@@ -93,8 +93,6 @@ namespace EazyCamera
                 {
                     _targetsInRange.RemoveAt(index);
                 }
-
-                Debug.Log($"{target} is in no longer range");
             }
         }
 
@@ -127,7 +125,7 @@ namespace EazyCamera
                 if (_currentTarget != null)
                 {
                     _currentTarget.OnFocusReceived();
-                    _controlledCamera.CameraSettings.TargetLockIcon.SetActive(true);
+                    _controlledCamera.CameraSettings.TargetLockIcon.Enable(_controlledCamera, _currentTarget.TargetColor);
                     _controlledCamera.CameraSettings.TargetLockIcon.transform.position = _currentTarget.LookAtPosition;
                 }
             }
