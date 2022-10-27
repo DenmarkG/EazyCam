@@ -133,6 +133,11 @@ namespace EazyCamera
             Debug.DrawLine(_focalPoint, position, Color.black);
         }
 
+        private void UpdateDefault()
+        {
+            // #DG: TODO
+        }
+
         private void UpdatePosition()
         {
             if (_settings.MaxLagDistance > 0f && _settings.SnapFactor < 1f)
@@ -365,7 +370,6 @@ namespace EazyCamera
                 _targetManager.ToggleLockOn();
             }
         }
-
     }
 }
 

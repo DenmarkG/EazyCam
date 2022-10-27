@@ -21,8 +21,10 @@ namespace EazyCamera
         private EazyCam _controlledCamera = null;
 
         private ITargetable _currentTarget = null;
+        
+        public bool IsEnabled { get; private set; } // Is the manager enabled and listening for events
 
-        public bool IsEnabled { get; private set; }
+        public bool IsActive { get; private set; } // Is the manager actively locked onto a target
 
         public EazyTargetManager(EazyCam cam, EnabledState defaultState = EnabledState.Enabled)
         {
@@ -76,6 +78,11 @@ namespace EazyCamera
             if (data is ExitFocusRangeData rangeExitData)
             {
                 RemoveTargetInRange(rangeExitData.Target);
+
+                if (rangeExitData.Target == _currentTarget)
+                {
+                    EndTargetLock();
+                }
             }
         }
 
@@ -98,16 +105,8 @@ namespace EazyCamera
 
         public void BeginTargetLock()
         {
-            //
-        }
+            IsActive = true;
 
-        public void EndTargetLock()
-        {
-            //
-        }
-
-        public void ToggleLockOn()
-        {
             if (_targetsInRange.Count > 0)
             {
                 ITargetable nearestTarget = FindNearestTarget();
@@ -125,9 +124,32 @@ namespace EazyCamera
                 if (_currentTarget != null)
                 {
                     _currentTarget.OnFocusReceived();
-                    _controlledCamera.CameraSettings.TargetLockIcon.Enable(_controlledCamera, _currentTarget.TargetColor);
-                    _controlledCamera.CameraSettings.TargetLockIcon.transform.position = _currentTarget.LookAtPosition;
+                    EnableLockIcon();
                 }
+            }
+        }
+
+        public void EndTargetLock()
+        {
+            if (_currentTarget != null)
+            {
+                _currentTarget.OnFocusLost();
+            }
+
+            DisableLockIcon();
+
+            IsActive = false;
+        }
+
+        public void ToggleLockOn()
+        {
+            if (IsActive)
+            {
+                EndTargetLock();
+            }
+            else
+            {
+                BeginTargetLock();
             }
         }
 
@@ -170,6 +192,25 @@ namespace EazyCamera
             }
 
             return null;
+        }
+
+        private void EnableLockIcon()
+        {
+            EazyTargetReticle reticle = _controlledCamera.CameraSettings.TargetLockIcon;
+            if (reticle != null)
+            {
+                reticle.Enable(_controlledCamera, _currentTarget.TargetColor);
+                reticle.transform.position = _currentTarget.LookAtPosition;
+            }
+        }
+
+        private void DisableLockIcon()
+        {
+            EazyTargetReticle reticle = _controlledCamera.CameraSettings.TargetLockIcon;
+            if (reticle != null)
+            {
+                _controlledCamera.CameraSettings.TargetLockIcon.Disable();
+            }
         }
 
         public void BindEvents()

@@ -11,6 +11,8 @@ namespace EazyCamera
 
         public Color CurrentColor { get; private set; }
 
+        public bool IsActive { get; private set; }
+
         private Transform _transform = null;
         private EazyCam _activeCamera = null;
 
@@ -21,7 +23,7 @@ namespace EazyCamera
 
         private void Update()
         {
-            if (_alwaysFaceCamera)
+            if (IsActive && _alwaysFaceCamera)
             {
                 FaceCamera();
             }
@@ -51,9 +53,17 @@ namespace EazyCamera
 
         public void Enable(EazyCam activeCamera, Color activeColor)
         {
+            IsActive = true;
             this.gameObject.SetActive(true);
             _activeCamera = activeCamera;
             SetReticleColor(activeColor);
+        }
+
+        public void Disable()
+        {
+            this.gameObject.SetActive(false);
+            SetReticleColor(_defaultColor);
+            IsActive = false;
         }
     }
 }
