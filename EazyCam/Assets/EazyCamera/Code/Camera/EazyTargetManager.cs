@@ -32,6 +32,19 @@ namespace EazyCamera
             SetEnabled(defaultState);
         }
 
+        public void Tick(float dt)
+        {
+            if (IsActive)
+            {
+                // Not cached here to allow changing the reticle while targeting is active
+                EazyTargetReticle reticle = _controlledCamera.CameraSettings.TargetLockIcon;
+                if (reticle != null)
+                {
+                    reticle.transform.position = _currentTarget.LookAtPosition;
+                }
+            }
+        }
+
         public void SetEnabled(EnabledState state)
         {
             IsEnabled = state == EnabledState.Enabled;
@@ -125,6 +138,8 @@ namespace EazyCamera
                 {
                     _currentTarget.OnFocusReceived();
                     EnableLockIcon();
+
+                    _controlledCamera.SetLookTargetOverride(_currentTarget);
                 }
             }
         }
@@ -136,6 +151,7 @@ namespace EazyCamera
                 _currentTarget.OnFocusLost();
             }
 
+            _controlledCamera.ClearLookTargetOverride();
             DisableLockIcon();
 
             IsActive = false;
@@ -215,14 +231,14 @@ namespace EazyCamera
 
         public void BindEvents()
         {
-            EazyEventManager.BindToEvent(EazyEventKeys.OnEnterFocasableRange, OnEnterFocusRange);
-            EazyEventManager.BindToEvent(EazyEventKeys.OnExitFocasableRange, OnExitFocusRange);
+            EazyEventManager.BindToEvent(EazyEventKey.OnEnterFocasableRange, OnEnterFocusRange);
+            EazyEventManager.BindToEvent(EazyEventKey.OnExitFocasableRange, OnExitFocusRange);
         }
 
         public void UnbindEvents()
         {
-            EazyEventManager.UnbindFromEvent(EazyEventKeys.OnEnterFocasableRange, OnEnterFocusRange);
-            EazyEventManager.UnbindFromEvent(EazyEventKeys.OnExitFocasableRange, OnExitFocusRange);
+            EazyEventManager.UnbindFromEvent(EazyEventKey.OnEnterFocasableRange, OnEnterFocusRange);
+            EazyEventManager.UnbindFromEvent(EazyEventKey.OnExitFocasableRange, OnExitFocusRange);
         }
     }
 }

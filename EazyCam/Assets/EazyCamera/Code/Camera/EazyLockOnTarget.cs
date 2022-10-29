@@ -30,7 +30,7 @@ namespace EazyCamera
         {
             if (other.transform.root.CompareTag(Util.PlayerTag))
             {
-                BroadcastEvent(EazyEventKeys.OnEnterFocasableRange, new EnterFocusRangeData(this));
+                BroadcastEvent(EazyEventKey.OnEnterFocasableRange, new EnterFocusRangeData(this));
                 
                 if (_interactionIcon != null)
                 {
@@ -43,7 +43,7 @@ namespace EazyCamera
         {
             if (other.transform.root.CompareTag(Util.PlayerTag))
             {
-                BroadcastEvent(EazyEventKeys.OnExitFocasableRange, new ExitFocusRangeData(this));
+                BroadcastEvent(EazyEventKey.OnExitFocasableRange, new ExitFocusRangeData(this));
 
                 if (_interactionIcon != null)
                 {

@@ -2,9 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 namespace EazyCamera
 {
     using Util = EazyCameraUtility;
+
+    using EazyCamera.Events;
+
     
     [RequireComponent(typeof(Camera))]
     [ExecuteInEditMode]
@@ -60,7 +65,7 @@ namespace EazyCamera
             EnableTargetLock = true,
         };
 
-        [SerializeField] private Transform _target = null;
+        [SerializeField] private Transform _followTarget = null;
         public Transform TargetRoot { get; private set; }
 
         public Vector3 FocalPoint => _focalPoint;
@@ -78,12 +83,15 @@ namespace EazyCamera
 
         private bool IsTargetLockAllowed => _settings.EnableTargetLock && _targetManager != null;
 
+        private ITargetable _lookTargetOverride = null;
+        public bool OverrideLookTarget => _lookTargetOverride != null;
+
         private void Awake()
         {
             _transform = this.transform;
             
-            Debug.Assert(_target != null, "Target should not be null on an EazyCam component");
-            TargetRoot = _target.root;
+            Debug.Assert(_followTarget != null, "Target should not be null on an EazyCam component");
+            TargetRoot = _followTarget.root;
 
             AttachedCamera = this.GetComponent<Camera>();
 
@@ -100,13 +108,13 @@ namespace EazyCamera
 
         private void Start()
         {
-            Vector3 initialPosition = _target.position + (_target.forward * _settings.Distance);
-            Quaternion lookDirection = Quaternion.LookRotation(_target.position - initialPosition);
+            Vector3 initialPosition = _followTarget.position + (_followTarget.forward * _settings.Distance);
+            Quaternion lookDirection = Quaternion.LookRotation(_followTarget.position - initialPosition);
             _rotation = lookDirection.eulerAngles;
 
             _transform.SetPositionAndRotation(initialPosition, lookDirection);
 
-            _focalPoint = _target.position;
+            _focalPoint = _followTarget.position;
 
             if (Application.isPlaying)
             {
@@ -116,57 +124,77 @@ namespace EazyCamera
 
         private void LateUpdate()
         {
-            UpdatePosition();
-
-            Quaternion rotation = CalculateRotationFromVector(_rotation);
-            Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
-
-            _transform.SetPositionAndRotation(position, Quaternion.LookRotation(_target.position - position));
+            float dt = Time.deltaTime;
+            if (OverrideLookTarget)
+            {
+                TargetedLook(dt);
+            }
+            else
+            {
+                DefaultLook(dt);
+            }
 
             DebugDrawFocualCross(_focalPoint);
+
+            if (_targetManager != null)
+            {
+                _targetManager.Tick(dt);
+            }
 
             if (_collider != null)
             {
                 _collider.Tick();
             }
 
-            Debug.DrawLine(_focalPoint, position, Color.black);
+            Debug.DrawLine(_focalPoint, _transform.position, Color.black);
         }
 
-        private void UpdateDefault()
+        private void DefaultLook(float deltaTime)
         {
-            // #DG: TODO
+            UpdatePosition(deltaTime);
+
+            Quaternion rotation = CalculateRotationFromVector(_rotation);
+            Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
+
+            _transform.SetPositionAndRotation(position, Quaternion.LookRotation(_followTarget.position - position));
         }
 
-        private void UpdatePosition()
+        private void TargetedLook(float deltaTime)
+        {
+            UpdatePosition(deltaTime);
+            Vector3 lookDirection = _lookTargetOverride.LookAtPosition - CameraTransform.position;
+            Quaternion rotation = Quaternion.LookRotation(lookDirection);
+            Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
+            _transform.SetPositionAndRotation(position, rotation);
+        }
+
+        private void UpdatePosition(float deltaTime)
         {
             if (_settings.MaxLagDistance > 0f && _settings.SnapFactor < 1f)
             {
-                Vector3 travelDirection = _target.position - _focalPoint;
+                Vector3 travelDirection = _followTarget.position - _focalPoint;
                 float travelDistance = travelDirection.sqrMagnitude;
                 float maxDistance = _settings.MaxLagDistance.Squared();
 
                 if (travelDistance > maxDistance)
                 {
-                    _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position - (travelDirection.normalized * _settings.MaxLagDistance), _settings.MoveSpeed * Time.deltaTime);
+                    _focalPoint = Vector3.MoveTowards(_focalPoint, _followTarget.position - (travelDirection.normalized * _settings.MaxLagDistance), _settings.MoveSpeed * deltaTime);
                 }
                 else if (travelDistance < Constants.DeadZone.Squared())
                 {
-                    _focalPoint = _target.position;
+                    _focalPoint = _followTarget.position;
                 }
-
-                float dt = Time.deltaTime;
 
                 float pointOnCurve = 1 - Mathf.Clamp01(travelDistance / maxDistance);
                 float speed = _settings.MoveSpeed * _settings.EaseCurve.Evaluate(pointOnCurve);
 
-                float step = _settings.SnapFactor * dt * speed;
+                float step = _settings.SnapFactor * deltaTime * speed;
 
-                _focalPoint = Vector3.MoveTowards(_focalPoint, _target.position, step);
+                _focalPoint = Vector3.MoveTowards(_focalPoint, _followTarget.position, step);
             }
             else
             {
-                _focalPoint = _target.position;
+                _focalPoint = _followTarget.position;
             }
         }
 
@@ -305,7 +333,7 @@ namespace EazyCamera
         public void ResetPositionAndRotation()
         {
             _rotation = new Vector2();
-            _focalPoint = _target.position;
+            _focalPoint = _followTarget.position;
             ResetToDefaultDistance();
         }
 
@@ -369,6 +397,17 @@ namespace EazyCamera
             {
                 _targetManager.ToggleLockOn();
             }
+        }
+
+        public void SetLookTargetOverride(ITargetable targetOverride)
+        {
+            _lookTargetOverride = targetOverride;
+        }
+
+        public void ClearLookTargetOverride()
+        {
+            _lookTargetOverride = null;
+            // #DG: Re-calculate rotation here, or lerp back to position
         }
     }
 }
