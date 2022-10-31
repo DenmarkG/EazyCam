@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 23186664}
   - component: {fileID: 23186663}
   - component: {fileID: 23186662}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Column (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -234,7 +234,7 @@ GameObject:
   - component: {fileID: 144034154}
   - component: {fileID: 144034153}
   - component: {fileID: 144034152}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Column
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -632,7 +632,7 @@ GameObject:
   - component: {fileID: 381103830}
   - component: {fileID: 381103829}
   - component: {fileID: 381103828}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Column (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -727,8 +727,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 935244027}
-  m_Layer: 0
-  m_Name: Geometry
+  m_Layer: 15
+  m_Name: StaticGeometry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -747,7 +747,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1180970399}
-  - {fileID: 1019037414}
   - {fileID: 1472462993}
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -880,8 +879,8 @@ Transform:
   - {fileID: 144377144}
   - {fileID: 1433923038}
   - {fileID: 1629737650}
-  m_Father: {fileID: 935244027}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1022930638 stripped
 MonoBehaviour:
@@ -916,7 +915,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1180970399}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Columns
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1135,7 +1134,7 @@ GameObject:
   - component: {fileID: 1472462992}
   - component: {fileID: 1472462991}
   - component: {fileID: 1472462990}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1531,7 +1530,7 @@ GameObject:
   - component: {fileID: 2088643412}
   - component: {fileID: 2088643411}
   - component: {fileID: 2088643410}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Column (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1877,10 +1876,15 @@ PrefabInstance:
       propertyPath: _settings.TargetLockIcon
       value: 
       objectReference: {fileID: 1022930638}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.CollisionLayer.m_Bits
+      value: 32768
+      objectReference: {fileID: 0}
     - target: {fileID: 4036685162768839143, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 279
+      value: 33047
       objectReference: {fileID: 0}
     - target: {fileID: 4055929309831659383, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}

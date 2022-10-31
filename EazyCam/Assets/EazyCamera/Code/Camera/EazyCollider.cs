@@ -31,8 +31,7 @@ namespace EazyCamera
 
             _nearPlaneDistance = _cameraComponent.nearClipPlane;
 
-            _layermask = (1 << LayerMask.NameToLayer(_playerLayer)) | (1 << LayerMask.NameToLayer("Ignore Raycast"));
-            _layermask = ~_layermask;
+            _layermask = _controlledCamera.CameraSettings.CollisionLayer;
 
             UpdateNearClipPlanePoints();
         }

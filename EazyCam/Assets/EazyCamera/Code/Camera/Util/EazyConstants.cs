@@ -10,5 +10,7 @@ namespace EazyCamera
         public static readonly Color EnemyTargetColor = Color.red;
         public static readonly Color InactiveTargetColor = Color.gray;
         public static readonly Color NeutralTargetColor = Color.cyan;
+
+        public static readonly string CameraStaticLayerName = "CameraStatic";
     }
 }

@@ -33,16 +33,16 @@ namespace EazyCamera
 
             public bool InvertY;
 
-            [Header("Optional Components")]
-            // Collision
+            [Header("Collision")]
             public bool EnableCollision;
+            public LayerMask CollisionLayer;
 
-            // Zoom
+            [Header("Zoom")]
             public bool EnableZoom;
             public float ZoomDistance;
             public FloatRange ZoomRange;
 
-            // Targeting
+            [Header("Targeting")]
             public bool EnableTargetLock;
             public EazyTargetReticle TargetLockIcon;
         }
