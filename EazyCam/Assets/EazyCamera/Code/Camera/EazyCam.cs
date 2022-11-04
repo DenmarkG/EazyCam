@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 namespace EazyCamera
 {
     using Util = EazyCameraUtility;
@@ -407,7 +405,9 @@ namespace EazyCamera
         public void ClearLookTargetOverride()
         {
             _lookTargetOverride = null;
-            // #DG: Re-calculate rotation here, or lerp back to position
+            Vector3 currentRotation = _transform.rotation.eulerAngles;
+
+            SetRotation(currentRotation.y, currentRotation.x);
         }
     }
 }
