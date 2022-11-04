@@ -210,6 +210,17 @@ namespace EazyCamera
             return null;
         }
 
+
+        private void MoveToNextTarget(Vector3 direction)
+        {
+            //
+        }
+
+        private void CycleTargets()
+        {
+            //
+        }
+
         private void EnableLockIcon()
         {
             EazyTargetReticle reticle = _controlledCamera.CameraSettings.TargetLockIcon;

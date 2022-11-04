@@ -17,7 +17,6 @@ namespace EazyCamera
         private float _aspectHalfHeight = 0f;
         private float _aspectHalfWidth = 0f;
 
-        [SerializeField] private string _playerLayer = "Player";
         private int _layermask = 0;
 
         private bool _enabled = true;

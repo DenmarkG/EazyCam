@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace EazyCamera
@@ -17,7 +15,7 @@ namespace EazyCamera
         public struct Settings
         {
             public float Distance;
-            public float DefaultDistance;
+            public float DefaultDistance { get; set; }
 
             [Header("Movement")]
             public float MoveSpeed;
@@ -37,13 +35,15 @@ namespace EazyCamera
 
             [Header("Zoom")]
             public bool EnableZoom;
-            public float ZoomDistance;
+            public float ZoomDistance { get; set; }
             public FloatRange ZoomRange;
 
             [Header("Targeting")]
             public bool EnableTargetLock;
             public EazyTargetReticle TargetLockIcon;
         }
+
+        [SerializeField] private Transform _followTarget = null;
 
         public Settings CameraSettings => _settings;
         [SerializeField] private Settings _settings = new Settings()
@@ -63,7 +63,7 @@ namespace EazyCamera
             EnableTargetLock = true,
         };
 
-        [SerializeField] private Transform _followTarget = null;
+        
         public Transform TargetRoot { get; private set; }
 
         public Vector3 FocalPoint => _focalPoint;
@@ -106,6 +106,9 @@ namespace EazyCamera
 
         private void Start()
         {
+            _settings.DefaultDistance = _settings.Distance;
+            _settings.ZoomDistance = _settings.Distance;
+
             Vector3 initialPosition = _followTarget.position + (_followTarget.forward * _settings.Distance);
             Quaternion lookDirection = Quaternion.LookRotation(_followTarget.position - initialPosition);
             _rotation = lookDirection.eulerAngles;

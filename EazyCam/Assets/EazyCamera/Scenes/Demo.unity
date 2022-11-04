@@ -1881,6 +1881,21 @@ PrefabInstance:
       propertyPath: _settings.CollisionLayer.m_Bits
       value: 32768
       objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.EaseCurve.m_Curve.Array.data[1].inSlope
+      value: -2.6403704
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.EaseCurve.m_Curve.Array.data[1].inWeight
+      value: 0.037516177
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.EaseCurve.m_Curve.Array.data[1].outSlope
+      value: -2.6403704
+      objectReference: {fileID: 0}
     - target: {fileID: 4036685162768839143, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
       propertyPath: m_CullingMask.m_Bits
