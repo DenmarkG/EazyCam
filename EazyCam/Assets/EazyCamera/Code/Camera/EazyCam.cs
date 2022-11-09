@@ -338,7 +338,9 @@ namespace EazyCamera
             ResetToDefaultDistance();
         }
 
+        //
         // Targeting
+        #region Targeting
         public void SetTargetingEnabled(EnabledState state)
         {
             _settings.EnableTargetLock = state == EnabledState.Enabled;
@@ -412,6 +414,18 @@ namespace EazyCamera
 
             SetRotation(currentRotation.y, currentRotation.x);
         }
+
+        public void CycleTargets()
+        {
+            _targetManager.CycleTargets();
+        }
+
+        public void CycleTargets(Vector3 direction)
+        {
+            _targetManager.CycleTargets(direction);
+        }
+
+        #endregion // Targeting
     }
 }
 

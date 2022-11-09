@@ -33,9 +33,24 @@ namespace EazyCamera
             }
 
 
-            if (Input.GetKeyUp(KeyCode.Space))
+            if (Input.GetKeyUp(KeyCode.T))
             {
                 ToggleLockOn();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                CycleTargets();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                CycleTargets(Vector3.left);
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                CycleTargets(Vector3.right);
             }
         }
 
@@ -44,19 +59,19 @@ namespace EazyCamera
             _controlledCamera = cam;
         }
 
-        private void BeginLockOn()
-        {
-            //
-        }
-
-        private void EndLockOn()
-        {
-            //
-        }
-
         private void ToggleLockOn()
         {
             _controlledCamera.ToggleLockOn();
+        }
+
+        private void CycleTargets()
+        {
+            _controlledCamera.CycleTargets();
+        }
+
+        private void CycleTargets(Vector3 direction)
+        {
+            _controlledCamera.CycleTargets(direction);
         }
     }
 }

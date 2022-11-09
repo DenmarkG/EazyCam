@@ -6,6 +6,8 @@ namespace EazyCamera
 {
     using EazyCamera.Events;
 
+    using TargetInfo = System.Tuple<ITargetable, int>;
+
     public interface ITargetable
     {
         Vector3 LookAtPosition { get; }
@@ -21,9 +23,9 @@ namespace EazyCamera
         private EazyCam _controlledCamera = null;
 
         private ITargetable _currentTarget = null;
+        private int _currentTargetIndex = -1;
         
         public bool IsEnabled { get; private set; } // Is the manager enabled and listening for events
-
         public bool IsActive { get; private set; } // Is the manager actively locked onto a target
 
         public EazyTargetManager(EazyCam cam, EnabledState defaultState = EnabledState.Enabled)
@@ -122,7 +124,10 @@ namespace EazyCamera
 
             if (_targetsInRange.Count > 0)
             {
-                ITargetable nearestTarget = FindNearestTarget();
+                TargetInfo info = FindNearestTarget();
+                ITargetable nearestTarget = info.Item1;
+                _currentTargetIndex = info.Item2;
+
                 if (_currentTarget != null)
                 {
                     if (_currentTarget != nearestTarget)
@@ -169,14 +174,26 @@ namespace EazyCamera
             }
         }
 
-        private ITargetable FindNearestTarget()
+        private TargetInfo FindNearestTarget()
         {
             if (_targetsInRange.Count > 0)
             {
+                if (_targetsInRange.Count == 1)
+                {
+                    return new TargetInfo(_targetsInRange[0], 0);
+                }
+
                 // if two targets, toggle between them
                 if (_targetsInRange.Count == 2)
                 {
-                    return _currentTarget == _targetsInRange[0] ? _targetsInRange[1] : _targetsInRange[0]; ;
+                    if (_currentTarget == _targetsInRange[0])
+                    {
+                        return new TargetInfo(_targetsInRange[1], 1);
+                    }
+                    else
+                    {
+                        return new TargetInfo(_targetsInRange[0], 0);
+                    }
                 }
 
                 // if more than two targets:
@@ -186,6 +203,8 @@ namespace EazyCamera
                 float currentNearestDistance = float.MaxValue;
 
                 Transform cameraTransform = _controlledCamera.CameraTransform;
+
+                int nearestIndex = 0;
 
                 for (int i = 0; i < _targetsInRange.Count; ++i)
                 {
@@ -201,24 +220,77 @@ namespace EazyCamera
                     {
                         nearestTarget = nextTarget;
                         currentNearestDistance = distance;
+                        nearestIndex = i;
                     }
                 }
 
-                return nearestTarget;
+                return new TargetInfo(nearestTarget, nearestIndex);
             }
 
             return null;
         }
 
-
-        private void MoveToNextTarget(Vector3 direction)
+        public void CycleTargets()
         {
-            //
+            int numTargets = _targetsInRange.Count;
+            if (_targetsInRange.Count <= 1)
+            {
+                return;
+            }
+
+            _currentTargetIndex = (numTargets + (_currentTargetIndex + 1)) % numTargets;
+            SetCurrentTarget(_targetsInRange[_currentTargetIndex], _currentTargetIndex);
         }
 
-        private void CycleTargets()
+        public void CycleTargets(Vector3 direction)
         {
-            //
+            // if one target early out
+            if (_targetsInRange.Count <= 1)
+            {
+                return;
+            }
+
+            ITargetable nearestTarget = null;
+            // if two targets, toggle between them
+            if (_targetsInRange.Count == 2)
+            {
+                nearestTarget = _currentTarget == _targetsInRange[0] ? _targetsInRange[1] : _targetsInRange[0];
+            }
+            else
+            {
+                // if more than two targets:
+                // Find the target nearest to the direction we want to move 
+                nearestTarget = _currentTarget;
+                ITargetable nextTarget = null;
+                Vector3 relativeDirection = direction;
+                float currentNearestDistance = float.MaxValue;
+                float sqDstance = float.MaxValue;
+
+                for (int i = 0; i < _targetsInRange.Count; ++i)
+                {
+                    nextTarget = _targetsInRange[i];
+                    if (nextTarget == _currentTarget)
+                    {
+                        continue;
+                    }
+
+                    relativeDirection = nextTarget.LookAtPosition - _controlledCamera.CameraTransform.position;
+                    if (Vector3.Dot(relativeDirection, direction) > 0)
+                    {
+                        //sqDstance = relativeDirection.sqrMagnitude;
+                        sqDstance = (_currentTarget.LookAtPosition - nextTarget.LookAtPosition).sqrMagnitude;
+                        if (sqDstance < currentNearestDistance)
+                        {
+                            nearestTarget = nextTarget;
+                            currentNearestDistance = sqDstance;
+                        }
+                    }
+                }
+            }
+
+            _currentTarget?.OnFocusLost();
+            _currentTarget = nearestTarget;
+            _currentTarget?.OnFocusReceived();
         }
 
         private void EnableLockIcon()
@@ -250,6 +322,22 @@ namespace EazyCamera
         {
             EazyEventManager.UnbindFromEvent(EazyEventKey.OnEnterFocasableRange, OnEnterFocusRange);
             EazyEventManager.UnbindFromEvent(EazyEventKey.OnExitFocasableRange, OnExitFocusRange);
+        }
+
+        private void SetCurrentTarget(ITargetable target, int index)
+        {
+            if (_currentTarget != null)
+            {
+                _currentTarget.OnFocusLost();
+            }
+
+            _currentTarget = target;
+            _currentTargetIndex = index;
+
+            if (_currentTarget != null)
+            {
+                _currentTarget.OnFocusReceived();
+            }
         }
     }
 }
