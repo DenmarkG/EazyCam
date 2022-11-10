@@ -45,12 +45,12 @@ namespace EazyCamera
 
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                CycleTargets(Vector3.left);
+                CycleLeft();
             }
 
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                CycleTargets(Vector3.right);
+                CycleRight();
             }
         }
 
@@ -69,9 +69,14 @@ namespace EazyCamera
             _controlledCamera.CycleTargets();
         }
 
-        private void CycleTargets(Vector3 direction)
+        private void CycleRight()
         {
-            _controlledCamera.CycleTargets(direction);
+            _controlledCamera.CycleTargetsRight();
+        }
+
+        private void CycleLeft()
+        {
+            _controlledCamera.CycleTargetsLeft();
         }
     }
 }

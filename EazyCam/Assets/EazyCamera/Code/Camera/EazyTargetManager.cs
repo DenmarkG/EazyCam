@@ -40,7 +40,7 @@ namespace EazyCamera
             {
                 // Not cached here to allow changing the reticle while targeting is active
                 EazyTargetReticle reticle = _controlledCamera.CameraSettings.TargetLockIcon;
-                if (reticle != null)
+                if (reticle != null && _currentTarget != null)
                 {
                     reticle.transform.position = _currentTarget.LookAtPosition;
                 }
@@ -145,6 +145,7 @@ namespace EazyCamera
                     EnableLockIcon();
 
                     _controlledCamera.SetLookTargetOverride(_currentTarget);
+                    Debug.Log("Target locked");
                 }
             }
         }
@@ -202,8 +203,6 @@ namespace EazyCamera
                 ITargetable nextTarget = null;
                 float currentNearestDistance = float.MaxValue;
 
-                Transform cameraTransform = _controlledCamera.CameraTransform;
-
                 int nearestIndex = 0;
 
                 for (int i = 0; i < _targetsInRange.Count; ++i)
@@ -214,7 +213,7 @@ namespace EazyCamera
                         continue;
                     }
 
-                    Vector3 relativeDirection = nextTarget.LookAtPosition - cameraTransform.position;
+                    Vector3 relativeDirection = nextTarget.LookAtPosition - _controlledCamera.FocalPoint;
                     float distance = relativeDirection.sqrMagnitude;
                     if (distance < currentNearestDistance)
                     {
@@ -232,18 +231,26 @@ namespace EazyCamera
 
         public void CycleTargets()
         {
-            int numTargets = _targetsInRange.Count;
-            if (_targetsInRange.Count <= 1)
+            if (IsActive)
             {
-                return;
-            }
+                int numTargets = _targetsInRange.Count;
+                if (_targetsInRange.Count <= 1)
+                {
+                    return;
+                }
 
-            _currentTargetIndex = (numTargets + (_currentTargetIndex + 1)) % numTargets;
-            SetCurrentTarget(_targetsInRange[_currentTargetIndex], _currentTargetIndex);
+                _currentTargetIndex = (numTargets + (_currentTargetIndex + 1)) % numTargets;
+                SetCurrentTarget(_targetsInRange[_currentTargetIndex], _currentTargetIndex);
+            }
         }
 
         public void CycleTargets(Vector3 direction)
         {
+            if (!IsActive)
+            {
+                return;
+            }
+
             // if one target early out
             if (_targetsInRange.Count <= 1)
             {
@@ -251,10 +258,21 @@ namespace EazyCamera
             }
 
             ITargetable nearestTarget = null;
+            int nearestTargetIndex = -1;
+
             // if two targets, toggle between them
             if (_targetsInRange.Count == 2)
             {
-                nearestTarget = _currentTarget == _targetsInRange[0] ? _targetsInRange[1] : _targetsInRange[0];
+                if (_currentTarget == _targetsInRange[0])
+                {
+                    nearestTarget = _targetsInRange[1];
+                    nearestTargetIndex = 1;
+                }
+                else
+                {
+                    _currentTarget = _targetsInRange[0];
+                    nearestTargetIndex = 0;
+                }
             }
             else
             {
@@ -283,14 +301,13 @@ namespace EazyCamera
                         {
                             nearestTarget = nextTarget;
                             currentNearestDistance = sqDstance;
+                            nearestTargetIndex = i;
                         }
                     }
                 }
             }
 
-            _currentTarget?.OnFocusLost();
-            _currentTarget = nearestTarget;
-            _currentTarget?.OnFocusReceived();
+            SetCurrentTarget(nearestTarget, nearestTargetIndex);
         }
 
         private void EnableLockIcon()
@@ -337,6 +354,7 @@ namespace EazyCamera
             if (_currentTarget != null)
             {
                 _currentTarget.OnFocusReceived();
+                _controlledCamera.SetLookTargetOverride(_currentTarget);
             }
         }
     }

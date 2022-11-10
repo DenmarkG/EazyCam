@@ -420,6 +420,16 @@ namespace EazyCamera
             _targetManager.CycleTargets();
         }
 
+        public void CycleTargetsRight()
+        {
+            _targetManager.CycleTargets(_transform.right);
+        }
+
+        public void CycleTargetsLeft()
+        {
+            _targetManager.CycleTargets(-_transform.right);
+        }
+
         public void CycleTargets(Vector3 direction)
         {
             _targetManager.CycleTargets(direction);
