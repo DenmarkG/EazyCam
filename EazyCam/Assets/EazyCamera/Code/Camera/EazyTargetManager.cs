@@ -145,7 +145,6 @@ namespace EazyCamera
                     EnableLockIcon();
 
                     _controlledCamera.SetLookTargetOverride(_currentTarget);
-                    Debug.Log("Target locked");
                 }
             }
         }
@@ -161,6 +160,7 @@ namespace EazyCamera
             DisableLockIcon();
 
             IsActive = false;
+            _currentTarget = null;
         }
 
         public void ToggleLockOn()
@@ -175,6 +175,10 @@ namespace EazyCamera
             }
         }
 
+        /// <summary>
+        /// Finds and returns the target closest to the center of the screen
+        /// </summary>
+        /// <returns>The target found</returns>
         private TargetInfo FindNearestTarget()
         {
             if (_targetsInRange.Count > 0)
@@ -201,7 +205,7 @@ namespace EazyCamera
                 // Find the target nearest to the direction we want to move 
                 ITargetable nearestTarget = _currentTarget;
                 ITargetable nextTarget = null;
-                float currentNearestDistance = float.MaxValue;
+                float smallestDotProduct = float.MaxValue;
 
                 int nearestIndex = 0;
 
@@ -213,12 +217,14 @@ namespace EazyCamera
                         continue;
                     }
 
-                    Vector3 relativeDirection = nextTarget.LookAtPosition - _controlledCamera.FocalPoint;
-                    float distance = relativeDirection.sqrMagnitude;
-                    if (distance < currentNearestDistance)
+                    Vector3 relativeDirection = (nextTarget.LookAtPosition - _controlledCamera.FocalPoint).normalized;
+                    float dot = 1f - Vector3.Dot(relativeDirection, _controlledCamera.CameraTransform.forward);
+                    Debug.Log($"{nextTarget} has dot {dot}, camera forward = {_controlledCamera.CameraTransform.forward}, relative = {relativeDirection}");
+
+                    if (dot < smallestDotProduct)
                     {
                         nearestTarget = nextTarget;
-                        currentNearestDistance = distance;
+                        smallestDotProduct = dot;
                         nearestIndex = i;
                     }
                 }
