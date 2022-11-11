@@ -119,8 +119,6 @@ namespace EazyCamera
 
         public void BeginTargetLock()
         {
-            IsActive = true;
-
             if (_targetsInRange.Count > 0)
             {
                 TargetInfo info = FindNearestTarget();
@@ -140,6 +138,7 @@ namespace EazyCamera
 
                 if (_currentTarget != null)
                 {
+                    IsActive = true;
                     _currentTarget.OnFocusReceived();
                     EnableLockIcon();
 
