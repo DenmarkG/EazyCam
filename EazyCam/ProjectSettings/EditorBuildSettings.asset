@@ -4,4 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/EazyCamera/Scenes/Demo.unity
+    guid: 0fc51a4b5100ac74f874d2b3d5222469
+  m_configObjects: {}
