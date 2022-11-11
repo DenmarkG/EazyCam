@@ -5,7 +5,6 @@ using UnityEngine;
 namespace EazyCamera
 {
     using EazyCamera.Events;
-
     using TargetInfo = System.Tuple<ITargetable, int>;
 
     public interface ITargetable
@@ -205,7 +204,9 @@ namespace EazyCamera
                 // Find the target nearest to the direction we want to move 
                 ITargetable nearestTarget = _currentTarget;
                 ITargetable nextTarget = null;
-                float smallestDotProduct = float.MaxValue;
+
+                // Heuristic = Dot / Distance
+                float bestHeuristic = float.MinValue;
 
                 int nearestIndex = 0;
 
@@ -217,15 +218,17 @@ namespace EazyCamera
                         continue;
                     }
 
-                    Vector3 relativeDirection = (nextTarget.LookAtPosition - _controlledCamera.FocalPoint).normalized;
-                    float dot = 1f - Vector3.Dot(relativeDirection, _controlledCamera.CameraTransform.forward);
-                    Debug.Log($"{nextTarget} has dot {dot}, camera forward = {_controlledCamera.CameraTransform.forward}, relative = {relativeDirection}");
+                    Vector3 relativeDirection = (nextTarget.LookAtPosition - _controlledCamera.FocalPoint);
+                    float dot = Vector3.Dot(relativeDirection.normalized, _controlledCamera.CameraTransform.forward);
+                    float heuristic = dot / relativeDirection.sqrMagnitude;
+                    //Debug.Log($"{nextTarget} has dot {dot}, camera forward = {_controlledCamera.CameraTransform.forward}, relative = {relativeDirection}");
+                    Debug.Log($"{nextTarget} has dot {dot}, h = {heuristic}");
 
-                    if (dot < smallestDotProduct)
+                    if (heuristic > bestHeuristic)
                     {
                         nearestTarget = nextTarget;
-                        smallestDotProduct = dot;
                         nearestIndex = i;
+                        bestHeuristic = heuristic;
                     }
                 }
 
