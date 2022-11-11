@@ -25,7 +25,7 @@ namespace EazyCamera
         {
             Debug.Assert(camera != null, "Attempting to create collsions on a non-camera object");
             _controlledCamera = camera;
-            _cameraComponent = camera.AttachedCamera;
+            _cameraComponent = camera.UnityCamera;
             _cameraTransform = camera.CameraTransform;
 
             _nearPlaneDistance = _cameraComponent.nearClipPlane;

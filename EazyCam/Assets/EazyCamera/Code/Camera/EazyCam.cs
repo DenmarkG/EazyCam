@@ -3,9 +3,6 @@ using UnityEngine;
 namespace EazyCamera
 {
     using Util = EazyCameraUtility;
-
-    using EazyCamera.Events;
-
     
     [RequireComponent(typeof(Camera))]
     [ExecuteInEditMode]
@@ -69,7 +66,7 @@ namespace EazyCamera
         public Vector3 FocalPoint => _focalPoint;
         private Vector3 _focalPoint = new Vector3();
 
-        public Camera AttachedCamera { get; private set; }
+        public Camera UnityCamera { get; private set; }
         
         public Transform CameraTransform => _transform;
         private Transform _transform = null;
@@ -91,7 +88,7 @@ namespace EazyCamera
             Debug.Assert(_followTarget != null, "Target should not be null on an EazyCam component");
             TargetRoot = _followTarget.root;
 
-            AttachedCamera = this.GetComponent<Camera>();
+            UnityCamera = this.GetComponent<Camera>();
 
             if (_settings.EnableCollision)
             {
@@ -336,6 +333,12 @@ namespace EazyCamera
             _rotation = new Vector2();
             _focalPoint = _followTarget.position;
             ResetToDefaultDistance();
+        }
+
+        public bool PointIsOnScreen(Vector2 point)
+        {
+            Rect rect = new Rect(0f, 0f, Screen.width, Screen.height);
+            return rect.Contains(point);
         }
 
         //

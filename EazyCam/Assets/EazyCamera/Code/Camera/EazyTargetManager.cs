@@ -23,7 +23,7 @@ namespace EazyCamera
 
         private ITargetable _currentTarget = null;
         private int _currentTargetIndex = -1;
-        
+
         public bool IsEnabled { get; private set; } // Is the manager enabled and listening for events
         public bool IsActive { get; private set; } // Is the manager actively locked onto a target
 
@@ -150,16 +150,19 @@ namespace EazyCamera
 
         public void EndTargetLock()
         {
-            if (_currentTarget != null)
+            if (IsActive)
             {
-                _currentTarget.OnFocusLost();
+                if (_currentTarget != null)
+                {
+                    _currentTarget.OnFocusLost();
+                }
+
+                _controlledCamera.ClearLookTargetOverride();
+                DisableLockIcon();
+
+                IsActive = false;
+                _currentTarget = null;
             }
-
-            _controlledCamera.ClearLookTargetOverride();
-            DisableLockIcon();
-
-            IsActive = false;
-            _currentTarget = null;
         }
 
         public void ToggleLockOn()
@@ -175,7 +178,8 @@ namespace EazyCamera
         }
 
         /// <summary>
-        /// Finds and returns the target closest to the center of the screen
+        /// Finds and returns the target closest to the center of the screen.
+        /// Attempts to only select from on screen targets
         /// </summary>
         /// <returns>The target found</returns>
         private TargetInfo FindNearestTarget()
@@ -188,7 +192,7 @@ namespace EazyCamera
                 }
 
                 // if two targets, toggle between them
-                if (_targetsInRange.Count == 2)
+                if (_targetsInRange.Count == 2 && _currentTarget != null)
                 {
                     if (_currentTarget == _targetsInRange[0])
                     {
@@ -203,12 +207,11 @@ namespace EazyCamera
                 // if more than two targets:
                 // Find the target nearest to the direction we want to move 
                 ITargetable nearestTarget = _currentTarget;
-                ITargetable nextTarget = null;
+                ITargetable nextTarget = _targetsInRange[0];
+                int nearestIndex = 0;
 
                 // Heuristic = Dot / Distance
                 float bestHeuristic = float.MinValue;
-
-                int nearestIndex = 0;
 
                 for (int i = 0; i < _targetsInRange.Count; ++i)
                 {
@@ -218,11 +221,16 @@ namespace EazyCamera
                         continue;
                     }
 
+                    Vector2 screenPos = _controlledCamera.UnityCamera.WorldToScreenPoint(nextTarget.LookAtPosition);
+                    bool targetIsOnScreen = _controlledCamera.PointIsOnScreen(screenPos);
+                    if (!targetIsOnScreen)
+                    {
+                        continue;
+                    }
+
                     Vector3 relativeDirection = (nextTarget.LookAtPosition - _controlledCamera.FocalPoint);
                     float dot = Vector3.Dot(relativeDirection.normalized, _controlledCamera.CameraTransform.forward);
                     float heuristic = dot / relativeDirection.sqrMagnitude;
-                    //Debug.Log($"{nextTarget} has dot {dot}, camera forward = {_controlledCamera.CameraTransform.forward}, relative = {relativeDirection}");
-                    Debug.Log($"{nextTarget} has dot {dot}, h = {heuristic}");
 
                     if (heuristic > bestHeuristic)
                     {
@@ -248,8 +256,8 @@ namespace EazyCamera
                     return;
                 }
 
-                _currentTargetIndex = (numTargets + (_currentTargetIndex + 1)) % numTargets;
-                SetCurrentTarget(_targetsInRange[_currentTargetIndex], _currentTargetIndex);
+                int index = (_currentTargetIndex + 1) % numTargets;
+                SetCurrentTarget(_targetsInRange[index], index);
             }
         }
 
@@ -260,31 +268,27 @@ namespace EazyCamera
                 return;
             }
 
+            int targetCount = _targetsInRange.Count;
+
             // if one target early out
-            if (_targetsInRange.Count <= 1)
+            if (targetCount <= 1)
             {
                 return;
             }
 
-            ITargetable nearestTarget = null;
-            int nearestTargetIndex = -1;
+            
 
             // if two targets, toggle between them
-            if (_targetsInRange.Count == 2)
+            if (targetCount == 2)
             {
-                if (_currentTarget == _targetsInRange[0])
-                {
-                    nearestTarget = _targetsInRange[1];
-                    nearestTargetIndex = 1;
-                }
-                else
-                {
-                    _currentTarget = _targetsInRange[0];
-                    nearestTargetIndex = 0;
-                }
+                ToggleTargets();
+                return;
             }
             else
             {
+                ITargetable nearestTarget = _currentTarget;
+                int nearestTargetIndex = 0;
+
                 // if more than two targets:
                 // Find the target nearest to the direction we want to move 
                 nearestTarget = _currentTarget;
@@ -304,7 +308,6 @@ namespace EazyCamera
                     relativeDirection = nextTarget.LookAtPosition - _controlledCamera.CameraTransform.position;
                     if (Vector3.Dot(relativeDirection, direction) > 0)
                     {
-                        //sqDstance = relativeDirection.sqrMagnitude;
                         sqDstance = (_currentTarget.LookAtPosition - nextTarget.LookAtPosition).sqrMagnitude;
                         if (sqDstance < currentNearestDistance)
                         {
@@ -314,9 +317,21 @@ namespace EazyCamera
                         }
                     }
                 }
-            }
 
-            SetCurrentTarget(nearestTarget, nearestTargetIndex);
+                SetCurrentTarget(nearestTarget, nearestTargetIndex);
+            }
+        }
+
+        private void ToggleTargets()
+        {
+            if (_currentTarget == _targetsInRange[0])
+            {
+                SetCurrentTarget(_targetsInRange[1], 1);
+            }
+            else
+            {
+                SetCurrentTarget(_targetsInRange[0], 0);
+            }
         }
 
         private void EnableLockIcon()
