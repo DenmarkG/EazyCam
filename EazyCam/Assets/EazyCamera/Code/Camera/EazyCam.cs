@@ -439,6 +439,11 @@ namespace EazyCamera
         }
 
         #endregion // Targeting
+
+        public void OverrideSettings(Settings settings)
+        {
+            _settings = settings;
+        }
     }
 }
 
