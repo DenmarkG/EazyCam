@@ -251,7 +251,11 @@ namespace EazyCamera
             Debug.DrawLine(position - (Vector3.right / 2f), position + (Vector3.right / 2f), Color.red);
             Debug.DrawLine(position - (Vector3.forward / 2f), position + (Vector3.forward / 2f), Color.blue);
         }
-
+        
+        /// <summary>
+        /// Directly sets the distance of the camera. If zoom is enabled, it will chose the farther of the two values
+        /// </summary>
+        /// <param name="distance"></param>
         public void SetDistance(float distance)
         {
             if (_settings.EnableZoom)
@@ -265,6 +269,10 @@ namespace EazyCamera
             }
         }
 
+        /// <summary>
+        /// Sets Zoom Distance of the camera. If distance is not in the allowed range, it will be clamped to the range
+        /// </summary>
+        /// <param name="zoomDistance"></param>
         public void SetZoomDistance(float zoomDistance)
         {
             _settings.ZoomDistance = Util.ClampToRange(zoomDistance, _settings.ZoomRange);

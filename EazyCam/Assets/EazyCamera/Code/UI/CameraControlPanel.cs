@@ -11,6 +11,7 @@ namespace EazyCamera
 
         [SerializeField] private EazyCam _sceneCamera = null;
         private EazyCam.Settings _activeSettings;
+        private EazyCam.Settings _defaultSettings;
 
         private void Start()
         {
@@ -25,6 +26,7 @@ namespace EazyCamera
         private void OnEnable()
         {
             _activeSettings = _sceneCamera.CameraSettings;
+            _defaultSettings = _activeSettings;
         }
 
         public void CancelChanges()
@@ -40,7 +42,20 @@ namespace EazyCamera
 
         private void Close()
         {
+            _sceneCamera.OverrideSettings(_defaultSettings);
             OnClosed();
+        }
+
+        public void SetCameraZoomDistanceNormalized(float normalizedDistance)
+        {
+            float actualDistance = _activeSettings.ZoomRange.Lerp(normalizedDistance);
+            _sceneCamera.SetZoomDistance(actualDistance);
+        }
+
+        public void SetCollisionsEnabled(bool enabled)
+        {
+            _activeSettings.EnableCollision = enabled;
+            _sceneCamera.SetCollisionEnabled(enabled ? EnabledState.Enabled : EnabledState.Disabled);
         }
     }
 }

@@ -47,5 +47,9 @@ namespace EazyCamera
             return Mathf.Clamp(value, range.Min, range.Max);
         }
 
+        public static float Lerp(this FloatRange range, float t)
+        {
+            return Mathf.Lerp(range.Min, range.Max, t);
+        }
     }
 }
