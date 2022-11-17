@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace EazyCamera.Events
 {
@@ -15,16 +12,11 @@ namespace EazyCamera.Events
         }
 
         public static implicit operator string(EazyEventKey key) => key.Key;
-
-        public override int GetHashCode()
-        {
-            return Key.GetHashCode();
-        }
-
-        public bool Equals(EazyEventKey other)
-        {
-            return Key == other.Key;
-        }
+        public override int GetHashCode() => Key.GetHashCode();
+        public bool Equals(EazyEventKey other) => Key == other.Key;
+        public override bool Equals(object obj) => obj is EazyEventKey key && this.Equals(key);
+        public static bool operator ==(EazyEventKey lhs, EazyEventKey rhs) => lhs.Equals(rhs);
+        public static bool operator !=(EazyEventKey lhs, EazyEventKey rhs) => !(lhs.Equals(rhs));
 
         public static readonly EazyEventKey OnEnterFocasableRange = new EazyEventKey("OnEnterFocasableRange");
         public static readonly EazyEventKey OnExitFocasableRange = new EazyEventKey("OnExitFocasableRange");

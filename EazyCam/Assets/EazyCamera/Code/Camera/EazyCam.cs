@@ -12,7 +12,11 @@ namespace EazyCamera
         public struct Settings
         {
             public float Distance;
+            public Vector2 DefaultRotation;
             public float DefaultDistance { get; set; }
+
+            [Header("Orbit")]
+            public bool OrbitEnabled;
 
             [Header("Movement")]
             public float MoveSpeed;
@@ -47,6 +51,7 @@ namespace EazyCamera
         {
             Distance = -5f,
             DefaultDistance = -5f,
+            OrbitEnabled = true,
             MoveSpeed = 5f,
             SnapFactor = .75f,
             MaxLagDistance = 1f,
@@ -59,7 +64,6 @@ namespace EazyCamera
             ZoomRange = new FloatRange(-10f, -1f),
             EnableTargetLock = true,
         };
-
         
         public Transform TargetRoot { get; private set; }
 
@@ -106,11 +110,10 @@ namespace EazyCamera
             _settings.DefaultDistance = _settings.Distance;
             _settings.ZoomDistance = _settings.Distance;
 
-            Vector3 initialPosition = _followTarget.position + (_followTarget.forward * _settings.Distance);
-            Quaternion lookDirection = Quaternion.LookRotation(_followTarget.position - initialPosition);
-            _rotation = lookDirection.eulerAngles;
-
-            _transform.SetPositionAndRotation(initialPosition, lookDirection);
+            _rotation = _settings.DefaultRotation;
+            Quaternion rotation = CalculateRotationFromVector(_rotation);
+            Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
+            _transform.SetPositionAndRotation(position, Quaternion.LookRotation(_followTarget.position - position));
 
             _focalPoint = _followTarget.position;
 
@@ -150,8 +153,12 @@ namespace EazyCamera
         private void DefaultLook(float deltaTime)
         {
             UpdatePosition(deltaTime);
-
+#if UNITY_EDITOR
+            Quaternion rotation = CalculateRotationFromVector(Application.isPlaying ? _rotation : _settings.DefaultRotation);
+#else
             Quaternion rotation = CalculateRotationFromVector(_rotation);
+#endif // UNITY_EDITOR
+
             Vector3 position = _focalPoint + ((rotation * Vector3.forward) * _settings.Distance);
 
             _transform.SetPositionAndRotation(position, Quaternion.LookRotation(_followTarget.position - position));
@@ -205,15 +212,23 @@ namespace EazyCamera
             ClampHorizontalRotation();
         }
 
+        public void SetRotationUnclamped(float horzRot, float vertRot)
+        {
+            _rotation.x = vertRot;
+            _rotation.y = horzRot;
+        }
+
         public void IncreaseRotation(float horzRotDelta, float vertRotDelta, float deltaTime)
         {
-            float step = deltaTime * _settings.RotationSpeed;
-            _rotation.y += horzRotDelta * step;
-            ClampVerticalRotation();
+            if (_settings.OrbitEnabled)
+            {
+                float step = deltaTime * _settings.RotationSpeed;
+                _rotation.y += horzRotDelta * step;
+                ClampVerticalRotation();
 
-
-            _rotation.x += vertRotDelta * step * (_settings.InvertY ? 1f : -1f);
-            ClampHorizontalRotation();
+                _rotation.x += vertRotDelta * step * (_settings.InvertY ? 1f : -1f);
+                ClampHorizontalRotation();
+            }
         }
 
         private void ClampVerticalRotation()
@@ -349,9 +364,14 @@ namespace EazyCamera
             return rect.Contains(point);
         }
 
+        public void SetOrbitEnabled(EnabledState state)
+        {
+            _settings.OrbitEnabled = state == EnabledState.Enabled ? true : false;
+        }
+
         //
         // Targeting
-        #region Targeting
+#region Targeting
         public void SetTargetingEnabled(EnabledState state)
         {
             _settings.EnableTargetLock = state == EnabledState.Enabled;
@@ -446,7 +466,7 @@ namespace EazyCamera
             _targetManager.CycleTargets(direction);
         }
 
-        #endregion // Targeting
+#endregion // Targeting
 
         public void OverrideSettings(Settings settings)
         {
