@@ -208,8 +208,8 @@ namespace EazyCamera
             _rotation.x = vertRot;
             _rotation.y = horzRot;
 
-            ClampVerticalRotation();
             ClampHorizontalRotation();
+            ClampVerticalRotation();
         }
 
         public void SetRotationUnclamped(float horzRot, float vertRot)
@@ -224,14 +224,14 @@ namespace EazyCamera
             {
                 float step = deltaTime * _settings.RotationSpeed;
                 _rotation.y += horzRotDelta * step;
-                ClampVerticalRotation();
+                ClampHorizontalRotation();
 
                 _rotation.x += vertRotDelta * step * (_settings.InvertY ? 1f : -1f);
-                ClampHorizontalRotation();
+                ClampVerticalRotation();
             }
         }
 
-        private void ClampVerticalRotation()
+        private void ClampHorizontalRotation()
         {
             if (_rotation.y > 360f)
             {
@@ -243,7 +243,7 @@ namespace EazyCamera
             }
         }
 
-        private void ClampHorizontalRotation()
+        private void ClampVerticalRotation()
         {
             _rotation.x = Mathf.Clamp(_rotation.x, _settings.VerticalRotation.Min, _settings.VerticalRotation.Max);
         }
@@ -441,7 +441,7 @@ namespace EazyCamera
         public void ClearLookTargetOverride()
         {
             _lookTargetOverride = null;
-            Vector3 currentRotation = _transform.rotation.eulerAngles;
+            Vector3 currentRotation = _settings.OrbitEnabled ? _transform.rotation.eulerAngles : _settings.DefaultRotation;
 
             SetRotation(currentRotation.y, currentRotation.x);
         }

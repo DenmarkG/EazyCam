@@ -1868,6 +1868,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
+      propertyPath: _settings.OrbitEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
       propertyPath: _settings.RotationSpeed
       value: 50
       objectReference: {fileID: 0}
@@ -1885,6 +1890,16 @@ PrefabInstance:
         type: 3}
       propertyPath: _settings.DefaultRotation.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.VerticalRotation.Max
+      value: 89
+      objectReference: {fileID: 0}
+    - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
+        type: 3}
+      propertyPath: _settings.VerticalRotation.Min
+      value: -89
       objectReference: {fileID: 0}
     - target: {fileID: 427229399175577728, guid: e562a044313886c43a9e34edf7f8b259,
         type: 3}
