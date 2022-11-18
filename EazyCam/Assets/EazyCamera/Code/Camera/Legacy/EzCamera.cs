@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace EazyCamera.Legacy
 {
+    using Extensions;
     [System.Serializable]
     [ExecuteInEditMode]
     public class EzCamera : MonoBehaviour

@@ -1,32 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EzAnimator : MonoBehaviour
+namespace EazyCamera.Legacy
 {
-	[SerializeField] private EzMotor _controlledCharacter = null;
-    private Animator _animator = null;
-
-    // Anim hashes
-    private int _speedHash = -1;
-    //private int _directionHash = -1;
-
-    private void Awake()
+    public class EzAnimator : MonoBehaviour
     {
-        _animator = this.GetComponent<Animator>();
-        _speedHash = Animator.StringToHash("Speed");
-        //_directionHash = Animator.StringToHash("Direction");
-    }
+        [SerializeField] private EzMotor _controlledCharacter = null;
+        private Animator _animator = null;
 
-    private void Start()
-    {
-        if (_controlledCharacter == null)
+        // Anim hashes
+        private int _speedHash = -1;
+        //private int _directionHash = -1;
+
+        private void Awake()
         {
-            _controlledCharacter = this.transform.root.GetComponentInChildren<EzMotor>();
+            _animator = this.GetComponent<Animator>();
+            _speedHash = Animator.StringToHash("Speed");
+            //_directionHash = Animator.StringToHash("Direction");
         }
-    }
 
-    private void Update()
-    {
-        _animator.SetFloat(_speedHash, _controlledCharacter.GetNormalizedSpeed());
+        private void Start()
+        {
+            if (_controlledCharacter == null)
+            {
+                _controlledCharacter = this.transform.root.GetComponentInChildren<EzMotor>();
+            }
+        }
+
+        private void Update()
+        {
+            _animator.SetFloat(_speedHash, _controlledCharacter.GetNormalizedSpeed());
+        }
     }
 }

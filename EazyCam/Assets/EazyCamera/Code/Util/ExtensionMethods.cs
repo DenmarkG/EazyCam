@@ -1,52 +1,55 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public static class ExtensionMethods
+namespace EazyCamera.Extensions
 {
-    public const string HORIZONTAL = "Horizontal";
-    public const string VERITCAL = "Vertical";
-    public const string MOUSEX = "Mouse X";
-    public const string MOUSEY = "Mouse Y";
-    public const string MOUSE_WHEEL = "Mouse ScrollWheel";
-
-    public static T GetOrAddComponent<T>(this GameObject obj) where T : Component
+    public static class ExtensionMethods
     {
-        T component = obj.GetComponent<T>();
-        if (component == null)
+        public const string HORIZONTAL = "Horizontal";
+        public const string VERITCAL = "Vertical";
+        public const string MOUSEX = "Mouse X";
+        public const string MOUSEY = "Mouse Y";
+        public const string MOUSE_WHEEL = "Mouse ScrollWheel";
+
+        public static T GetOrAddComponent<T>(this GameObject obj) where T : Component
         {
-            component = obj.AddComponent<T>();
+            T component = obj.GetComponent<T>();
+            if (component == null)
+            {
+                component = obj.AddComponent<T>();
+            }
+
+            return component;
         }
 
-        return component;
-    }
-
-    public static T GetOrAddComponent<T>(this Component comp) where T : Component
-    {
-        T component = comp.GetComponent<T>();
-        if (component == null)
+        public static T GetOrAddComponent<T>(this Component comp) where T : Component
         {
-            component = comp.gameObject.AddComponent<T>();
+            T component = comp.GetComponent<T>();
+            if (component == null)
+            {
+                component = comp.gameObject.AddComponent<T>();
+            }
+
+            return component;
         }
 
-        return component;
-    }
+        public static ScriptableObject Clone(this ScriptableObject obj)
+        {
+            return UnityEngine.Object.Instantiate(obj) as ScriptableObject;
+        }
 
-    public static ScriptableObject Clone(this ScriptableObject obj)
-    {
-        return  UnityEngine.Object.Instantiate(obj) as ScriptableObject;
-    }
+        public static T Clone<T>(this T obj) where T : ScriptableObject
+        {
+            return UnityEngine.Object.Instantiate<T>(obj);
+        }
 
-    public static T Clone<T>(this T obj) where T : ScriptableObject
-    {
-        return UnityEngine.Object.Instantiate<T>(obj);
-    }
-
-    public static Vector3 GetMidpointTo(this Vector3 vect, Vector3 other)
-    {
-        // ((B - A / 2) + A
-        Vector3 result = other - vect;
-        result /= 2;
-        result += vect;
-        return result;
+        public static Vector3 GetMidpointTo(this Vector3 vect, Vector3 other)
+        {
+            // ((B - A / 2) + A
+            Vector3 result = other - vect;
+            result /= 2;
+            result += vect;
+            return result;
+        }
     }
 }

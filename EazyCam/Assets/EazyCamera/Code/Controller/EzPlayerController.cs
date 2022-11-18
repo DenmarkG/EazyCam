@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace EazyCamera.Legacy
 {
+    using Extensions;
     /// <summary>
     /// This is the main class for controlling both camera and player. It is recommended to attach this to the player or camera in the scene, but not necessary
     /// </summary>
