@@ -32,7 +32,6 @@ namespace EazyCamera
                 _controlledCamera.ResetPositionAndRotation();
             }
 
-
             if (Input.GetKeyUp(KeyCode.T))
             {
                 ToggleLockOn();

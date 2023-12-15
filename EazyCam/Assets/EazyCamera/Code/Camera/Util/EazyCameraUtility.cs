@@ -10,6 +10,8 @@ namespace EazyCamera
         Enabled = 1,
     }
 
+
+
     public enum LockOnStyle
     {
         Toggle, // Press button to turn targeting on/off
