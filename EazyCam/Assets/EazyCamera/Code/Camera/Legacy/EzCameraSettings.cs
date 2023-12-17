@@ -10,8 +10,8 @@ namespace EazyCamera.Legacy
     public class EzCameraSettings : ScriptableObject
     {
 #if UNITY_EDITOR
-        [MenuItem("Eazy Camera/Create Camera Settings")]
-        static void Init()
+        [MenuItem("Tools/Eazy Camera/Create Camera Settings")]
+        static void CreateCameraSettings()
         {
             AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<EzCameraSettings>(), "Assets/NewCameraSettings.asset");
             AssetDatabase.Refresh();
