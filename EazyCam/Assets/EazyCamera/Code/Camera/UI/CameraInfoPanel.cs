@@ -55,5 +55,10 @@ namespace EazyCamera
                 _targetCommands[i].SetActive(state == EnabledState.Enabled ? true : false);
             }
         }
+
+        private void ToggleUiVisibility()
+        {
+            //
+        }
     }
 }

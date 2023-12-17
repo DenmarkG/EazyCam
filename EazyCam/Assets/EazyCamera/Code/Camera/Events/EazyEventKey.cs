@@ -22,5 +22,6 @@ namespace EazyCamera.Events
         public static readonly EazyEventKey OnExitFocasableRange = new EazyEventKey("OnExitFocasableRange");
         public static readonly EazyEventKey OnMangerEnabled = new EazyEventKey("OnManagerEnabled");
         public static readonly EazyEventKey OnManagerDisabled = new EazyEventKey("OnManagerDisabled");
+        public static readonly EazyEventKey OnUiToggled = new EazyEventKey("OnUiToggled");
     }
 }

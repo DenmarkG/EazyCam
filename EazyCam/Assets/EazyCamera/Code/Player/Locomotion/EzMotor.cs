@@ -44,13 +44,9 @@ namespace EazyCamera.Legacy
                 float step = _rotateSpeed * Time.deltaTime;
                 Quaternion targetRotation = Quaternion.LookRotation(_moveVector, Vector3.up);
                 this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, step);
+                //this.transform.rotation = targetRotation;
             }
         }
-
-        //public void Jump()
-        //{
-        //    //
-        //}
 
         public float GetNormalizedSpeed()
         {

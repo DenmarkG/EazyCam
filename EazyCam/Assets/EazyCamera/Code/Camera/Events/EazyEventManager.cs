@@ -84,7 +84,7 @@ namespace EazyCamera.Events
             }
         }
 
-        public static void TriggerEvent(string eventKey, EventData data)
+        public static void TriggerEvent(string eventKey, EventData data = null)
         {
             if (_eventMappings.TryGetValue(eventKey, out EazyEvent evt))
             {

@@ -1,6 +1,78 @@
 # Changelog
 All notable changes to this package will be documented in this file.
 
+## [11.3.1] - 2023-08-14
+
+### Uploader Changes
+- Added the option to select indirect package dependencies from the project (e.g. Mathematics package installed by the Burst package)
+
+### Validator Changes
+- Updated the Texture Dimensions test to ignore 'Sprite' and 'Editor GUI' texture types
+
+### Exporter Changes
+- Updated exporter to ignore the 'ProjectSettings/ProjectVersion.txt' asset when exporting 'Complete Project' category packages
+
+## [11.3.0] - 2023-07-04
+
+### Uploader Changes
+
+- Added the option to validate a pre-exported package
+- Added the option to export a .unitypackage file without uploading
+- Updated the dependency selection UI
+
+### Validator Changes
+
+- Added the option to validate several asset paths at once
+    - Note: when validating package that is comprised of several folders (e.g. Assets/MyPackage + 
+	Assets/StreamingAssets + Assets/WebGLTemplates), please select all applicable paths that would be included in the package
+- Added several new validation tests for:
+    - File Menu Names
+	- Compressed files 
+	- Model Types
+	- Texture Dimensions
+	- Particle Systems
+	- Normal Map Textures
+    - Audio Clipping
+    - Path Lengths
+    - Script Compilation	
+- Updated validation test severities based on package category
+- Updated validation tests to each have their own test logic class
+- Updated validation tests to be displayed in alphabetical order
+- Fixed several issues with the namespace check test
+- Fixed scenes in Samples~ folders not being taken into account for the sample scene check test
+- Other internal changes
+
+### Exporter Changes
+
+- Package exporter is now a separate module (similar to Uploader and Validator)
+- Fixed hidden folders being included when exporting package content
+    - Note: this prevents an issue with the Unity Editor, where exported hidden folders would appear in the Project window 
+	as empty folders when imported, despite having content on disk. Content nested within hidden folders is still collected, 
+	provided it contains unique .meta files
+
+## [11.2.2] - 2023-02-23
+
+### Validator Changes
+
+- Updated the 'LOD Setup' test to address some issues
+	- Added additional checks for LOD renderers (inactive renderer check, LOD Group reference check, relative hierarchy position to LOD Group check)
+	- LOD Group Component is no longer required to be on the root of the Prefab
+	- Updated the test result message interface when invalid Prefabs are found
+
+## [11.2.1] - 2023-01-17
+
+### Uploader Changes
+
+- Added a more informative error when exporting content with clashing guid meta files in hidden folders
+- Fixed a compilation issue for Unity 2020.1 and 2020.2
+- Fixed a rare error condition when queueing multiple package uploads in quick succession
+- Fixed Asset Store Uploader state not being properly reset if the uploading process fails
+
+### Validator Changes
+
+- Updated the Asset Store Validator description
+- Fixed a rare memory overflow issue when performing package validation
+
 ## [11.2.0] - 2022-11-03
 
 ### Uploader Changes
