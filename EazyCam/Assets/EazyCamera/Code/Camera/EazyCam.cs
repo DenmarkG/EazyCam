@@ -222,6 +222,14 @@ namespace EazyCamera
         {
             if (_settings.OrbitEnabled)
             {
+                Vector2 rotation = new Vector2(horzRotDelta, vertRotDelta);
+                if (rotation.sqrMagnitude > 1f)
+                {
+                    rotation.Normalize();
+                    horzRotDelta = rotation.x;
+                    vertRotDelta = rotation.y;
+                }
+
                 float step = deltaTime * _settings.RotationSpeed;
                 _rotation.y += horzRotDelta * step;
                 ClampHorizontalRotation();
@@ -298,6 +306,7 @@ namespace EazyCamera
         {
             if (_settings.EnableZoom)
             {
+                inputDelta = Mathf.Clamp(inputDelta, -_settings.MoveSpeed, _settings.MoveSpeed);
                 inputDelta *= _settings.MoveSpeed * deltaTime;
                 inputDelta += _settings.ZoomDistance;
                 _settings.ZoomDistance = Util.ClampToRange(inputDelta, _settings.ZoomRange);

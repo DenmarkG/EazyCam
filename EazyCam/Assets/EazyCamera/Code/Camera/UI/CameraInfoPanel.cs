@@ -7,6 +7,7 @@ namespace EazyCamera
     using EazyCamera.Events;
     public class CameraInfoPanel : MonoBehaviour, IEventListener
     {
+        [SerializeField] private GameObject _rootPanel = null;
         [SerializeField] private GameObject[] _targetCommands = System.Array.Empty<GameObject>();
 
         private void Awake()
@@ -28,12 +29,14 @@ namespace EazyCamera
         {
             EazyEventManager.BindToEvent(EazyEventKey.OnEnterFocasableRange, ShowTargetingInfo);
             EazyEventManager.BindToEvent(EazyEventKey.OnExitFocasableRange, HideTargetingInfo);
+            EazyEventManager.BindToEvent(EazyEventKey.OnUiToggled, ToggleUiVisibility);
         }
 
         public void UnbindEvents()
         {
             EazyEventManager.UnbindFromEvent(EazyEventKey.OnEnterFocasableRange, ShowTargetingInfo);
             EazyEventManager.UnbindFromEvent(EazyEventKey.OnEnterFocasableRange, HideTargetingInfo);
+            EazyEventManager.UnbindFromEvent(EazyEventKey.OnUiToggled, ToggleUiVisibility);
         }
 
         private void ShowTargetingInfo(EventData data)
@@ -56,9 +59,9 @@ namespace EazyCamera
             }
         }
 
-        private void ToggleUiVisibility()
+        private void ToggleUiVisibility(EventData data)
         {
-            //
+            _rootPanel.SetActive(!_rootPanel.activeSelf);
         }
     }
 }

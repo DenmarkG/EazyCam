@@ -13,18 +13,23 @@ namespace EazyCamera
     {
         [SerializeField] private EazyCam _controlledCamera = null;
 
-        private EazyInputHandler _inputHandler = EazyInputHandler.Create();
-
         private void Start()
         {
             Debug.Assert(_controlledCamera != null, "Attempting to use a controller on a GameOjbect without an EazyCam component");
-            _inputHandler.Init(this);
+#if ENABLE_INPUT_SYSTEM
+            SetupInput();
+#endif
         }
 
         private void Update()
         {
             float dt = Time.deltaTime;
-            _inputHandler.HandleInput(this, dt);
+
+#if ENABLE_INPUT_SYSTEM
+            HandleInput(dt);
+#else
+            HandleLegacyInput(dt);
+#endif // ENABLE_INPUT_SYSTEM
         }
 
         public void SetControlledCamera(EazyCam cam)
@@ -57,124 +62,163 @@ namespace EazyCamera
             EazyEventManager.TriggerEvent(EazyEventKey.OnUiToggled);
         }
 
-        public void OnValidate()
+#if ENABLE_INPUT_SYSTEM
+        [SerializeField] private InputAction _toggleLockOn = new InputAction("ToggleLock");
+        [SerializeField] private InputAction _cycleTargets = new InputAction("Cycle");
+        [SerializeField] private InputAction _cycleRight = new InputAction("CycleRight");
+        [SerializeField] private InputAction _cycleLeft = new InputAction("CycleLeft");
+        [SerializeField] private InputAction _zoom = new InputAction("Zoom");
+        [SerializeField] private InputAction _orbit = new InputAction("Orbit");
+        [SerializeField] private InputAction _toggleUi = new InputAction("ToggleUi");
+        [SerializeField] private InputAction _reset = new InputAction("ResetCamera");
+
+        private Vector2 _rotation = new Vector2();
+
+        public void HandleInput(float dt)
         {
+            _controlledCamera.IncreaseRotation(_rotation.x, _rotation.y, dt);
             
         }
 
-        #region InputHandlers
-        private abstract class EazyInputHandler
+        public void SetupInput()
         {
-            public abstract void Init(EazyController controller);
-            public abstract void HandleInput(EazyController controller, float dt);
-            public abstract void Validate(EazyController controller);
+            Validate();
 
-            public static EazyInputHandler Create()
+            _toggleLockOn.canceled += ctx => ToggleLockOn();
+            _toggleLockOn.Enable();
+
+            _cycleTargets.performed += ctx => CycleTargets();
+            _cycleTargets.Enable();
+
+            _cycleRight.performed += ctx => CycleRight();
+            _cycleRight.Enable();
+
+            _cycleLeft.performed += ctx => CycleLeft();
+            _cycleLeft.Enable();
+
+            _toggleUi.canceled += ctx => ToggleUi();
+            _toggleUi.Enable();
+
+            _reset.canceled += ctx => _controlledCamera.ResetPositionAndRotation();
+            _reset.Enable();
+
+            _zoom.performed += OnZoom;
+            _zoom.canceled += OnZoom;
+            _zoom.Enable();
+
+            _orbit.performed += OnOrbit;
+            _orbit.canceled += OnOrbit;
+            _orbit.Enable();
+        }
+
+        private void OnZoom(InputAction.CallbackContext ctx)
+        {
+            _controlledCamera.IncreaseZoomDistance(ctx.ReadValue<Vector2>().y, Time.deltaTime);
+        }
+
+        private void OnOrbit(InputAction.CallbackContext ctx)
+        {
+            _rotation = ctx.ReadValue<Vector2>();
+        }
+
+        private void Validate()
+        {
+            if (_toggleLockOn.bindings.Count == 0)
             {
-#if ENABLE_INPUT_SYSTEM
-                return new EazyCameraInputHandler();
+                _toggleLockOn.AddBinding(Keyboard.current.tKey);
+                _toggleLockOn.AddBinding(Gamepad.current.leftTrigger);
+            }
+
+            if (_cycleTargets.bindings.Count == 0)
+            {
+                _cycleTargets.AddBinding(Keyboard.current.spaceKey);
+            }
+
+            if (_cycleRight.bindings.Count == 0)
+            {
+                _cycleRight.AddBinding(Keyboard.current.eKey);
+                _cycleRight.AddBinding(Gamepad.current.rightShoulder);
+            }
+
+            if (_cycleLeft.bindings.Count == 0)
+            {
+                _cycleLeft.AddBinding(Keyboard.current.qKey);
+                _cycleLeft.AddBinding(Gamepad.current.leftShoulder);
+            }
+
+            if (_zoom.bindings.Count == 0)
+            {
+                _zoom.AddBinding(Mouse.current.scroll);
+            }
+
+            if (_orbit.bindings.Count == 0)
+            {
+                _orbit.AddBinding(Mouse.current.delta);
+                _orbit.AddBinding(Gamepad.current.rightStick);
+            }
+
+            if (_toggleUi.bindings.Count == 0)
+            {
+                _toggleUi.AddBinding(Keyboard.current.uKey);
+                _toggleUi.AddBinding(Gamepad.current.startButton);
+            }
+
+            if (_reset.bindings.Count == 0)
+            {
+                _reset.AddBinding(Keyboard.current.rKey);
+                _reset.AddBinding(Gamepad.current.rightStickButton);
+            }
+        }
+
+        private void OnValidate()
+        {
+            Validate();
+        }
+
 #else
-                return new EazyLegacyInputHandler();
-#endif
-            }
-        }
-
-        private class EazyLegacyCameraInputHandler : EazyInputHandler
+        public void HandleLegacyInput(float dt)
         {
-            public override void HandleInput(EazyController controller, float dt)
+            float scrollDelta = Input.mouseScrollDelta.y;
+            if (scrollDelta > Constants.DeadZone || scrollDelta < -Constants.DeadZone)
             {
-                float scrollDelta = Input.mouseScrollDelta.y;
-                if (scrollDelta > Constants.DeadZone || scrollDelta < -Constants.DeadZone)
-                {
-                    controller._controlledCamera.IncreaseZoomDistance(scrollDelta, dt);
-                }
-
-                float horz = Input.GetAxis(Util.MouseX);
-                float vert = Input.GetAxis(Util.MouseY);
-                controller._controlledCamera.IncreaseRotation(horz, vert, dt);
-
-                if (Input.GetKeyDown(KeyCode.R))
-                {
-                    controller._controlledCamera.ResetPositionAndRotation();
-                }
-
-                if (Input.GetKeyUp(KeyCode.T))
-                {
-                    controller.ToggleLockOn();
-                }
-
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    controller.CycleTargets();
-                }
-
-                if (Input.GetKeyDown(KeyCode.Q))
-                {
-                    controller.CycleLeft();
-                }
-
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    controller.CycleRight();
-                }
-
-                if (Input.GetKeyDown(KeyCode.U))
-                {
-                    controller.ToggleUi();
-                }
+                _controlledCamera.IncreaseZoomDistance(scrollDelta, dt);
             }
 
-            public override void Init(EazyController controller)
+            float horz = Input.GetAxis(Util.MouseX);
+            float vert = Input.GetAxis(Util.MouseY);
+            _controlledCamera.IncreaseRotation(horz, vert, dt);
+
+            if (Input.GetKeyDown(KeyCode.R))
             {
-                //
+                _controlledCamera.ResetPositionAndRotation();
             }
 
-            public override void Validate(EazyController controller)
+            if (Input.GetKeyUp(KeyCode.T))
             {
-                //
+                ToggleLockOn();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                CycleTargets();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                CycleLeft();
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                CycleRight();
+            }
+
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                ToggleUi();
             }
         }
-
-        private class EazyCameraInputHandler : EazyInputHandler
-        {
-            private InputAction _toggleLockOn = new InputAction();
-            private InputAction _cycleTargets = new InputAction();
-            private InputAction _cycleRight = new InputAction();
-            private InputAction _cycleLeft = new InputAction();
-            private InputAction _zoom = new InputAction();
-            private InputAction _orbit = new InputAction();
-
-            private Vector2 _rotation = new Vector2();
-
-            public override void HandleInput(EazyController controller, float dt)
-            {
-                controller._controlledCamera.IncreaseRotation(_rotation.x, _rotation.y, dt);
-            }
-
-            public override void Init(EazyController controller)
-            {
-                Validate(controller);
-
-                _orbit.performed += OnOrbit;
-                _orbit.canceled += OnOrbit;
-                _orbit.Enable();
-            }
-
-            public override void Validate(EazyController controller)
-            {
-                if (_orbit.bindings.Count == 0)
-                {
-                    _orbit.AddBinding(Mouse.current.delta);
-                    _orbit.AddBinding(Gamepad.current.rightStick);
-                }
-            }
-
-            private void OnOrbit(InputAction.CallbackContext cxt)
-            {
-                _rotation = cxt.ReadValue<Vector2>();
-            }
-        }
-        #endregion // InputHandlers
+#endif // ENABLE_INPUT_SYSTEM
     }
 
 

@@ -92,7 +92,6 @@ namespace EazyCamera.Legacy
             if (_controlledPlayer != null)
             {
                 Vector2 inputVector = cxt.ReadValue<Vector2>();
-                Debug.Log(inputVector);
                 _moveVector = EazyCameraUtility.ConvertMoveInputToCameraSpace(_cameraTransform, inputVector.x, inputVector.y);
             }
         }
